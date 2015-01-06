@@ -1,0 +1,12 @@
+"ExclRP"
+{
+	"base"		"base"
+	"title"		"ExclRP"
+	"maps"		"^rp_"
+	"menusystem"	"1"
+
+	"settings"
+	{
+	}
+
+}
