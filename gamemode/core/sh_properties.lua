@@ -11,7 +11,7 @@ if SERVER then
 	
 	function GM:LoadProperty()
 		print("Loading properties.")
-		ES:QueryDBCallback("SELECT * FROM es_erp_property_"..ES:MySQLEscape(game.GetMap())..";",function(c)	
+		ES.DBQuery("SELECT * FROM es_erp_property_"..ES.DBEscape(game.GetMap())..";",function(c)	
 			if c and c[1] then
 				for k,v in pairs(c)do
 					v.doors = (string.Explode("|",(v.doors or "")) or {});
@@ -39,7 +39,7 @@ if SERVER then
 		GAMEMODE:LoadProperty();
 	end)
 	function GM:AddProperty(name,description,...)
-		ES:QueryDBCallback(Format("INSERT INTO es_erp_property_"..ES:MySQLEscape(game.GetMap()).." SET name = '%s', description = '%s', factionRestriction = '%s'", tostring(name),tostring(description),string.Implode("|",({...})) or "nil"));
+		ES.DBQuery(Format("INSERT INTO es_erp_property_"..ES.DBEscape(game.GetMap()).." SET name = '%s', description = '%s', factionRestriction = '%s'", tostring(name),tostring(description),string.Implode("|",({...})) or "nil"));
 		GAMEMODE:LoadProperty();
 	end
 	function GM:AddDoorToProperty(name,e)
@@ -58,7 +58,7 @@ if SERVER then
 		if not t.doors then t.doors = {} end
 		table.insert(t.doors,e:EntIndex());
 
-		ES:QueryDBCallback(Format("UPDATE es_erp_property_"..ES:MySQLEscape(game.GetMap()).." SET doors = '%s' WHERE name = '%s'  ;", string.Implode("|",t.doors),tostring(name)),function(r) 
+		ES.DBQuery(Format("UPDATE es_erp_property_"..ES.DBEscape(game.GetMap()).." SET doors = '%s' WHERE name = '%s'  ;", string.Implode("|",t.doors),tostring(name)),function(r) 
 			GAMEMODE:LoadProperty();
 		end);
 	end

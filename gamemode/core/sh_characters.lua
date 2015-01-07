@@ -26,11 +26,11 @@ if SERVER then
 	function pmeta:CreateCharacter(fname,lname,model)
 		if not fname or not lname or not model or not table.HasValue(allowedModels,model) then return end
 	
-		ES:QueryDBCallback("SELECT id FROM es_erp_players WHERE steamid = '"..self:SteamID().."' ;",function(c)
+		ES.DBQuery("SELECT id FROM es_erp_players WHERE steamid = '"..self:SteamID().."' ;",function(c)
 			if #c >= 3 then 
 				return;
 			end
-			ES:QueryDBCallback(Format("INSERT INTO es_erp_players SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 10 , bank = 500", ES:MySQLEscape(fname), ES:MySQLEscape(lname), self:SteamID(),ES:MySQLEscape(model)),function()
+			ES.DBQuery(Format("INSERT INTO es_erp_players SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 10 , bank = 500", ES.DBEscape(fname), ES.DBEscape(lname), self:SteamID(),ES.DBEscape(model)),function()
 				print ("Character created: "..fname.." "..lname);
 				self:OpenMainMenu()
 			end)
@@ -53,7 +53,7 @@ if SERVER then
 		net.Send(self);
 	end
 	function pmeta:LoadCharacter(id)
-		ES:QueryDBCallback("SELECT * FROM es_erp_players WHERE steamid = '"..self:SteamID().."' AND id = "..tonumber(id)..";",function(c)
+		ES.DBQuery("SELECT * FROM es_erp_players WHERE steamid = '"..self:SteamID().."' AND id = "..tonumber(id)..";",function(c)
 			if c and c[1] then
 				self.character = c[1];
 				self.character.inventory = 
@@ -69,7 +69,7 @@ if SERVER then
 	end)
 	function pmeta:SaveCharacter(nosynch)
 		if not self:IsLoaded() then return end		
-		ES:QueryDBCallback(Format("UPDATE es_erp_players SET cash = '%s', job = '%s', inventory = '%s';",self.character.cash,self:Team() or 0, GAMEMODE:EncodeInventory(self.character.inventory) or ""),function() end)
+		ES.DBQuery(Format("UPDATE es_erp_players SET cash = '%s', job = '%s', inventory = '%s';",self.character.cash,self:Team() or 0, GAMEMODE:EncodeInventory(self.character.inventory) or ""),function() end)
 		
 		if !nosynch then
 			self:SynchCharacter()
@@ -77,7 +77,7 @@ if SERVER then
 	end
 	util.AddNetworkString("ERPOpenMainMenu")
 	function pmeta:OpenMainMenu()
-		ES:QueryDBCallback("SELECT * FROM es_erp_players WHERE steamid = '"..self:SteamID().."';",function(c)
+		ES.DBQuery("SELECT * FROM es_erp_players WHERE steamid = '"..self:SteamID().."';",function(c)
 			net.Start("ERPOpenMainMenu");
 			net.WriteTable(c or {});
 			net.Send(self);

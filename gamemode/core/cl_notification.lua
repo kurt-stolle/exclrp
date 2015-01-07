@@ -12,11 +12,11 @@ local meta={}
 local notify = {}
 notify.tbl = {}
 notify.icons = {}
-notify.icons["boom"] =surface.GetTextureID("prisonbreak/notices/cleanup");
-notify.icons["generic"] =surface.GetTextureID("prisonbreak/notices/generic");
-notify.icons["error"]	=surface.GetTextureID("prisonbreak/notices/error");
-notify.icons["undo"] =surface.GetTextureID("prisonbreak/notices/undo");
-notify.icons["hint"] =surface.GetTextureID("prisonbreak/notices/hint");
+notify.icons["boom"] =Material("exclrp/notices/cleanup.png");
+notify.icons["generic"] =Material("exclrp/notices/generic.png");
+notify.icons["error"]	=Material("exclrp/notices/error.png");
+notify.icons["undo"] =Material("exclrp/notices/undo.png");
+notify.icons["hint"] =Material("exclrp/notices/cleanup.png");
 
 function meta:SetText(s)
 	if not s then s="Unidentified"; end
@@ -47,7 +47,7 @@ function meta:Draw()
 	draw.RoundedBox(4,x+3,y+3,w-6,(h-6)/2,Color(255,255,255,100));
 	
 	surface.SetDrawColor( 255, 255, 255, 255 );
-	surface.SetTexture(icon);
+	surface.SetMaterial(icon);
 	surface.DrawTexturedRect(x+5,y-8,40,40);
 	
 	draw.SimpleText(t,"DermaDefaultBold",x+50,y+11,Color(0,0,0),0,1);
@@ -109,7 +109,8 @@ hook.Add("HUDPaint", "exclNoteHUD", function()
 	local t=notify.tbl;
 	for i=1, #t do
 		if t[i] then
-			t[i]:Draw(i)
+			t[i]:Draw(i) -- ES.BroadcastNotification
+
 		end
 	end
 end)

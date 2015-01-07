@@ -207,18 +207,18 @@ end
 vgui.Register( "exclTabbedPanel", PNL, "Panel" );
 
 function GM:CreateExclFrame(title,x,y,w,h,closeable) -- let's make it all more simple
-	local p = vgui.Create("exclFrame");
+	local p = vgui.Create("esFrame");
 	p:SetSize(w,h);
 	p:SetPos(x,y);
 	p.Title = title;
-	if closeable then
+--[[	if closeable then
 		p.closebutton = vgui.Create("exclCloseButton",p);
 		p.closebutton:SetPos(p:GetWide()-32,1);
 		p.closebutton:SetSize(22,16);
 		function p.closebutton:DoClick()
 			self:GetParent():Remove();
 		end
-	end
+	end--]]
 	
 	return p;
 end

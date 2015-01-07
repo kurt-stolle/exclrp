@@ -32,7 +32,7 @@ function PNL:Paint()
 	surface.SetDrawColor(Color(255,255,255))
 	surface.DrawRect(0,self:GetTall()-101,self:GetWide(),1);
 	surface.DrawRect(0,self:GetTall()-249,self:GetWide(),1);
-	surface.SetDrawColor(Color(200,200,200,150))
+	surface.SetDrawColor(Color(30,30,30))
 	surface.DrawRect(0,self:GetTall()-248,self:GetWide(),150-3);
 	
 	--[[draw.SimpleTextOutlined("EXCL'S","HUDNumber4",self:GetWide()-250,self:GetTall()-240,Color(0,0,0),0,0,1,Color(255,255,255,10));
@@ -131,10 +131,10 @@ net.Receive("ERPOpenMainMenu",function()
 	local slideitems = {}
 	local first = randomfirst[math.random(1,#randomfirst)];
 	local last = randomlast[math.random(1,#randomlast)];
-	local create = vgui.Create("exclButton",GAMEMODE.MainMenu);
+	local create = vgui.Create("esButton",GAMEMODE.MainMenu);
 	create:SetPos(GAMEMODE.MainMenu:GetWide() - 160,GAMEMODE.MainMenu:GetTall()-232);
 	create:SetSize(150,30);
-	create.Title = "Create character";
+	create:SetText("Create Character");
 	create.DoClick = function()
 		if #decoded >= 4 then
 			if not errorCreateTooMuch or not errorCreateTooMuch:IsValid() then
@@ -152,10 +152,10 @@ net.Receive("ERPOpenMainMenu",function()
 			holder:SetSize(GAMEMODE.MainMenu:GetWide(),GAMEMODE.MainMenu:GetTall());
 			holder:SetPos(-GAMEMODE.MainMenu:GetWide(),0);
 			
-			local create = vgui.Create("exclButton",holder);
+			local create = vgui.Create("esButton",holder);
 			create:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-232);
 			create:SetSize(150,30);
-			create.Title = "Accept & Create";
+			create:SetText("Create");
 			create.DoClick = function()
 				slideActive = false;
 				slideDirection = false; //  true for right, false for left
@@ -164,10 +164,10 @@ net.Receive("ERPOpenMainMenu",function()
 				RunConsoleCommand("excl_createcharacter",first,last,GAMEMODE:GetAllowedCharacterModels()[modelselected]);
 			end
 			
-			local dc = vgui.Create("exclButton",holder);
+			local dc = vgui.Create("esButton",holder);
 			dc:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-147);
 			dc:SetSize(150,30);
-			dc.Title = "Back";
+			dc:SetText("Back");
 			dc.DoClick = function() 
 				setUpSlide(false,{holder},function()
 					holder:Remove();
@@ -183,10 +183,10 @@ net.Receive("ERPOpenMainMenu",function()
 			model:SetLookAt( Vector( 0, 0,40 ) );
 			model.LayoutEntity = function(self) self:RunAnimation() end // hou op met spinnen, jij gek model panel.
 			local lName
-			local prev = vgui.Create("exclButton",holder);
+			local prev = vgui.Create("esButton",holder);
 			prev:SetPos(130,GAMEMODE.MainMenu:GetTall()-147);
 			prev:SetSize(70,30);
-			prev.Title = "Previous";
+			prev:SetText("Previous");
 			prev.DoClick = function()
 				modelselected = modelselected-1;
 				if modelselected < 1 then
@@ -197,10 +197,10 @@ net.Receive("ERPOpenMainMenu",function()
 			end
 			lMdl = Label("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(GAMEMODE:GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""),holder);
 			lMdl:SetFont("DefaultBold");
-			lMdl:SetColor(Color(0,0,0));
+			lMdl:SetColor(Color(255,255,255,200));
 			lMdl:SetPos(300,holder:GetTall()-220);
 			lMdl:SizeToContents();
-			local next = vgui.Create("exclButton",holder);
+			local next = vgui.Create("esButton",holder);
 			next:SetPos(130+10+70,GAMEMODE.MainMenu:GetTall()-147);
 			next:SetSize(70,30);
 			next.DoClick = function()
@@ -213,54 +213,54 @@ net.Receive("ERPOpenMainMenu",function()
 				lMdl:SizeToContents();
 				model:SetModel(GAMEMODE:GetAllowedCharacterModels()[modelselected]);
 			end
-			next.Title = "Next";
+			next:SetText("Next");
 			
 			lName = Label("Name: "..first.." "..last ,holder);
 			lName:SetFont("DefaultBold");
-			lName:SetColor(Color(0,0,0));
+			lName:SetColor(Color(255,255,255,200));
 			lName:SetPos(300,holder:GetTall()-240);
 			lName:SizeToContents();
 			
-			local statedit = vgui.Create("exclButton",holder);
+			local statedit = vgui.Create("esButton",holder);
 			statedit:SetPos(300,GAMEMODE.MainMenu:GetTall()-147);
 			statedit:SetSize(150,30);
-			statedit.Title = "Randomise stats";
+			statedit:SetText("Randomize Stats");
 			statedit.DoClick = function()
 			end
 			
-			local nameedit = vgui.Create("exclButton",holder);
+			local nameedit = vgui.Create("esButton",holder);
 			nameedit:SetPos(300,GAMEMODE.MainMenu:GetTall()-190);
 			nameedit:SetSize(150,30);
-			nameedit.Title = "Customise Name";
+			nameedit:SetText("Customize Name");
 			nameedit.DoClick = function()
-				local pnlName = GAMEMODE:CreateExclFrame("Edit name",1,1,200,100,true);
+				local pnlName = GAMEMODE:CreateExclFrame("Edit name",1,1,225,120,true);
 				pnlName:Center();
 				pnlName:MakePopup();
 				local firstText;
 				local lastText;
-				local accept = vgui.Create("exclButton",pnlName);
-				accept.Title = "Accept";
+				local accept = vgui.Create("esButton",pnlName);
+				accept:SetText("Accept");
 				accept:SetSize(pnlName:GetWide()-10,30);
 				accept:SetPos(5,pnlName:GetTall()-35);
 
 				local l = Label("First:",pnlName);
-				l:SetPos(10,25);
+				l:SetPos(10,38);
 				l:SetColor(Color(200,200,200));
 				l:SizeToContents();
 				local l = Label("Last:",pnlName);
-				l:SetPos(10,45);
+				l:SetPos(10,58);
 				l:SetColor(Color(200,200,200));
 				l:SizeToContents();
 
 				local firstText = vgui.Create("DTextEntry", pnlName)
 				firstText:SetText(first)
 				firstText:SetSize(pnlName:GetWide()-40-5,17)
-				firstText:SetPos(40,24);
+				firstText:SetPos(40,37);
 				firstText.OnEnter = function(self) if IsValid(lastText) then lastText:RequestFocus() end  end
 				local lastText = vgui.Create("DTextEntry", pnlName)
 				lastText:SetText(last)
 				lastText:SetSize(pnlName:GetWide()-40-5,17)
-				lastText:SetPos(40,44);
+				lastText:SetPos(40,57);
 				lastText.OnEnter = function(self) if IsValid(accept) then accept:DoClick() end end
 
 				accept.DoClick = function(self)
@@ -286,17 +286,17 @@ net.Receive("ERPOpenMainMenu",function()
 	end
 	table.insert(slideitems,create);
 	
-	local settings = vgui.Create("exclButton",GAMEMODE.MainMenu);
+	local settings = vgui.Create("esButton",GAMEMODE.MainMenu);
 	settings:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-190);
 	settings:SetSize(150,30);
-	settings.Title = "Settings";
+	settings:SetText("Settings");
 	table.insert(slideitems,settings);
 	
-	local dc = vgui.Create("exclButton",GAMEMODE.MainMenu);
+	local dc = vgui.Create("esButton",GAMEMODE.MainMenu);
 	dc:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-147);
 	dc:SetSize(150,30);
 	dc.Red = true;
-	dc.Title = "Disconnect";
+	dc:SetText("Disconnect");
 	table.insert(slideitems,dc);
 	
 	// characters
@@ -311,11 +311,11 @@ net.Receive("ERPOpenMainMenu",function()
 		local button;
 		table.insert(slideitems,model);
 		timer.Simple(0,function()
-			button = vgui.Create("exclButton",GAMEMODE.MainMenu);
+			button = vgui.Create("esButton",GAMEMODE.MainMenu);
 			local x,y = model:GetPos();
 			button:SetPos(x+200-70,GAMEMODE.MainMenu:GetTall()-147); // y same as dc.pos.y
 			button:SetSize(150,30);
-			button.Title = "Select";
+			button:SetText("Select");
 			button.DoClick = function()
 				RunConsoleCommand("excl_selectcharacter",v.id);
 			end
