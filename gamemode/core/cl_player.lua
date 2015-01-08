@@ -6,7 +6,6 @@ function GM:HUDShouldDraw(name)
 	return true;
 end
 
-
 COLOR_BLACK = COLOR_BLACK or Color(0,0,0,255);
 
 local fov = 0;
@@ -95,12 +94,12 @@ function GM:HUDPaint()
 	surface.SetDrawColor(255,255,255,255);
 	surface.SetMaterial(Material("exclrp/cashbar.png"));
 	surface.DrawTexturedRect(10,ScrH()-150,256,64);
-	draw.SimpleText(convertMoneyString(),"TargetID",60,ScrH()-150+32,Color(255,255,255),0,1);
+	draw.SimpleText(convertMoneyString(),"ES.MainMenu.MainElementInfoBnnsSmall",65,ScrH()-150+32,Color(255,255,255),0,1);
 	
 	surface.SetDrawColor(255,255,255,255);
 	surface.SetMaterial(Material("exclrp/jobbar.png"));
 	surface.DrawTexturedRect(30,ScrH()-80,256,64);
-	draw.SimpleText(getJobString(),"TargetID",90,ScrH()-80+32,Color(255,255,255),0,1);
+	draw.SimpleText(getJobString(),"ES.MainMenu.MainElementInfoBnnsSmall",95,ScrH()-80+32,Color(255,255,255),0,1);
 	
 	local aw = localplayer:GetActiveWeapon();
 	if( IsValid(aw) and aw.Primary and aw.Primary.Ammo and aw.Primary.Ammo != "none" )then
