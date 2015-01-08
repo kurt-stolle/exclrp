@@ -119,12 +119,12 @@ if SERVER then
 	concommand.Add("excl_buyproperty",function(p)
 		if IsValid(p) and p:IsLoaded() and IsValid(p:GetEyeTrace().Entity) and p:GetEyeTrace().Entity.property and !ERP.OwnedProperty[p:GetEyeTrace().Entity.property] and p:GetEyeTrace().HitPos:Distance(p:EyePos()) < 100 then
 			if( p:GetMoney() - (50+(#ERP.Properties[p:GetEyeTrace().Entity.property].doors*6)) < 0 )then 
-				p:SendNotification("You do not have enough cash on you.","error");
+				p:ESSendNotification("generic","You do not have enough cash on you.");
 				return;
 			end
 			p:AddMoney(-(50+(#ERP.Properties[p:GetEyeTrace().Entity.property].doors*6)));
 			p:GiveProperty(ERP.Properties[ p:GetEyeTrace().Entity.property ].name);
-			p:SendNotification("The property has been bought.","generic");
+			p:ESSendNotification("generic","The property has been bought.");
 		end
 	end)
 	

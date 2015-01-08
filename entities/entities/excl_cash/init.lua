@@ -19,7 +19,7 @@ function ENT:Use(activator,caller)
 	local amount = self.dt.amount
 
 	activator:AddMoney(self.dt.amount or 0)
-	activator:SendNotification("You picked up $ "..self.dt.amount..",-","generic");
+	activator:ESSendNotification("generic","You picked up $ "..self.dt.amount..",-","generic");
 	self:Remove()
 end
 

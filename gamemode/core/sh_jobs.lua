@@ -64,10 +64,10 @@ if SERVER then
 			if v:IsLoaded() then
 				if v:GetJob() then
 					v:AddMoney(v:GetJob().pay)
-					v:SendNotification("You have earned $ "..v:GetJob().pay..",- from your paycheque, it has been put on your bank account.","boom");
+					v:ESSendNotification("generic","You have earned $ "..v:GetJob().pay..",- from your paycheque, it has been put on your bank account.");
 				else
 					v:AddMoney(10);
-					v:SendNotification("You have earned $ 10,- from your unemployment cheque, it has been put on your bank account.","boom");
+					v:ESSendNotification("generic","You have earned $ 10,- from your unemployment cheque, it has been put on your bank account.");
 				end
 			end
 		end

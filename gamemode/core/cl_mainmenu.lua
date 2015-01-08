@@ -2,7 +2,7 @@
 
 ERP.MainMenu = false;
 
-hook.Add( "RenderScreenspaceEffects", "ERPProcessMMEffects", function()
+hook.Add( "RenderScreenspaceEffects", "ERP.MM.PostProcess", function()
 	if ERP.MainMenu and ERP.MainMenu:IsValid()then
 		local tab = {}
 		tab[ "$pp_colour_addr" ] = 0

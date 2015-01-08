@@ -5,13 +5,7 @@ function pmeta:IsWearingTag()
 	
 	return tobool(string.find(self:Nick(),"%[CBC%]"));
 end
-function pmeta:SendNotification(t,i)
-	if SERVER then
-		umsg.Start("exclNC",self); umsg.String(t); umsg.String(i); umsg.End();
-	else
-		createNotify(t,i);
-	end
-end
+
 //aim
 
 function pmeta:IsAiming()
