@@ -1,7 +1,7 @@
 --sh_inventory
 -- inventory methods
 
-function GM:DecodeInventory(str)
+function ERP:DecodeInventory(str)
 	local t ={}
 	for k,v in pairs(string.Explode("]",str))do
 		t[#t+1] = {}
@@ -16,7 +16,7 @@ function GM:DecodeInventory(str)
 	end
 	return t;
 end
-function GM:EncodeInventory(tbl)
+function ERP:EncodeInventory(tbl)
 	local s = ""
 	for k,v in pairs(tbl or {})do
 		s = s..v.item.."["..v.pos.x..","..v.pos.y;

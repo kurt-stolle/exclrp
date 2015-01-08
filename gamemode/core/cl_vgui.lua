@@ -206,7 +206,7 @@ function PNL:Paint()
 end
 vgui.Register( "exclTabbedPanel", PNL, "Panel" );
 
-function GM:CreateExclFrame(title,x,y,w,h,closeable) -- let's make it all more simple
+function ERP:CreateExclFrame(title,x,y,w,h,closeable) -- let's make it all more simple
 	local p = vgui.Create("esFrame");
 	p:SetSize(w,h);
 	p:SetPos(x,y);
@@ -222,9 +222,9 @@ function GM:CreateExclFrame(title,x,y,w,h,closeable) -- let's make it all more s
 	
 	return p;
 end
-function GM:CreateErrorDialog(text,onDone)
+function ERP:CreateErrorDialog(text,onDone)
 	onDone = onDone or function() end
-	local f =GAMEMODE:CreateExclFrame("An error occured",1,1,200,100,false);
+	local f =ERP:CreateExclFrame("An error occured",1,1,200,100,false);
 	f:Center();
 	f:MakePopup();
 	local b =vgui.Create("exclButton",f)
@@ -251,7 +251,7 @@ concommand.Add("testvgui",function()
 	
 	gui.EnableScreenClicker(true);
 	
-	testpanel = GAMEMODE:CreateExclFrame("Testing",0,0,300,150,true);
+	testpanel = ERP:CreateExclFrame("Testing",0,0,300,150,true);
 	testpanel:Center();
 	
 	local buttona = vgui.Create("exclButton",testpanel);

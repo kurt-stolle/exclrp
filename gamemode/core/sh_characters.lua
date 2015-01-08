@@ -17,7 +17,7 @@ local allowedModels = {
 "models/player/Group01/male_08.mdl",
 "models/player/Group01/male_09.mdl",
 }
-function GM:GetAllowedCharacterModels()
+function ERP:GetAllowedCharacterModels()
 	return allowedModels;
 end
 
@@ -26,11 +26,11 @@ if SERVER then
 	function pmeta:CreateCharacter(fname,lname,model)
 		if not fname or not lname or not model or not table.HasValue(allowedModels,model) then return end
 	
-		ES.DBQuery("SELECT id FROM es_erp_players WHERE steamid = '"..self:SteamID().."' ;",function(c)
+		ES.DBQuery("SELECT id FROM es_erp_characters WHERE steamid = '"..self:SteamID().."' ;",function(c)
 			if #c >= 3 then 
 				return;
 			end
-			ES.DBQuery(Format("INSERT INTO es_erp_players SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 10 , bank = 500", ES.DBEscape(fname), ES.DBEscape(lname), self:SteamID(),ES.DBEscape(model)),function()
+			ES.DBQuery(Format("INSERT INTO es_erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 10 , bank = 500", ES.DBEscape(fname), ES.DBEscape(lname), self:SteamID(),ES.DBEscape(model)),function()
 				print ("Character created: "..fname.." "..lname);
 				self:OpenMainMenu()
 			end)
@@ -53,7 +53,7 @@ if SERVER then
 		net.Send(self);
 	end
 	function pmeta:LoadCharacter(id)
-		ES.DBQuery("SELECT * FROM es_erp_players WHERE steamid = '"..self:SteamID().."' AND id = "..tonumber(id)..";",function(c)
+		ES.DBQuery("SELECT * FROM es_erp_characters WHERE steamid = '"..self:SteamID().."' AND id = "..tonumber(id)..";",function(c)
 			if c and c[1] then
 				self.character = c[1];
 				self.character.inventory = 
@@ -69,7 +69,7 @@ if SERVER then
 	end)
 	function pmeta:SaveCharacter(nosynch)
 		if not self:IsLoaded() then return end		
-		ES.DBQuery(Format("UPDATE es_erp_players SET cash = '%s', job = '%s', inventory = '%s';",self.character.cash,self:Team() or 0, GAMEMODE:EncodeInventory(self.character.inventory) or ""),function() end)
+		ES.DBQuery(Format("UPDATE es_erp_characters SET cash = '%s', job = '%s', inventory = '%s';",self.character.cash,self:Team() or 0, ERP:EncodeInventory(self.character.inventory) or ""),function() end)
 		
 		if !nosynch then
 			self:SynchCharacter()
@@ -77,7 +77,7 @@ if SERVER then
 	end
 	util.AddNetworkString("ERPOpenMainMenu")
 	function pmeta:OpenMainMenu()
-		ES.DBQuery("SELECT * FROM es_erp_players WHERE steamid = '"..self:SteamID().."';",function(c)
+		ES.DBQuery("SELECT * FROM es_erp_characters WHERE steamid = '"..self:SteamID().."';",function(c)
 			net.Start("ERPOpenMainMenu");
 			net.WriteTable(c or {});
 			net.Send(self);
@@ -88,9 +88,9 @@ end
 if CLIENT then
 	net.Receive("ERPSynchCharacter",function()
 		LocalPlayer().character = net.ReadTable();
-		if GAMEMODE.MainMenu and GAMEMODE.MainMenu:IsValid() then
-			GAMEMODE.MainMenu:Remove();
-			GAMEMODE.MainMenu = nil;
+		if ERP.MainMenu and ERP.MainMenu:IsValid() then
+			ERP.MainMenu:Remove();
+			ERP.MainMenu = nil;
 			gui.EnableScreenClicker(false);
 		end
 	end);

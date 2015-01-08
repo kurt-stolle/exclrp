@@ -1,7 +1,7 @@
 -- sh_jobs
 
 local jobs = {}
-function GM:GetJobs()
+function ERP:GetJobs()
 	return jobs
 end
 
@@ -17,7 +17,7 @@ local function createJob( name, description, class, pay, color)
 	return #jobs;
 end
 
-function GM:GetJobs(class)
+function ERP:GetJobs(class)
 	if !class then
 		return jobs;
 	end

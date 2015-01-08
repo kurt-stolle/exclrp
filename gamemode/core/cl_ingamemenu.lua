@@ -17,7 +17,7 @@ end
 vgui.Register("exclInGameMenuJobUpgrade", PNL, "Panel" );
 local PNL = {};
 function PNL:Init()
-	self.Job = GAMEMODE:GetJobs()[1];
+	self.Job = ERP:GetJobs()[1];
 	self.Colorcenter = 70
 	self.Hover = false;
 end
@@ -76,19 +76,19 @@ function PNL:Paint()
 	draw.SimpleText(self.Job.name,"JobFont",10,self:GetTall()/2-2,WHITE,0,1);
 	
 	//description
-	draw.DrawText(GAMEMODE:exclFormatLine(self.Job.description,"DermaDefaultBold",300),"DermaDefaultBold",self:GetWide()-80,10,BLACK,2);
+	draw.DrawText(ERP:exclFormatLine(self.Job.description,"DermaDefaultBold",300),"DermaDefaultBold",self:GetWide()-80,10,BLACK,2);
 end
 vgui.Register("exclInGameMenuJob", PNL, "Panel" );
 
 local menu;
-usermessage.Hook("EOIGM",function()
+usermessage.Hook("EOIERP",function()
 	if menu and menu:IsValid() then
 		menu:Remove();
 		return;
 	end
 
 	
-	menu = GAMEMODE:CreateExclFrame("In-Game control menu",0,0,700,600,true);
+	menu = ERP:CreateExclFrame("In-Game control menu",0,0,700,600,true);
 	menu:Center();
 	menu:MakePopup()
 	
@@ -98,7 +98,7 @@ usermessage.Hook("EOIGM",function()
 	tabs:AddTab("icon16/star.png","Help pages")
 	tabs:AddTab("icon16/user.png","Character")
 	local pnl = tabs:AddTab("icon16/world.png","Jobs");
-	for k,v in pairs(GAMEMODE:GetJobs())do
+	for k,v in pairs(ERP:GetJobs())do
 		local job = vgui.Create("exclInGameMenuJob",pnl);
 		job:SetPos(10,10+(k-1)*90);
 		job:SetSize(pnl:GetWide()-20,80);

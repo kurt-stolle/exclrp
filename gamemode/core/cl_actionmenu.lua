@@ -4,7 +4,7 @@
 local actionmenu = false;
 local actionmenuOptions = {};
 local actionmenuPos = Vector(0,0,0); -- 3d vector!
-function GM:CreateActionMenu(pos,options)
+function ERP:CreateActionMenu(pos,options)
 	actionmenu = true;
 	actionmenuOptions = options;
 	actionmenuPos = pos;

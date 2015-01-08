@@ -1,9 +1,9 @@
 -- cl_mainmenu.lua
 
-GM.MainMenu = false;
+ERP.MainMenu = false;
 
 hook.Add( "RenderScreenspaceEffects", "ERPProcessMMEffects", function()
-	if GAMEMODE.MainMenu and GAMEMODE.MainMenu:IsValid()then
+	if ERP.MainMenu and ERP.MainMenu:IsValid()then
 		local tab = {}
 		tab[ "$pp_colour_addr" ] = 0
 		tab[ "$pp_colour_addg" ] = 0
@@ -115,30 +115,30 @@ local randomlast = {"Rutten","Stolle","Jean","McCarter","Selie","Jackson","Biebe
 local errorCreateTooMuch;
 
 net.Receive("ERPOpenMainMenu",function()
-	if GAMEMODE.MainMenu and GAMEMODE.MainMenu:IsValid() then
-		GAMEMODE.MainMenu:Remove();
+	if ERP.MainMenu and ERP.MainMenu:IsValid() then
+		ERP.MainMenu:Remove();
 	end
 
 	local decoded = net.ReadTable();
 	
 	gui.EnableScreenClicker(true);
 	
-	GAMEMODE.MainMenu = vgui.Create("exclMainMenuPanel");
-	GAMEMODE.MainMenu:SetPos(0,0);
-	GAMEMODE.MainMenu:SetSize(ScrW(),ScrH());
+	ERP.MainMenu = vgui.Create("exclMainMenuPanel");
+	ERP.MainMenu:SetPos(0,0);
+	ERP.MainMenu:SetSize(ScrW(),ScrH());
 	
 	// main items
 	local slideitems = {}
 	local first = randomfirst[math.random(1,#randomfirst)];
 	local last = randomlast[math.random(1,#randomlast)];
-	local create = vgui.Create("esButton",GAMEMODE.MainMenu);
-	create:SetPos(GAMEMODE.MainMenu:GetWide() - 160,GAMEMODE.MainMenu:GetTall()-232);
+	local create = vgui.Create("esButton",ERP.MainMenu);
+	create:SetPos(ERP.MainMenu:GetWide() - 160,ERP.MainMenu:GetTall()-232);
 	create:SetSize(150,30);
 	create:SetText("Create Character");
 	create.DoClick = function()
 		if #decoded >= 4 then
 			if not errorCreateTooMuch or not errorCreateTooMuch:IsValid() then
-				errorCreateTooMuch= GAMEMODE:CreateErrorDialog("You can not create over 4 characters.");
+				errorCreateTooMuch= ERP:CreateErrorDialog("You can not create over 4 characters.");
 			end
 			return;
 		end
@@ -146,14 +146,14 @@ net.Receive("ERPOpenMainMenu",function()
 			first = randomfirst[math.random(1,#randomfirst)];
 			last = randomlast[math.random(1,#randomlast)];
 		
-			local modelselected=math.random(1,#GAMEMODE:GetAllowedCharacterModels());
+			local modelselected=math.random(1,#ERP:GetAllowedCharacterModels());
 		
-			local holder = vgui.Create("exclMainMenuEmpty",GAMEMODE.MainMenu);
-			holder:SetSize(GAMEMODE.MainMenu:GetWide(),GAMEMODE.MainMenu:GetTall());
-			holder:SetPos(-GAMEMODE.MainMenu:GetWide(),0);
+			local holder = vgui.Create("exclMainMenuEmpty",ERP.MainMenu);
+			holder:SetSize(ERP.MainMenu:GetWide(),ERP.MainMenu:GetTall());
+			holder:SetPos(-ERP.MainMenu:GetWide(),0);
 			
 			local create = vgui.Create("esButton",holder);
-			create:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-232);
+			create:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-232);
 			create:SetSize(150,30);
 			create:SetText("Create");
 			create.DoClick = function()
@@ -161,11 +161,11 @@ net.Receive("ERPOpenMainMenu",function()
 				slideDirection = false; //  true for right, false for left
 				slideItems = {};
 				onDoneSliding = function() end
-				RunConsoleCommand("excl_createcharacter",first,last,GAMEMODE:GetAllowedCharacterModels()[modelselected]);
+				RunConsoleCommand("excl_createcharacter",first,last,ERP:GetAllowedCharacterModels()[modelselected]);
 			end
 			
 			local dc = vgui.Create("esButton",holder);
-			dc:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-147);
+			dc:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-147);
 			dc:SetSize(150,30);
 			dc:SetText("Back");
 			dc.DoClick = function() 
@@ -176,42 +176,42 @@ net.Receive("ERPOpenMainMenu",function()
 			end
 			
 			local model = vgui.Create("DModelPanel",holder);
-			model:SetPos(0,GAMEMODE.MainMenu:GetTall()-120-400);
-			model:SetModel(GAMEMODE:GetAllowedCharacterModels()[modelselected]);
+			model:SetPos(0,ERP.MainMenu:GetTall()-120-400);
+			model:SetModel(ERP:GetAllowedCharacterModels()[modelselected]);
 			model:SetSize( 400, 400 );
 			model:SetCamPos( Vector( 100,0,40 ) );
 			model:SetLookAt( Vector( 0, 0,40 ) );
 			model.LayoutEntity = function(self) self:RunAnimation() end // hou op met spinnen, jij gek model panel.
 			local lName
 			local prev = vgui.Create("esButton",holder);
-			prev:SetPos(130,GAMEMODE.MainMenu:GetTall()-147);
+			prev:SetPos(130,ERP.MainMenu:GetTall()-147);
 			prev:SetSize(70,30);
 			prev:SetText("Previous");
 			prev.DoClick = function()
 				modelselected = modelselected-1;
 				if modelselected < 1 then
-					modelselected = #GAMEMODE:GetAllowedCharacterModels();
+					modelselected = #ERP:GetAllowedCharacterModels();
 				end
 
-				model:SetModel(GAMEMODE:GetAllowedCharacterModels()[modelselected]);
+				model:SetModel(ERP:GetAllowedCharacterModels()[modelselected]);
 			end
-			lMdl = Label("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(GAMEMODE:GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""),holder);
+			lMdl = Label("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(ERP:GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""),holder);
 			lMdl:SetFont("DefaultBold");
 			lMdl:SetColor(Color(255,255,255,200));
 			lMdl:SetPos(300,holder:GetTall()-220);
 			lMdl:SizeToContents();
 			local next = vgui.Create("esButton",holder);
-			next:SetPos(130+10+70,GAMEMODE.MainMenu:GetTall()-147);
+			next:SetPos(130+10+70,ERP.MainMenu:GetTall()-147);
 			next:SetSize(70,30);
 			next.DoClick = function()
 				modelselected = modelselected+1;
-				if modelselected > #GAMEMODE:GetAllowedCharacterModels() then
+				if modelselected > #ERP:GetAllowedCharacterModels() then
 					modelselected = 1;
 				end
 
-				lMdl:SetText("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(GAMEMODE:GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""));
+				lMdl:SetText("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(ERP:GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""));
 				lMdl:SizeToContents();
-				model:SetModel(GAMEMODE:GetAllowedCharacterModels()[modelselected]);
+				model:SetModel(ERP:GetAllowedCharacterModels()[modelselected]);
 			end
 			next:SetText("Next");
 			
@@ -222,18 +222,18 @@ net.Receive("ERPOpenMainMenu",function()
 			lName:SizeToContents();
 			
 			local statedit = vgui.Create("esButton",holder);
-			statedit:SetPos(300,GAMEMODE.MainMenu:GetTall()-147);
+			statedit:SetPos(300,ERP.MainMenu:GetTall()-147);
 			statedit:SetSize(150,30);
 			statedit:SetText("Randomize Stats");
 			statedit.DoClick = function()
 			end
 			
 			local nameedit = vgui.Create("esButton",holder);
-			nameedit:SetPos(300,GAMEMODE.MainMenu:GetTall()-190);
+			nameedit:SetPos(300,ERP.MainMenu:GetTall()-190);
 			nameedit:SetSize(150,30);
 			nameedit:SetText("Customize Name");
 			nameedit.DoClick = function()
-				local pnlName = GAMEMODE:CreateExclFrame("Edit name",1,1,225,120,true);
+				local pnlName = ERP:CreateExclFrame("Edit name",1,1,225,120,true);
 				pnlName:Center();
 				pnlName:MakePopup();
 				local firstText;
@@ -286,14 +286,14 @@ net.Receive("ERPOpenMainMenu",function()
 	end
 	table.insert(slideitems,create);
 	
-	local settings = vgui.Create("esButton",GAMEMODE.MainMenu);
-	settings:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-190);
+	local settings = vgui.Create("esButton",ERP.MainMenu);
+	settings:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-190);
 	settings:SetSize(150,30);
 	settings:SetText("Settings");
 	table.insert(slideitems,settings);
 	
-	local dc = vgui.Create("esButton",GAMEMODE.MainMenu);
-	dc:SetPos(GAMEMODE.MainMenu:GetWide()-160,GAMEMODE.MainMenu:GetTall()-147);
+	local dc = vgui.Create("esButton",ERP.MainMenu);
+	dc:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-147);
 	dc:SetSize(150,30);
 	dc.Red = true;
 	dc:SetText("Disconnect");
@@ -302,8 +302,8 @@ net.Receive("ERPOpenMainMenu",function()
 	// characters
 	
 	for k,v in pairs(decoded)do
-		local model = vgui.Create("DModelPanel",GAMEMODE.MainMenu);
-		model:SetPos((k-1)*200,GAMEMODE.MainMenu:GetTall()-120-400);
+		local model = vgui.Create("DModelPanel",ERP.MainMenu);
+		model:SetPos((k-1)*200,ERP.MainMenu:GetTall()-120-400);
 		model:SetModel(v.model);
 		model:SetSize( 400, 400 );
 		model:SetCamPos( Vector( 100,0,40 ) );
@@ -311,9 +311,9 @@ net.Receive("ERPOpenMainMenu",function()
 		local button;
 		table.insert(slideitems,model);
 		timer.Simple(0,function()
-			button = vgui.Create("esButton",GAMEMODE.MainMenu);
+			button = vgui.Create("esButton",ERP.MainMenu);
 			local x,y = model:GetPos();
-			button:SetPos(x+200-70,GAMEMODE.MainMenu:GetTall()-147); // y same as dc.pos.y
+			button:SetPos(x+200-70,ERP.MainMenu:GetTall()-147); // y same as dc.pos.y
 			button:SetSize(150,30);
 			button:SetText("Select");
 			button.DoClick = function()
@@ -328,7 +328,7 @@ net.Receive("ERPOpenMainMenu",function()
 		end
 		
 		local x,y = model:GetPos();
-		local l = Label(v.firstname.." "..v.lastname,GAMEMODE.MainMenu);
+		local l = Label(v.firstname.." "..v.lastname,ERP.MainMenu);
 		l:SetFont("TabLarge");
 		surface.SetFont("TabLarge");
 		l:SetPos(x+200-surface.GetTextSize(v.firstname.." "..v.lastname)/2,y+60);

@@ -1,4 +1,4 @@
-local ITEM = GM:Item();
+local ITEM = ERP:Item();
 ITEM:SetInfo("mpr","Money printer","A device that prints money every now and then, this item is illegal and you may be arrested for posessing it, even if it is just in your inventory.");
 ITEM:SetModel("models/props_c17/consolebox01a.mdl");
 if CLIENT then

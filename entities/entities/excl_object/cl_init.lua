@@ -2,7 +2,7 @@ include("shared.lua")
 AddCSLuaFile("cl_init.lua")
 
 function ENT:GetItem()
-	return GAMEMODE.Items[self.itemid]
+	return ERP.Items[self.itemid]
 end
 
 function ENT:Initialize()

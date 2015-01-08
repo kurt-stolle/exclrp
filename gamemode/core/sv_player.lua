@@ -1,6 +1,6 @@
 
 
-function GM:PlayerSpawn(p)
+function ERP:PlayerSpawn(p)
 	if p:IsLoaded() then
 		p:UnSpectate();
 		p:SetModel(p.character.model);
@@ -22,7 +22,7 @@ function GM:PlayerSpawn(p)
 		
 		p:SynchProperty()
 		
-		GAMEMODE:SetPlayerSpeed( p, 150, 270 )
+		ERP:SetPlayerSpeed( p, 150, 270 )
 	else
 		p:OpenMainMenu()
 	end
@@ -37,10 +37,10 @@ hook.Add( "PlayerDeath", "exclHandleClothingRagdolls", function(pVictim,i,pAttac
 	end
 	
 end )
-function GM:CanPlayerSuicide()
+function ERP:CanPlayerSuicide()
 	return false
 end
-function GM:ScalePlayerDamage( p, hitgroup, dmginfo )
+function ERP:ScalePlayerDamage( p, hitgroup, dmginfo )
 	if ( hitgroup == HITGROUP_HEAD ) then 
 		dmginfo:ScaleDamage( 5 )
 	elseif ( hitgroup == HITGROUP_LEFTARM ||
@@ -52,26 +52,26 @@ function GM:ScalePlayerDamage( p, hitgroup, dmginfo )
 		dmginfo:ScaleDamage( 0.5 )
 	end
 end
-function GM:PlayerSpray()
+function ERP:PlayerSpray()
 	return true;
 end
-function GM:GetFallDamage( ply, speed )
+function ERP:GetFallDamage( ply, speed )
 	return (speed/10);
 end
-function GM:ShowHelp(p)
+function ERP:ShowHelp(p)
 	return false;
 end
-function GM:ShowTeam(p)
+function ERP:ShowTeam(p)
 	return false;
 end
-function GM:ShowSpare1(p)
+function ERP:ShowSpare1(p)
 	umsg.Start("EOINVM",p); umsg.End();
 	return false;
 end
-function GM:ShowSpare2(p)
-	umsg.Start("EOIGM",p); umsg.End();
+function ERP:ShowSpare2(p)
+	umsg.Start("EOIERP",p); umsg.End();
 	return false;
 end
-function GM:PlayerSwitchFlashlight()
+function ERP:PlayerSwitchFlashlight()
     return false;
 end

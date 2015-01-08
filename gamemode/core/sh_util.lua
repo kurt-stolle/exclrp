@@ -1,6 +1,6 @@
 -- sh_util.lua
 
-function GM:exclFormatLine(str,font,size) --note to self: size equals width in pixes
+function ERP:exclFormatLine(str,font,size) --note to self: size equals width in pixes
 	surface.SetFont( font );
 	
 	local start = 1;

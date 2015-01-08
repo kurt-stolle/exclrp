@@ -1,5 +1,5 @@
 local nodrawWeps = {"CHudDeathNotice", "CHudHealth", "CHudBattery", "CHudAmmo", "CHudSecondaryAmmo", "CHudDamageIndicator"}
-function GM:HUDShouldDraw(name)
+function ERP:HUDShouldDraw(name)
 	if table.HasValue(nodrawWeps, name) then
 		return false;
 	end
@@ -20,7 +20,7 @@ local camAng = Angle(0, 0, 0)
 local bulletsFrom = Vector(ScrW()-80,ScrH()-70,0);
 local matBullet = Material("exclrp/bulletHudParti.png");
 local bullets= {}
-function GM:CreateHUDBullet()
+function ERP:CreateHUDBullet()
 	table.insert(bullets,{
 		gravitySpeed = math.random(2,3),
 		predictUp = math.random(100,250),
@@ -76,7 +76,7 @@ local function getJobString()
 	return str;
 end
 
-function GM:HUDPaint()
+function ERP:HUDPaint()
 	hook.Call("PrePaintMainHUD");
 
 	local localplayer = LocalPlayer();
@@ -133,9 +133,9 @@ hook.Add("PlayerBindPress","ThirdpersonScroll",function(ply, bind, pressed)
 		end
 	end
 end)
-function GM:CalcView(p, pos, angles, fov) --Calculates the view, for run-view, menu-view, and death from the ragdoll's eyes.
+function ERP:CalcView(p, pos, angles, fov) --Calculates the view, for run-view, menu-view, and death from the ragdoll's eyes.
 	local view = {origin = pos, angles = angles, fov = fov};
-	if GAMEMODE.MainMenu and GAMEMODE.MainMenu:IsValid() then
+	if ERP.MainMenu and ERP.MainMenu:IsValid() then
 		view.origin = Vector(-2677.004639, -645.997803, 92.479630);
 		view.angles = Angle(6.719857, -59.160347, 0.000000);
 		view.fov = 90;
@@ -165,7 +165,7 @@ hook.Add("CalcView", "exclThirdperson", function(ply, pos , angles ,fov)
 
 			camPos = pos
 			camAng = angles;
-			return GAMEMODE:CalcView(ply, newpos, angles, fov)
+			return ERP:CalcView(ply, newpos, angles, fov)
 		else
 			tracedata.start = pos
 			tracedata.endpos = pos - ( angles:Forward() * distance * 2 ) + ( angles:Up()* ((distance/60)*20) )
@@ -177,14 +177,14 @@ hook.Add("CalcView", "exclThirdperson", function(ply, pos , angles ,fov)
 
 			camPos = pos
 			camAng = angles
-			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
+			return ERP:CalcView(ply, newpos , angles ,fov)
 
 		end
 	else
 		newpos = ply:EyePos();
 	end
 	
-	return GAMEMODE:CalcView(ply, pos , angles ,fov-2+(math.sin(CurTime()*2))*.3)
+	return ERP:CalcView(ply, pos , angles ,fov-2+(math.sin(CurTime()*2))*.3)
 end)
 
 usermessage.Hook("ESM",function(u)
@@ -202,19 +202,19 @@ local doors = {
 	"prop_door_rotating",
 	"func_door",
 	"func_door_rotating"};
-function GM:OnContextMenuOpen()
+function ERP:OnContextMenuOpen()
 	local e= LocalPlayer():GetEyeTrace().Entity
 	if not IsValid(e) or not LocalPlayer():IsLoaded() or LocalPlayer():GetEyeTrace().HitPos:Distance(LocalPlayer():EyePos()) > 100 then return false end
 	
 	if table.HasValue(doors,e:GetClass()) and availableProperty[e:EntIndex()] then
-		if !GAMEMODE.OwnedProperty[availableProperty[e:EntIndex()]] then
-			GAMEMODE:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
+		if !ERP.OwnedProperty[availableProperty[e:EntIndex()]] then
+			ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
 			{text="Buy property",func=function()
 				RunConsoleCommand("excl_buyproperty");
 			end}
 			})
-		elseif GAMEMODE.OwnedProperty[availableProperty[e:EntIndex()]].id == LocalPlayer():UniqueID() then
-			GAMEMODE:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
+		elseif ERP.OwnedProperty[availableProperty[e:EntIndex()]].id == LocalPlayer():UniqueID() then
+			ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
 			{text="Lock",func=function()
 				RunConsoleCommand("excl_lockdoor");
 			end},

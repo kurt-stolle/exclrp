@@ -1,12 +1,12 @@
 --- item system.
-GM.Items = {};
+ERP.Items = {};
 local meta = {}
-function GM:Item()
+function ERP:Item()
 	obj={}
 	setmetatable(obj,meta);
 	meta.__index = meta;
 	
-	obj.id = tostring(#GM.Items+1);
+	obj.id = tostring(#ERP.Items+1);
 	obj.name = "Undefined";
 	obj.description = "An unidentified object.\nProbrably a bug.";
 	obj.hooks = {}; -- entity hooks and onUse and onDrop
@@ -33,7 +33,7 @@ function meta:SetModel(m)
 end
 function meta:__call() -- register
 	local id = tonumber(util.CRC(string.lower(self.name)));
-	GM.Items[id] = self;
+	ERP.Items[id] = self;
 	self.registration = id;
 end
 
@@ -56,8 +56,8 @@ if SERVER then
 		e:SetItem(self.registration)
 	end
 	concommand.Add("excl_cheat_spawnitem",function(p,c,a)
-		if p and p:IsSuperAdmin() and a[1] and GAMEMODE.Items[tonumber(util.CRC(string.lower(table.concat(a," "))))] then
-			GAMEMODE.Items[tonumber(util.CRC(string.lower(table.concat(a," "))))]:SpawnInWorld(p:GetEyeTrace().HitPos,p:GetAngles(),p);
+		if p and p:IsSuperAdmin() and a[1] and ERP.Items[tonumber(util.CRC(string.lower(table.concat(a," "))))] then
+			ERP.Items[tonumber(util.CRC(string.lower(table.concat(a," "))))]:SpawnInWorld(p:GetEyeTrace().HitPos,p:GetAngles(),p);
 		else
 			p:ChatPrint("Invalid item specified or invalid rank.")
 		end

@@ -1,15 +1,22 @@
-GM.Name = "Excl's Roleplay";
-GM.Author = "Excl (_NewBee)"
-GM.Version = "0.5";
+ERP = {}
+setmetatable(ERP,{
+	__index = function(tbl,key)
+		return (GM or GAMEMODE)[key];
+	end
+})
+
+ERP.Name = "ExclRP";
+ERP.Author = "Excl"
+ERP.Version = "1";
 
 DeriveGamemode "sandbox";
-Msg("\n")
-ES:DebugPrint("Loading ExclRP...")
+
+ES.DebugPrint("Loading ExclRP...")
 
 local function exclQuickInclude(file,folder)
 	folder = folder or "core/"
 	
-	ES:DebugPrint("Including file: "..folder..file);
+	ES.DebugPrint("Including file: "..folder..file);
 	
 	if string.Left(file,3) == "cl_" then
 		if SERVER then
@@ -51,7 +58,6 @@ exclQuickInclude "cl_inventorymenu.lua";
 exclQuickInclude "sh_items.lua";
 exclQuickInclude "sh_inventory.lua";
 exclQuickInclude "cl_actionmenu.lua";
-exclQuickInclude "cl_gmodcompatability.lua";
 
 for k,v in pairs(file.Find("exclrp/gamemode/items/*.lua","LUA"))do
 	if SERVER then
@@ -59,4 +65,4 @@ for k,v in pairs(file.Find("exclrp/gamemode/items/*.lua","LUA"))do
 	end
 	include("items/"..v);
 end
-ES:DebugPrint("done!\n")
+ES.DebugPrint("done!\n")

@@ -30,10 +30,10 @@ function ENT:Touch(ent)
 	self:Remove()
 	ent:Remove()
 
-	GAMEMODE:SpawnCash(self.dt.amount + ent.dt.amount,self:GetPos(),self:GetAngles());
+	ERP:SpawnCash(self.dt.amount + ent.dt.amount,self:GetPos(),self:GetAngles());
 end
 
-function GAMEMODE:SpawnCash(amt,pos,ang)
+function ERP:SpawnCash(amt,pos,ang)
 	local e = ents.Create("excl_cash");
 	e:SetPos(pos);
 	e:SetAngles(ang);

@@ -19,14 +19,14 @@ end
 
 local fr;
 usermessage.Hook("exclOpenATMMenu",function()
-	GAMEMODE:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,
+	ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,
 	{
 	{text = "Deposit",func = function()
 		if fr and fr:IsValid() then
 			fr:Remove();
 		end
 		
-		fr = GAMEMODE:CreateExclFrame("Deposit cash",1,1,150,88,true);
+		fr = ERP:CreateExclFrame("Deposit cash",1,1,150,88,true);
 		fr:Center();
 		fr:MakePopup();
 		
@@ -51,7 +51,7 @@ usermessage.Hook("exclOpenATMMenu",function()
 			fr:Remove();
 		end
 		
-		fr = GAMEMODE:CreateExclFrame("Withdraw cash",1,1,150,88,true);
+		fr = ERP:CreateExclFrame("Withdraw cash",1,1,150,88,true);
 		fr:Center();
 		fr:MakePopup();
 		
