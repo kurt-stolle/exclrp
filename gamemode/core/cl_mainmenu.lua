@@ -2,6 +2,13 @@
 
 ERP.MainMenu = false;
 
+surface.CreateFont("TabLarge", {
+	font = "Tahoma",
+	size = 13,
+	weight = 700,
+	shadow = true,
+})
+
 hook.Add( "RenderScreenspaceEffects", "ERP.MM.PostProcess", function()
 	if ERP.MainMenu and ERP.MainMenu:IsValid()then
 		local tab = {}
@@ -26,13 +33,13 @@ end
 function PNL:Paint()
 	Derma_DrawBackgroundBlur(self,6)
 
-	surface.SetDrawColor(Color(0,0,0))
+	surface.SetDrawColor(ES.Color["#000000"])
 	surface.DrawRect(0,self:GetTall()-100,self:GetWide(),1);
 	surface.DrawRect(0,self:GetTall()-250,self:GetWide(),1);
-	surface.SetDrawColor(Color(255,255,255))
+	surface.SetDrawColor(ES.Color["#FFFFFF"])
 	surface.DrawRect(0,self:GetTall()-101,self:GetWide(),1);
 	surface.DrawRect(0,self:GetTall()-249,self:GetWide(),1);
-	surface.SetDrawColor(Color(30,30,30))
+	surface.SetDrawColor(ES.Color["#1E1E1E"])
 	surface.DrawRect(0,self:GetTall()-248,self:GetWide(),150-3);
 	
 	--[[draw.SimpleTextOutlined("EXCL'S","HUDNumber4",self:GetWide()-250,self:GetTall()-240,Color(0,0,0),0,0,1,Color(255,255,255,10));

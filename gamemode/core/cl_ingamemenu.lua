@@ -9,6 +9,20 @@ surface.CreateFont("JobFont",{
 	size = 48;
 
 })
+
+surface.CreateFont( "HUDNumber1", { 
+ 	font = "Arial", 
+ 	size = 22,
+ 	weight = 350
+ })
+
+surface.CreateFont( "TargetID", {
+	font = "Trebuchet MS",
+	size = 22,
+	weight = 900,
+	antialias = true,
+})
+
 local PNL = {};
 function PNL:Paint()
 	draw.RoundedBox(4,0,0,self:GetWide(),self:GetTall(),BLACK);
@@ -88,7 +102,7 @@ usermessage.Hook("EOIERP",function()
 	end
 
 	
-	menu = ERP:CreateExclFrame("In-Game control menu",0,0,700,600,true);
+	menu = ERP:CreateExclFrame("Control Menu",0,0,700,600,true);
 	menu:Center();
 	menu:MakePopup()
 	

@@ -1,15 +1,17 @@
-ERP = {}
+ERP = GM; -- I'm not sure why but the below code breaks the gamemode, so instead just as a temp hotfix for me to work with I added ERP = GM;
+
+--[[ERP = {}
 setmetatable(ERP,{
 	__index = function(tbl,key)
 		return (GM or GAMEMODE)[key];
 	end
 })
-
+--]]
 ERP.Name = "ExclRP";
-ERP.Author = "Excl"
+ERP.Author = "Excl";
 ERP.Version = "1";
 
-DeriveGamemode "sandbox";
+DeriveGamemode("sandbox")
 
 ES.DebugPrint("Loading ExclRP...")
 

@@ -67,18 +67,18 @@ usermessage.Hook("EOINVM",function()
 	l:SetColor(Color(255,255,255));
 	l:SizeToContents();
 	
-	local use = vgui.Create("exclButton",info);
+	local use = vgui.Create("esButton",info);
 	use:SetPos(info:GetWide()-105,5);
 	use:SetSize(100,30);
-	use.Title = "Use"
-	local destroy = vgui.Create("exclButton",info);
+	use:SetText("Use");
+	local destroy = vgui.Create("esButton",info);
 	destroy:SetPos(info:GetWide()-105,37.5);
 	destroy:SetSize(100,30);
-	destroy.Title = "Edit"
-	local destroy = vgui.Create("exclButton",info);
+	destroy:SetText("Edit");
+	local destroy = vgui.Create("esButton",info);
 	destroy:SetPos(info:GetWide()-105,70);
 	destroy:SetSize(100,30);
-	destroy.Title = "Destroy"
+	destroy:SetText("Destroy");
 	destroy.Red = true;
 	
 	//STORE
