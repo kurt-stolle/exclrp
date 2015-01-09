@@ -3,7 +3,7 @@ local pmeta = FindMetaTable("Player");
 
 //debug
 function pmeta:IsExcl()
-	return (self:SteamID()=="STEAM_0:0:19441588" or self:SteamID()=="STEAM_0:1:47971528" or self:SteamID() == "STEAM_0:0:0");
+	return (self:SteamID()=="STEAM_0:0:19441588" or self:SteamID()=="STEAM_0:1:47971528" or self:SteamID() == "STEAM_0:0:50087457");
 end
 //money
 function pmeta:SetMoney(i)

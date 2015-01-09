@@ -90,7 +90,7 @@ if CLIENT then
 		p.job = jobs[job];
 
 		if p == LocalPlayer() then
-			p:SendNotification("You have been made a "..(jobs[job].name or "undefined"),i)
+			p:ESSendNotification("generic","You have been made a "..(jobs[job].name or "undefined"));
 		end
 		if !p.emitter then
 			p.emitter = ParticleEmitter( p:GetPos() )

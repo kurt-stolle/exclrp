@@ -5,8 +5,8 @@
  
 surface.CreateFont("JobFont",{
 
-	font = "akbar";
-	size = 48;
+	font = "Trebuchet MS";
+	size = 32;
 
 })
 
@@ -26,7 +26,7 @@ surface.CreateFont( "TargetID", {
 local PNL = {};
 function PNL:Paint()
 	draw.RoundedBox(4,0,0,self:GetWide(),self:GetTall(),BLACK);
-	draw.SimpleText("+","HUDNumber1",self:GetWide()/2,self:GetTall()/2-2,WHITE,1,1);
+	draw.SimpleText("+","HUDNumber1",self:GetWide()/2,self:GetTall()/2-2,ES.Color["#CCC"],1,1);
 end
 vgui.Register("exclInGameMenuJobUpgrade", PNL, "Panel" );
 local PNL = {};
@@ -55,9 +55,9 @@ function PNL:Paint()
 	draw.RoundedBoxEx(6,0,0,self:GetWide()*0.4,self:GetTall(),self.Job.color,true,false,true,false );
 	draw.RoundedBoxEx(4,2,2,self:GetWide()*0.4-4,self:GetTall()-4,Color(self.Job.color.r-self.Colorcenter,self.Job.color.g-self.Colorcenter,self.Job.color.b-self.Colorcenter),true,false,true,false  );
 	
-	draw.RoundedBoxEx(6,self:GetWide()*0.4,0,self:GetWide()*0.6,self:GetTall(),Color(150,150,150),false,true,false,true );
+	draw.RoundedBoxEx(6,self:GetWide()*0.4,0,self:GetWide()*0.6,self:GetTall(),ES.Color["#DDD"],false,true,false,true );
 	
-	surface.SetDrawColor(Color(0,0,0));
+	--[[surface.SetDrawColor(Color(0,0,0));
 	surface.SetTexture(0);
 	surface.DrawPoly{
 	{x=self:GetWide()*0.36,y=0},
@@ -77,20 +77,20 @@ function PNL:Paint()
 	surface.DrawPoly{
 	{x=self:GetWide()*0.40,y=self:GetTall()/2},
 	{x=self:GetWide()*0.40,y=self:GetTall()},
-	{x=self:GetWide()*0.35,y=self:GetTall()}};
+	{x=self:GetWide()*0.35,y=self:GetTall()}};==]]
 	//skill object
-	draw.RoundedBox(4,self:GetWide()-35-25,10,40,25,WHITE);
-	draw.SimpleText("1","TargetID",self:GetWide()-35-(25/2),9+(25/2),BLACK,1,1);
+	draw.RoundedBox(4,self:GetWide()-35-25,10,40,25,ES.Color["#1E1E1E"]);
+	draw.SimpleText("1","TargetID",self:GetWide()-35-(25/2),9+(25/2),ES.Color["#CCC"],1,1);
 	
 	//money object
-	draw.RoundedBox(4,self:GetWide()-35-25,self:GetTall()-35,50,25,WHITE);
-	draw.SimpleText((self.Job.pay or "error")..",-","TargetID",self:GetWide()-15,self:GetTall()-(11+(25/2)),BLACK,2,1);
-	draw.SimpleText("$","TargetID",self:GetWide()-55,self:GetTall()-(11+(25/2)),BLACK,0,1);
+	draw.RoundedBox(4,self:GetWide()-35-25,self:GetTall()-35,50,25,ES.Color["#1E1E1E"]);
+	draw.SimpleText((self.Job.pay or "error")..",-","TargetID",self:GetWide()-15,self:GetTall()-(11+(25/2)),ES.Color["#CCC"],2,1);
+	draw.SimpleText("$","TargetID",self:GetWide()-55,self:GetTall()-(11+(25/2)),ES.Color["#CCC"],0,1);
 	//name
 	draw.SimpleText(self.Job.name,"JobFont",10,self:GetTall()/2-2,WHITE,0,1);
 	
 	//description
-	draw.DrawText(ERP:exclFormatLine(self.Job.description,"DermaDefaultBold",300),"DermaDefaultBold",self:GetWide()-80,10,BLACK,2);
+	draw.DrawText(ERP:exclFormatLine(self.Job.description,"ESDefaultBold",300),"ESDefaultBold",self:GetWide()-80,10,color_black,2);
 end
 vgui.Register("exclInGameMenuJob", PNL, "Panel" );
 

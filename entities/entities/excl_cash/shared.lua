@@ -2,7 +2,7 @@ ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
 ENT.PrintName = "Cash"
 ENT.Author = "_NewBee (Excl)"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
