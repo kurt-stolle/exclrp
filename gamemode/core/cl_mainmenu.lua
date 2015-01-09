@@ -19,10 +19,10 @@ hook.Add( "RenderScreenspaceEffects", "ERP.MM.PostProcess", function()
 		tab[ "$pp_colour_addb" ] = 0
 		tab[ "$pp_colour_brightness" ] = 0
 		tab[ "$pp_colour_contrast" ] = 1
-		tab[ "$pp_colour_colour" ] = 0.5
-		tab[ "$pp_colour_mulr" ] = 1
-		tab[ "$pp_colour_mulg" ] = 1
-		tab[ "$pp_colour_mulb" ] = 1
+		tab[ "$pp_colour_colour" ] = 0.1
+		tab[ "$pp_colour_mulr" ] = 0
+		tab[ "$pp_colour_mulg" ] = 0
+		tab[ "$pp_colour_mulb" ] = 0
 	 
 		DrawColorModify( tab )
 	end
