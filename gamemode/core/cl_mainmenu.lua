@@ -2,6 +2,8 @@
 
 ERP.MainMenu = false;
 
+local color_outline=Color(255,255,255,5);
+
 surface.CreateFont("TabLarge", {
 	font = "Tahoma",
 	size = 13,
@@ -10,17 +12,17 @@ surface.CreateFont("TabLarge", {
 })
 
 hook.Add( "RenderScreenspaceEffects", "ERP.MM.PostProcess", function()
-	if ERP.MainMenu and ERP.MainMenu:IsValid()then
+	if IsValid(ERP.MainMenu) then
 		local tab = {}
 		tab[ "$pp_colour_addr" ] = 0
 		tab[ "$pp_colour_addg" ] = 0
 		tab[ "$pp_colour_addb" ] = 0
 		tab[ "$pp_colour_brightness" ] = 0
 		tab[ "$pp_colour_contrast" ] = 1
-		tab[ "$pp_colour_colour" ] = 0
-		tab[ "$pp_colour_mulr" ] = 0
-		tab[ "$pp_colour_mulg" ] = 0
-		tab[ "$pp_colour_mulb" ] = 0
+		tab[ "$pp_colour_colour" ] = 0.5
+		tab[ "$pp_colour_mulr" ] = 1
+		tab[ "$pp_colour_mulg" ] = 1
+		tab[ "$pp_colour_mulb" ] = 1
 	 
 		DrawColorModify( tab )
 	end
@@ -31,22 +33,13 @@ function PNL:Init()
 	self.m_fCreateTime = SysTime();
 end
 function PNL:Paint()
-	Derma_DrawBackgroundBlur(self,6)
+	Derma_DrawBackgroundBlur(self,self.m_fCreateTime)
 
-	surface.SetDrawColor(ES.Color["#000000"])
-	surface.DrawRect(0,self:GetTall()-100,self:GetWide(),1);
-	surface.DrawRect(0,self:GetTall()-250,self:GetWide(),1);
-	surface.SetDrawColor(ES.Color["#FFFFFF"])
+	surface.SetDrawColor(color_outline)
 	surface.DrawRect(0,self:GetTall()-101,self:GetWide(),1);
 	surface.DrawRect(0,self:GetTall()-249,self:GetWide(),1);
 	surface.SetDrawColor(ES.Color["#1E1E1E"])
 	surface.DrawRect(0,self:GetTall()-248,self:GetWide(),150-3);
-	
-	--[[draw.SimpleTextOutlined("EXCL'S","HUDNumber4",self:GetWide()-250,self:GetTall()-240,Color(0,0,0),0,0,1,Color(255,255,255,10));
-	draw.SimpleTextOutlined("ROLEPLAY","HUDNumber4",self:GetWide()-250,self:GetTall()-200,Color(0,0,0),0,0,1,Color(255,255,255,10));
-	
-	surface.SetDrawColor(Color(0,0,0))
-	surface.DrawRect(self:GetWide()-265,self:GetTall()-249,5,149);]]
 end
 vgui.Register( "exclMainMenuPanel", PNL, "EditablePanel" );
 local PNL = {};
@@ -336,8 +329,8 @@ net.Receive("ERPOpenMainMenu",function()
 		
 		local x,y = model:GetPos();
 		local l = Label(v.firstname.." "..v.lastname,ERP.MainMenu);
-		l:SetFont("TabLarge");
-		surface.SetFont("TabLarge");
+		l:SetFont("ESDefaultBold");
+		surface.SetFont("ESDefaultBold");
 		l:SetPos(x+200-surface.GetTextSize(v.firstname.." "..v.lastname)/2,y+60);
 		l:SizeToContents();
 		table.insert(slideitems,l);
