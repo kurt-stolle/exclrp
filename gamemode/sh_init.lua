@@ -1,12 +1,13 @@
-ERP = GM; -- I'm not sure why but the below code breaks the gamemode, so instead just as a temp hotfix for me to work with I added ERP = GM;
-
---[[ERP = {}
+ERP = {}
 setmetatable(ERP,{
 	__index = function(tbl,key)
-		return (GM or GAMEMODE)[key];
+		return rawget(GM or GAMEMODE,key);
+	end,
+	__newindex = function(tbl,key,value)
+		return rawset(GM or GAMEMODE,key,value);
 	end
 })
---]]
+
 ERP.Name = "ExclRP";
 ERP.Author = "Excl";
 ERP.Version = "1";
