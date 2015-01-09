@@ -6,8 +6,8 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
-	self:DTVar("Entity",0,"Owner")
-	self:DTVar("Int",0,"ItemID");
+	self:NetworkVar("Entity",0,"Owner")
+	self:NetworkVar("Int",0,"ItemID");
 end
 
 function ENT:GetItem()

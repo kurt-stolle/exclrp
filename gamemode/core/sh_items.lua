@@ -42,7 +42,7 @@ if SERVER then
 		e:SetAngles(ang);
 		e:SetModel(self.model);
 		if IsValid(owner) then
-			e.dt.owner = owner;
+			e:SetOwner(owner);
 		end
 		for k,v in pairs(self.hooks)do
 			if k != "onUse" and k != "onDrop" and k != "Initialize" then

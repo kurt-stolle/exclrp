@@ -16,10 +16,10 @@ end
 
 
 function ENT:Use(activator,caller)
-	local amount = self.dt.amount
+	local amount = self:GetAmount()
 
-	activator:AddMoney(self.dt.amount or 0)
-	activator:ESSendNotification("generic","You picked up $ "..self.dt.amount..",-","generic");
+	activator:AddMoney(self:GetAmount() or 0)
+	activator:ESSendNotification("generic","You picked up $ "..self:GetAmount()..",-","generic");
 	self:Remove()
 end
 
@@ -30,7 +30,7 @@ function ENT:Touch(ent)
 	self:Remove()
 	ent:Remove()
 
-	ERP:SpawnCash(self.dt.amount + ent.dt.amount,self:GetPos(),self:GetAngles());
+	ERP:SpawnCash(self:GetAmount() + ent.dt.amount,self:GetPos(),self:GetAngles());
 end
 
 function ERP:SpawnCash(amt,pos,ang)
@@ -38,5 +38,5 @@ function ERP:SpawnCash(amt,pos,ang)
 	e:SetPos(pos);
 	e:SetAngles(ang);
 	e:Spawn();
-	e:SetDTInt("amount",tonumber(amt));
+	e:SetAmount(tonumber(amt));
 end

@@ -38,10 +38,8 @@ if SERVER then
 	end
 	concommand.Add("excl_createcharacter",function(p,c,a)
 		if p:IsLoaded() or not a[1] or not a[2] or not a[3] or not table.HasValue(allowedModels,a[3]) then return end
-		
-		// debug
-		print(a[1].." | "..a[2].." | "..a[3]);
-		
+
+		ES.DebugPrint(a[1].." | "..a[2].." | "..a[3]);
 		p:CreateCharacter(tostring(a[1]),tostring(a[2]),tostring(a[3]))
 	end)
 	util.AddNetworkString("ERPSynchCharacter")
