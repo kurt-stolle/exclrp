@@ -6,9 +6,9 @@ function ERP:Item()
 	setmetatable(obj,meta);
 	meta.__index = meta;
 	
-	obj.id = tostring(#ERP.Items+1);
+	obj.id = "";
 	obj.name = "Undefined";
-	obj.description = "An unidentified object.\nProbrably a bug.";
+	obj.description = "An unidentified object.";
 	obj.hooks = {}; -- entity hooks and onUse and onDrop
 	obj.value = 100;
 	obj.model = "";
@@ -20,7 +20,7 @@ end
 function meta:SetInfo(id,name,desc)
 	self.id = id or self.id;
 	self.name = name or "Undefined";
-	self.description = desc or "An unidentified object.\nProbrably a bug.";
+	self.description = desc or "An unidentified object.";
 end
 function meta:SetValue(v)
 	self.value=tonumber(v);
@@ -31,10 +31,9 @@ end
 function meta:SetModel(m)
 	self.model = m or "";
 end
-function meta:__call() -- register
-	local id = tonumber(util.CRC(string.lower(self.name)));
-	ERP.Items[id] = self;
-	self.registration = id;
+function meta:__call(name) -- register
+	ERP.Items[name] = self;
+	self.registration = name;
 end
 
 
@@ -55,11 +54,12 @@ if SERVER then
 		e:Spawn();
 		e:SetItem(self.registration)
 	end
-	concommand.Add("excl_cheat_spawnitem",function(p,c,a)
-		if p and p:IsSuperAdmin() and a[1] and ERP.Items[tonumber(util.CRC(string.lower(table.concat(a," "))))] then
+	concommand.Add("excl_admin_spawnitem",function(p,c,a)
+		if not IsValid(p) or not p:IsSuperAdmin() then return end
+
+		local name = table.concat(a," ");
+		if ERP.Items[name] then
 			ERP.Items[tonumber(util.CRC(string.lower(table.concat(a," "))))]:SpawnInWorld(p:GetEyeTrace().HitPos,p:GetAngles(),p);
-		else
-			p:ChatPrint("Invalid item specified or invalid rank.")
 		end
 	end)
 end

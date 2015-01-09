@@ -1,3 +1,13 @@
+-- Only load ExclRP when ExclServer is installed. The gamemode will not function correctly when ExclServer is not installed.
+if not ES then
+	Error("ExclServer not installed, aborting gamemode startup.");
+end
+ES.DebugPrint("Loading ExclRP version "..ERP.Version);
+
+-- Derive from Sandbox.
+DeriveGamemode("sandbox")
+
+-- I prefer using ERP instead of GM or GAMEMODE.
 ERP = {}
 setmetatable(ERP,{
 	__index = function(tbl,key)
@@ -8,13 +18,10 @@ setmetatable(ERP,{
 	end
 })
 
+-- TODO: Load these variables from the .txt file.
 ERP.Name = "ExclRP";
 ERP.Author = "Excl";
 ERP.Version = "1";
-
-DeriveGamemode("sandbox")
-
-ES.DebugPrint("Loading ExclRP...")
 
 local function exclQuickInclude(file,folder)
 	folder = folder or "core/"
@@ -62,10 +69,10 @@ exclQuickInclude "sh_items.lua";
 exclQuickInclude "sh_inventory.lua";
 exclQuickInclude "cl_actionmenu.lua";
 
+-- Automatically load all items, for modularity.
 for k,v in pairs(file.Find("exclrp/gamemode/items/*.lua","LUA"))do
 	if SERVER then
 		AddCSLuaFile("items/"..v);
 	end
 	include("items/"..v);
 end
-ES.DebugPrint("done!\n")
