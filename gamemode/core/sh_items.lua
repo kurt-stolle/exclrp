@@ -1,39 +1,37 @@
 --- item system.
 ERP.Items = {};
+
 local meta = {}
+AccessorFunc(meta,"value","Value",FORCE_NUMBER);
+AccessorFunc(meta,"model","Model",FORCE_STRING);
+AccessorFunc(meta,"id","ID",FORCE_STRING);
+AccessorFunc(meta,"name","Name",FORCE_STRING);
+AccessorFunc(meta,"description","Description",FORCE_STRING);
 function ERP:Item()
 	obj={}
 	setmetatable(obj,meta);
 	meta.__index = meta;
 	
-	obj.id = "";
 	obj.name = "Undefined";
 	obj.description = "An unidentified object.";
 	obj.hooks = {}; -- entity hooks and onUse and onDrop
 	obj.value = 100;
 	obj.model = "";
-	obj.registration = 0;
+	obj.id = "";
 
 	return obj;
 end
 
-function meta:SetInfo(id,name,desc)
-	self.id = id or self.id;
+function meta:SetInfo(name,desc)
 	self.name = name or "Undefined";
 	self.description = desc or "An unidentified object.";
-end
-function meta:SetValue(v)
-	self.value=tonumber(v);
 end
 function meta:AddHook(n,f)
 	self.hooks[n] = f;
 end
-function meta:SetModel(m)
-	self.model = m or "";
-end
 function meta:__call(name) -- register
 	ERP.Items[name] = self;
-	self.registration = name;
+	self.id = name;
 end
 
 
@@ -52,7 +50,7 @@ if SERVER then
 			end
 		end
 		e:Spawn();
-		e:SetItem(self.registration)
+		e:SetItem(self);
 	end
 	concommand.Add("excl_admin_spawnitem",function(p,c,a)
 		if not IsValid(p) or not p:IsSuperAdmin() then return end

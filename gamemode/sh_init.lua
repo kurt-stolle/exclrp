@@ -2,7 +2,6 @@
 if not ES then
 	Error("ExclServer not installed, aborting gamemode startup.");
 end
-ES.DebugPrint("Loading ExclRP version "..ERP.Version);
 
 -- Derive from Sandbox.
 DeriveGamemode("sandbox")
@@ -22,6 +21,9 @@ setmetatable(ERP,{
 ERP.Name = "ExclRP";
 ERP.Author = "Excl";
 ERP.Version = "1";
+
+--Load files
+ES.DebugPrint("Loading ExclRP version "..ERP.Version);
 
 local function exclQuickInclude(file,folder)
 	folder = folder or "core/"
@@ -58,7 +60,8 @@ exclQuickInclude "sv_player.lua";
 exclQuickInclude "sv_player_meta.lua";
 exclQuickInclude "cl_player.lua";
 exclQuickInclude "sh_characters.lua";
-exclQuickInclude "sh_properties.lua";
+exclQuickInclude "sv_property.lua";
+exclQuickInclude "cl_property.lua";
 exclQuickInclude "cl_vgui.lua";
 exclQuickInclude "cl_mainmenu.lua";
 exclQuickInclude "cl_ingamemenu.lua";
