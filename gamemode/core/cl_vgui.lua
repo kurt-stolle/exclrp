@@ -142,12 +142,15 @@ function PNL:OnMouseReleased()
 	self:DoClick()
 end
 function PNL:Paint(w,h)
-	draw.RoundedBoxEx(6,0,0,self:GetWide(),self:GetTall(),Color(0,0,0),self.Position==1,false,false,false);
+	draw.RoundedBoxEx(6,0,0,self:GetWide(),self:GetTall(),Color(0,0,0,200),self.Position==1,false,false,false);
+
 	if not self.Selected then
-		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,Color(50,50,50),self.Position==1,false,false,false);
+		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,ES.Color.White,self.Position==1,false,false,false);
+		draw.SimpleText(self.Title,"DermaDefaultBold",6 + 16 + 6,self:GetTall()/2-1,ES.Color["#444"],0,1,1);
 	end
-	if self.Hover then
-		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,Color(0,0,100+math.sin(CurTime()*3)*50),self.Position==1,false,false,false);
+	if self.Hover or self.Selected then
+		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,ES.Color["#3c8c8c"],self.Position==1,false,false,false);
+		draw.SimpleTextOutlined(self.Title,"DermaDefaultBold",6 + 16 + 6,self:GetTall()/2-1,Color(255,255,255,255),0,1,1,Color(0,0,0,100));
 	end
 	draw.RoundedBoxEx(4,2,2,self:GetWide()-4,self:GetTall()/2 - 2,Color(255,255,255,5),self.Position==1,false,false,false);
 	
@@ -155,7 +158,6 @@ function PNL:Paint(w,h)
 	surface.SetDrawColor(Color(255,255,255,255));
 	surface.DrawTexturedRect(6,(h/2) - (16/2),16,16) ;
 	
-	draw.SimpleTextOutlined(self.Title,"DermaDefaultBold",6 + 16 + 6,self:GetTall()/2-1,Color(255,255,255,255),0,1,1,Color(0,0,0,100));
 	
 	self.PaintHook();
 end
@@ -194,9 +196,9 @@ function PNL:AddTab(icon,title)
 	return p;
 end
 function PNL:Paint()
-	surface.SetDrawColor(Color(0,0,0,200));
+	surface.SetDrawColor(ES.Color["#1E1E1E"]);
 	surface.DrawRect(0,24,self:GetWide(),self:GetTall()-24);
-	surface.SetDrawColor(Color(0,0,0,255));
+	surface.SetDrawColor(Color(0,0,0,250));
 	surface.DrawRect(0,24,2,self:GetTall()-24);
 	surface.DrawRect(self:GetWide()-2,24,2,self:GetTall()-24);
 	surface.DrawRect(0,24,self:GetWide(),2);

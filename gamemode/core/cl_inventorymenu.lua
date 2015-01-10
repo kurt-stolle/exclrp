@@ -41,7 +41,7 @@ usermessage.Hook("EOINVM",function()
 	end
 	
 	
-	menu = ERP:CreateExclFrame("In-Game control menu",0,0,700,600,true);
+	menu = ERP:CreateExclFrame("Control Menu",0,0,700,600,true);
 	menu:Center();
 	menu:MakePopup();
 	
