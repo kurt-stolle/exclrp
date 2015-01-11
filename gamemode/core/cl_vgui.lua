@@ -1,8 +1,8 @@
 -- cl_vgui.lua
 local PNL = {}
 function PNL:Paint()
-	draw.RoundedBox(6,0,0,self:GetWide(),self:GetTall(),Color(0,0,0,200));
-	draw.RoundedBox(4,2,2,self:GetWide()-4,self:GetTall()-4,Color(75,75,75,50));
+	draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(255,255,255,5));
+	draw.RoundedBox(0,1,1,self:GetWide()-2,self:GetTall()-2,ES.Color["#111"]);
 end
 vgui.Register("exclPanel",PNL,"EditablePanel")
 

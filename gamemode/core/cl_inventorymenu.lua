@@ -1,10 +1,11 @@
 -- cl_inventorymenu.lua
 -- the inventory & shop;
 
-surface.CreateFont("ObjectFont",{
+surface.CreateFont("ERP.InventoryInfoBig",{
 
-	font = "akbar";
-	size = 48;
+	font = "Roboto";
+	weight=400;
+	size = 36;
 
 })
 local BLACK = Color(0,0,0);
@@ -18,13 +19,13 @@ function PNL:SetGridSize(x,y)
 	self:SetSize(x*52 + 4,y*52 + 4);
 end
 function PNL:Paint()
-	draw.RoundedBox(6,0,0,self:GetWide(),self:GetTall(),Color(0,0,0,200));
-	draw.RoundedBox(4,2,2,self:GetWide()-4,self:GetTall()-4,Color(50,50,50,50));
+	draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(255,255,255,5));
+	draw.RoundedBox(0,1,1,self:GetWide()-2,self:GetTall()-2,ES.Color["#111"]);
 	local skip = false;
 	for x=0,self.gridSize.x-1 do
 		for y=0,self.gridSize.y-1 do
 			if not skip then
-			draw.RoundedBoxEx(4,2+x*52,2+y*52,52,52,Color(255,255,255,1),(x==0 and y==0), (x==self.gridSize.x-1 and y==0),  (x==0 and y==self.gridSize.y-1), (x==self.gridSize.x-1 and y==self.gridSize.y-1));
+			draw.RoundedBox(0,2+x*52,2+y*52,52,52,ES.Color["#222"]);
 			end
 			skip = not skip;
 		end
@@ -41,43 +42,46 @@ usermessage.Hook("EOINVM",function()
 	end
 	
 	
-	menu = ERP:CreateExclFrame("Control Menu",0,0,700,600,true);
+	menu = ERP:CreateExclFrame("Items & Inventory",0,0,12*52 + 20 + 10,620,true);
 	menu:Center();
 	menu:MakePopup();
 	
 	local tabs = vgui.Create("exclTabbedPanel",menu);
 	tabs:SetPos(5,35);
-	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-40);
+	tabs:SetSize(12*52 + 20,menu:GetTall()-40);
 	
 	//INVENTORY
-	local p =  tabs:AddTab("icon16/application_view_tile.png","Inventory")
+	local pnl =  tabs:AddTab("icon16/application_view_tile.png","Inventory")
 	
 	--GRID
-	local grid = vgui.Create("exclInventoryGrid",p);
-	grid:SetPos(5,115);
-	grid:SetGridSize(13,8);
+	local grid = vgui.Create("exclInventoryGrid",pnl);
+	grid:SetGridSize(12,8);
 	
 	--INFO
-	local info = vgui.Create("exclPanel",p);
-	info:SetPos(5,5);
-	info:SetSize(grid:GetWide(),p:GetTall()-grid:GetTall()-5-5-5)
+	local info = vgui.Create("exclPanel",pnl);
+	info:SetPos(10,10);
+	info:SetSize(grid:GetWide(),pnl:GetTall()-grid:GetTall()-10-10-10)
+
+	grid:SetPos(10,info.y + info:GetTall() + 10);
+
 	local l = Label("Placeholder",info);
 	l:SetPos(info:GetTall()+10,5);
-	l:SetFont("ObjectFont");
-	l:SetColor(Color(255,255,255));
+	l:SetFont("ERP.InventoryInfoBig");
+	l:SetColor(ES.Color.White);
 	l:SizeToContents();
 	
+	local btn_tall = (info:GetTall()-5*4)/3
 	local use = vgui.Create("esButton",info);
 	use:SetPos(info:GetWide()-105,5);
-	use:SetSize(100,30);
+	use:SetSize(100,btn_tall);
 	use:SetText("Use");
+	local edit = vgui.Create("esButton",info);
+	edit:SetPos(info:GetWide()-105,btn_tall+10);
+	edit:SetSize(100,btn_tall);
+	edit:SetText("Edit");
 	local destroy = vgui.Create("esButton",info);
-	destroy:SetPos(info:GetWide()-105,37.5);
-	destroy:SetSize(100,30);
-	destroy:SetText("Edit");
-	local destroy = vgui.Create("esButton",info);
-	destroy:SetPos(info:GetWide()-105,70);
-	destroy:SetSize(100,30);
+	destroy:SetPos(info:GetWide()-105,(btn_tall*2)+15);
+	destroy:SetSize(100,btn_tall);
 	destroy:SetText("Destroy");
 	destroy.Red = true;
 	
