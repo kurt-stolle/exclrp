@@ -149,7 +149,7 @@ function PNL:Paint(w,h)
 		draw.SimpleText(self.Title,"DermaDefaultBold",6 + 16 + 6,self:GetTall()/2-1,ES.Color["#444"],0,1,1);
 	end
 	if self.Hover or self.Selected then
-		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,ES.Color["#3c8c8c"],self.Position==1,false,false,false);
+		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,ES.GetColorScheme(1),self.Position==1,false,false,false);
 		draw.SimpleTextOutlined(self.Title,"DermaDefaultBold",6 + 16 + 6,self:GetTall()/2-1,Color(255,255,255,255),0,1,1,Color(0,0,0,100));
 	end
 	draw.RoundedBoxEx(4,2,2,self:GetWide()-4,self:GetTall()/2 - 2,Color(255,255,255,5),self.Position==1,false,false,false);
