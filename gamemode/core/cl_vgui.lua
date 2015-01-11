@@ -142,18 +142,17 @@ function PNL:OnMouseReleased()
 	self:DoClick()
 end
 function PNL:Paint(w,h)
-	draw.RoundedBoxEx(6,0,0,self:GetWide(),self:GetTall(),Color(0,0,0,200),self.Position==1,false,false,false);
+	draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(0,0,0,200));
 
 	if not self.Selected then
-		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,ES.Color.White,self.Position==1,false,false,false);
-		draw.SimpleText(self.Title,"DermaDefaultBold",6 + 16 + 6,self:GetTall()/2-1,ES.Color["#444"],0,1,1);
+		draw.RoundedBox(0,1,1,self:GetWide()-2,self:GetTall()-1,ES.GetColorScheme(3));
+		draw.SimpleText(self.Title,"ESDefaultBold",6 + 16 + 6,self:GetTall()/2,ES.Color["#EEE"],0,1);
 	end
 	if self.Hover or self.Selected then
-		draw.RoundedBoxEx(6,1,1,self:GetWide()-2,self:GetTall()-1,ES.GetColorScheme(1),self.Position==1,false,false,false);
-		draw.SimpleTextOutlined(self.Title,"DermaDefaultBold",6 + 16 + 6,self:GetTall()/2-1,Color(255,255,255,255),0,1,1,Color(0,0,0,100));
+		draw.RoundedBox(0,1,1,self:GetWide()-2,self:GetTall()-1,ES.GetColorScheme(1));
+		draw.SimpleText(self.Title,"ESDefaultBold",6 + 16 + 6,self:GetTall()/2,Color(255,255,255,255),0,1);
 	end
-	draw.RoundedBoxEx(4,2,2,self:GetWide()-4,self:GetTall()/2 - 2,Color(255,255,255,5),self.Position==1,false,false,false);
-	
+
 	surface.SetMaterial(self.Icon);
 	surface.SetDrawColor(Color(255,255,255,255));
 	surface.DrawTexturedRect(6,(h/2) - (16/2),16,16) ;
@@ -195,14 +194,13 @@ function PNL:AddTab(icon,title)
 	
 	return p;
 end
-function PNL:Paint()
+function PNL:Paint(w,h)
+	surface.SetDrawColor(ES.Color.Black);
+	surface.DrawRect(0,23,w,h-23);
+	surface.SetDrawColor(ES.GetColorScheme(1));
+	surface.DrawRect(1,24,w-2,h-25);
 	surface.SetDrawColor(ES.Color["#1E1E1E"]);
-	surface.DrawRect(0,24,self:GetWide(),self:GetTall()-24);
-	surface.SetDrawColor(Color(0,0,0,250));
-	surface.DrawRect(0,24,2,self:GetTall()-24);
-	surface.DrawRect(self:GetWide()-2,24,2,self:GetTall()-24);
-	surface.DrawRect(0,24,self:GetWide(),2);
-	surface.DrawRect(2,self:GetTall()-2,self:GetWide()-4,2);
+	surface.DrawRect(2,25,w-4,h-27);
 
 	self.PaintHook();
 end

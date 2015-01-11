@@ -46,8 +46,8 @@ usermessage.Hook("EOINVM",function()
 	menu:MakePopup();
 	
 	local tabs = vgui.Create("exclTabbedPanel",menu);
-	tabs:SetPos(5,25);
-	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-30);
+	tabs:SetPos(5,35);
+	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-40);
 	
 	//INVENTORY
 	local p =  tabs:AddTab("icon16/application_view_tile.png","Inventory")

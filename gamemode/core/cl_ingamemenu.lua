@@ -107,8 +107,8 @@ usermessage.Hook("EOIERP",function()
 	menu:MakePopup()
 	
 	local tabs = vgui.Create("exclTabbedPanel",menu);
-	tabs:SetPos(5,25);
-	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-30);
+	tabs:SetPos(5,35);
+	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-40);
 	tabs:AddTab("icon16/star.png","Help pages")
 	tabs:AddTab("icon16/user.png","Character")
 	local pnl = tabs:AddTab("icon16/world.png","Jobs");
