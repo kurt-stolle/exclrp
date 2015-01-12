@@ -133,19 +133,12 @@ hook.Add("PlayerBindPress","ThirdpersonScroll",function(ply, bind, pressed)
 		end
 	end
 end)
-function ERP:CalcView(p, pos, angles, fov) --Calculates the view, for run-view, menu-view, and death from the ragdoll's eyes.
-	local view = {origin = pos, angles = angles, fov = fov};
-	if ERP.MainMenu and ERP.MainMenu:IsValid() then
-		view.origin = Vector(-2677.004639, -645.997803, 92.479630);
-		view.angles = Angle(6.719857, -59.160347, 0.000000);
-		view.fov = 90;
-	end
-	return view
-end
+
+
 local newpos;
 local newangles;
-hook.Add("CalcView", "exclThirdperson", function(ply, pos , angles ,fov)
-	if !newpos then
+function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view, menu-view, and death from the ragdoll's eyes.
+	if not newpos then
 		newpos = pos;
 		newangles = angles;
 	end
@@ -165,7 +158,8 @@ hook.Add("CalcView", "exclThirdperson", function(ply, pos , angles ,fov)
 
 			camPos = pos
 			camAng = angles;
-			return ERP:CalcView(ply, newpos, angles, fov)
+			
+			pos=newpos;
 		else
 			tracedata.start = pos
 			tracedata.endpos = pos - ( angles:Forward() * distance * 2 ) + ( angles:Up()* ((distance/60)*20) )
@@ -177,15 +171,24 @@ hook.Add("CalcView", "exclThirdperson", function(ply, pos , angles ,fov)
 
 			camPos = pos
 			camAng = angles
-			return ERP:CalcView(ply, newpos , angles ,fov)
+			
 
+			pos=newpos;
 		end
 	else
 		newpos = ply:EyePos();
 	end
-	
-	return ERP:CalcView(ply, pos , angles ,fov-2+(math.sin(CurTime()*2))*.3)
-end)
+
+	fov=fov-2+(math.sin(CurTime()*2))*.3;
+
+	local view = {origin = pos, angles = angles, fov = fov};
+	if ERP.MainMenu and ERP.MainMenu:IsValid() then
+		view.origin = Vector(-2677.004639, -645.997803, 92.479630);
+		view.angles = Angle(6.719857, -59.160347, 0.000000);
+		view.fov = 90;
+	end
+	return view
+end
 
 usermessage.Hook("ESM",function(u)
 	if not LocalPlayer():IsLoaded() then return end
