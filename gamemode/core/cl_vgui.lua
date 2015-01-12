@@ -227,10 +227,10 @@ function ERP:CreateErrorDialog(text,onDone)
 	local f =ERP:CreateExclFrame("An error occured",1,1,200,100,false);
 	f:Center();
 	f:MakePopup();
-	local b =vgui.Create("exclButton",f)
+	local b =vgui.Create("esButton",f)
 	b:SetPos(5,f:GetTall()-35);
 	b:SetSize(f:GetWide()-10,30);
-	b.Title = "Okay";
+	b:SetText("Okay");
 	b.DoClick = function()
 		onDone();
 		f:Remove();

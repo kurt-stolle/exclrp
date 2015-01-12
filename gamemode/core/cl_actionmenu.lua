@@ -18,14 +18,16 @@ hook.Add("PrePaintMainHUD","exclDrawActionMenus",function()
 		for k,v in pairs(actionmenuOptions)do
 			if ScrW()/2 < scrPos.x-50+100 and ScrW()/2 > scrPos.x-50 and ScrH()/2 < scrPos.y+ 20*(k-1)+20 and ScrH()/2 >  scrPos.y+ 20*(k-1) then
 				v.hover =true;
-				draw.RoundedBox(2,scrPos.x-50,scrPos.y+ 20*(k-1),100,20,Color(0,0,100+math.sin(CurTime())*50));
+				draw.RoundedBox(2,scrPos.x-50,scrPos.y+ 20*(k-1),100,20,ES.GetColorScheme(1));
+				draw.SimpleTextOutlined(v.text or "Undefined","DermaDefaultBold",scrPos.x,scrPos.y+ 20*(k-1) +9,Color(255,255,255),1,1,1,Color(0,0,0))
 			else
 				v.hover = false;
-				draw.RoundedBox(2,scrPos.x-50,scrPos.y+ 20*(k-1),100,20,Color(0,0,0));
+				draw.RoundedBox(2,scrPos.x-50,scrPos.y+ 20*(k-1),100,20,ES.Color.White);
+				draw.SimpleText(v.text or "Undefined","DermaDefaultBold",scrPos.x,scrPos.y+ 20*(k-1) +9,ES.Color["#444"],1,1,1);
 			end
 			
 			draw.RoundedBox(2,scrPos.x-49,scrPos.y+ 20*(k-1) + 1,98,9,Color(255,255,255,10));
-			draw.SimpleTextOutlined(v.text or "Undefined","DermaDefaultBold",scrPos.x,scrPos.y+ 20*(k-1) +9,Color(255,255,255),1,1,1,Color(0,0,0))
+
 		end
 		draw.SimpleTextOutlined("x","DermaDefault",ScrW()/2,ScrH()/2,Color(255,255,255),1,1,1,Color(0,0,0));
 	end

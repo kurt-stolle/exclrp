@@ -18,7 +18,7 @@ local function CheckWeaponTable(class)
 	return false;
 end
 
-hook.Add("PostPlayerDraw","JBDrawWeaponsOnPlayer",function(p)
+hook.Add("PostPlayerDraw","ERPDrawWeaponsOnPlayer",function(p)
 	local weps = p:GetWeapons();
 		
 	for k, v in pairs(weps)do		

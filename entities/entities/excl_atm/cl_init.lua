@@ -13,7 +13,7 @@ function ENT:Draw()
 	cam.Start3D2D(pos + ang:Right()*-51 + ang:Up()*9.3, ang, 0.1)
 		surface.SetDrawColor(Color(0,0,0));
 		surface.DrawRect(-92,-51,120,73)
-		draw.DrawText("You have\n$ "..(LocalPlayer():GetMoneyBank() or 0)..",-\nin your bank account","DermaDefaultBold",-32,-35,Color(0,100,0),1);
+		draw.DrawText("You currently have\n$ "..(LocalPlayer():GetMoneyBank() or 0)..",-\nin your bank account","DermaDefaultBold",-32,-35,Color(0,100,0),1);
 	cam.End3D2D()
 end
 
@@ -26,22 +26,22 @@ usermessage.Hook("exclOpenATMMenu",function()
 			fr:Remove();
 		end
 		
-		fr = ERP:CreateExclFrame("Deposit cash",1,1,150,88,true);
+		fr = ERP:CreateExclFrame("Deposit",1,1,200,89,true);
 		fr:Center();
 		fr:MakePopup();
 		
 		local textEntry = vgui.Create("DTextEntry", fr)
 		textEntry:SetText("0")
-		textEntry:SetSize(fr:GetWide()-10,17)
-		textEntry:SetPos(5,30);
+		textEntry:SetSize(fr:GetWide()-10,16)
+		textEntry:SetPos(5,35);
 		textEntry.OnEnter = function(self) end
 		
-		local button = vgui.Create("exclButton",fr)
+		local button = vgui.Create("esButton",fr)
 		button:SetSize(fr:GetWide()-10,30);
 		button:SetPos(5,fr:GetTall()-35);
-		button.Title = "Confirm"
+		button:SetText("Confirm");
 		button.DoClick = function()
-			if tonumber(textEntry:GetValue()) > LocalPlayer():GetMoney() then createNotify("You do not have enough cash on you to do this.","error"); return; end
+			if tonumber(textEntry:GetValue()) > LocalPlayer():GetMoney() then ES.Notify("generic","You do not have enough cash on you to do this."); return; end
 			RunConsoleCommand("excl_bank_deposit",textEntry:GetValue());
 			fr:Remove();
 		end
@@ -51,22 +51,22 @@ usermessage.Hook("exclOpenATMMenu",function()
 			fr:Remove();
 		end
 		
-		fr = ERP:CreateExclFrame("Withdraw cash",1,1,150,88,true);
+		fr = ERP:CreateExclFrame("Withdraw",1,1,200,89,true);
 		fr:Center();
 		fr:MakePopup();
 		
 		local textEntry = vgui.Create("DTextEntry", fr)
 		textEntry:SetText("0")
-		textEntry:SetSize(fr:GetWide()-10,17)
-		textEntry:SetPos(5,30);
+		textEntry:SetSize(fr:GetWide()-10,16)
+		textEntry:SetPos(5,35);
 		textEntry.OnEnter = function(self) end
 		
-		local button = vgui.Create("exclButton",fr)
+		local button = vgui.Create("esButton",fr)
 		button:SetSize(fr:GetWide()-10,30);
 		button:SetPos(5,fr:GetTall()-35);
-		button.Title = "Confirm"
+		button:SetText("Confirm");
 		button.DoClick = function()
-			if tonumber(textEntry:GetValue()) > LocalPlayer():GetMoneyBank() then createNotify("You do not have enough cash in your account to do this.","error"); return; end
+			if tonumber(textEntry:GetValue()) > LocalPlayer():GetMoneyBank() then ES.Notify("generic","You do not have enough cash in your account to do this."); return; end
 			RunConsoleCommand("excl_bank_withdraw",textEntry:GetValue());
 			fr:Remove();
 		end
@@ -76,8 +76,8 @@ usermessage.Hook("exclOpenATMMenu",function()
 end)
 
 usermessage.Hook("eDeposDone",function(u)
-	createNotify("You deposited $"..u:ReadLong()..",- to your bank account","generic")
+	ES.Notify("generic","You deposited $"..u:ReadLong()..",- to your bank account")
 end)
 usermessage.Hook("eWithdrDone",function(u)
-	createNotify("You withdrew $"..u:ReadLong()..",- from your bank account","generic")
+	ES.Notify("generic","You withdrew $"..u:ReadLong()..",- from your bank account")
 end)
