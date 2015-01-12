@@ -6,7 +6,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"amount")
+	self:NetworkVar("Int",0,"Amount")
 end
 local emeta = FindMetaTable("Entity");
 function emeta:IsCash()

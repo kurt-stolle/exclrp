@@ -10,6 +10,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self:SetUseType(SIMPLE_USE)
 
+	self:SetAmount(1);
+
 	local phys = self.Entity:GetPhysicsObject()
 	if phys and phys:IsValid() then phys:Wake() end
 end
@@ -24,13 +26,15 @@ function ENT:Use(activator,caller)
 end
 
 function ENT:Touch(ent)
-	if ent:GetClass() != "excl_cash" or ent.hasMerged or self.hasMerged then return end
+	if not IsValid(self) or not IsValid(ent) or ent:GetClass() != "excl_cash" or ent.hasMerged or self.hasMerged then return end
 
-	ent.hasMerged, self.hasMerged = true, true
-	self:Remove()
-	ent:Remove()
+	if self:GetAmount() >= ent:GetAmount() then
+		ent.hasMerged = true;
 
-	ERP:SpawnCash(self:GetAmount() + ent.dt.amount,self:GetPos(),self:GetAngles());
+		self:SetAmount(self:GetAmount() + ent:GetAmount());
+
+		ent:Remove()
+	end
 end
 
 function ERP:SpawnCash(amt,pos,ang)
