@@ -68,6 +68,13 @@ function ERP.LoadCharacter(ply,id)
 			if ply.character.job and ERP.Jobs[ply.character.job] then
 				ply:SetJob(ERP.Jobs[ply.character.job]:GetTeam());
 			end
+
+			ply:ESGetNetworkedVariable("firstName",ply.character.firstname);
+			ply:ESGetNetworkedVariable("lastName",ply.character.lastname);
+
+			ply.character.firstname=nil;
+			ply.character.lastname=nil;
+
 			ply:Spawn();	
 
 			ERP.SyncCharacter(ply);		

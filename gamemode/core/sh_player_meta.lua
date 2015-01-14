@@ -9,14 +9,3 @@ function PLAYER:IsLoaded()
 	return (not not self.character);
 end
 
-function PLAYER:FirstName()
-	return self:ESGetNetworkedVariable("firstName","John");
-end
-
-function PLAYER:LastName()
-	return self:ESGetNetworkedVariable("lastName","Doe");
-end
-
-function PLAYER:FullName()
-	return (self:FirstName().." "..self:LastName());
-end
