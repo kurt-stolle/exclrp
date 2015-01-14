@@ -22,10 +22,8 @@ function ERP.GetAllowedCharacterModels()
 end
 
 -- Define networked variables.
-hook.Add("ES.DefineNetworkedVariables","ERP.Characters.DefineNetworked",function()
-	ES.DefineNetworkedVariable("firstName","String");
-	ES.DefineNetworkedVariable("lastName","String");
-end);
+ES.DefineNetworkedVariable("firstName","String");
+ES.DefineNetworkedVariable("lastName","String");
 
 -- Meta table for characters
 local CHARACTER=FindMetaTable("Character");
