@@ -7,3 +7,16 @@ function PLAYER:UnLoad()
 	self.character=nil;
 	ERP.OpenMainMenu(self);
 end
+
+function PLAYER:SprintEnable()
+	if not self._cachedSprintSpeed then return end
+	
+	self:SetRunSpeed(self._cachedSprintSpeed);
+end
+
+function PLAYER:SprintDisable()
+	if self:GetRunSpeed() ~= self:GetWalkSpeed() then
+		self._cachedSprintSpeed = self:GetRunSpeed();
+		self:SetRunSpeed(self:GetWalkSpeed());
+	end
+end
