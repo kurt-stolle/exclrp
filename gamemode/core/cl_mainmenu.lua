@@ -45,7 +45,7 @@ vgui.Register( "exclMainMenuPanel", PNL, "EditablePanel" );
 local PNL = {};
 
 function PNL:Init()
-	self.Title = "Unnamed";
+	self.title = "Unnamed";
 	self.Hover = false;
 	self.DoClick = function() end;
 end
@@ -62,7 +62,7 @@ function PNL:Paint()
 	if self.Hover then
 		draw.SimpleText("<","HUDNumber4",self:GetWide(),0,Color(0,0,0,230),2,0);
 	end
-	draw.SimpleText(self.Title,"HUDNumber4",self:GetWide()-30,0,Color(0,0,0,230),2,0);
+	draw.SimpleText(self.title,"HUDNumber4",self:GetWide()-30,0,Color(0,0,0,230),2,0);
 end
 vgui.Register( "exclMainMenuOptionButton", PNL, "Panel" );
 
@@ -94,6 +94,8 @@ hook.Add("Think","HandleSlide",function()
 			end
 		else
 			for k,v in pairs(slideItems)do
+				if not IsValid(v) then continue end
+
 				if v:GetPos() > v.OriginalPos.x+ScrW()-1 then
 					onDoneSliding();
 					return;

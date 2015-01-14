@@ -46,12 +46,12 @@ usermessage.Hook("EOINVM",function()
 	menu:Center();
 	menu:MakePopup();
 	
-	local tabs = vgui.Create("exclTabbedPanel",menu);
+	local tabs = vgui.Create("esTabPanel",menu);
 	tabs:SetPos(5,35);
 	tabs:SetSize(12*52 + 20,menu:GetTall()-40);
 	
 	//INVENTORY
-	local pnl =  tabs:AddTab("icon16/application_view_tile.png","Inventory")
+	local pnl =  tabs:AddTab("Inventory","icon16/application_view_tile.png")
 	
 	--GRID
 	local grid = vgui.Create("exclInventoryGrid",pnl);
@@ -86,6 +86,6 @@ usermessage.Hook("EOINVM",function()
 	destroy.Red = true;
 	
 	//STORE
-	tabs:AddTab("icon16/add.png","Store")
-	tabs:AddTab("icon16/brick_add.png","Class wholesale");
+	tabs:AddTab("Store","icon16/add.png")
+	tabs:AddTab("Class wholesale","icon16/brick_add.png");
 end);

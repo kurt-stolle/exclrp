@@ -38,7 +38,7 @@ vgui.Register( "exclCloseButton", PNL, "Panel" );
 local PNL = {};
 
 function PNL:Init()
-	self.Title = "Unnamed";
+	self.title = "Unnamed";
 	self.Red = false;
 	self.PaintHook = function() end
 	if self.ShowCloseButton then
@@ -52,7 +52,7 @@ function PNL:Init()
 	
 	self:SetTitle( "" )
 	function self:SetTitle(title)
-		self.Title = title;
+		self.title = title;
 	end
 	self.PerformLayout = function() end
 	
@@ -71,7 +71,7 @@ function PNL:Paint()
 	draw.RoundedBoxEx(2,0,0,self:GetWide(),20,Color(0,0,0),true,true,false,false);
 	draw.RoundedBox(2,1,1,self:GetWide()-2,18,Color(255,255,255,3),true,true,false,false);
 	draw.RoundedBox(2,2,2,self:GetWide()-4,8,Color(255,255,255,2),true,true,false,false);
-	draw.SimpleTextOutlined(self.Title,"DermaDefaultBold",self:GetWide()/2,9,Color(255,255,255,255),1,1,1,Color(0,0,0));
+	draw.SimpleTextOutlined(self.title,"DermaDefaultBold",self:GetWide()/2,9,Color(255,255,255,255),1,1,1,Color(0,0,0));
 	
 	self.PaintHook();
 end
@@ -80,7 +80,7 @@ vgui.Register( "exclFrame", PNL, "DFrame" );
 local PNL = {};
 
 function PNL:Init()
-	self.Title = "Unnamed";
+	self.title = "Unnamed";
 	self.Red = false;
 	self.Hover = false;
 	self.PaintHook = function() end
@@ -109,7 +109,7 @@ function PNL:Paint()
 		end
 	end
 	draw.RoundedBox(4,2,2,self:GetWide()-4,self:GetTall()/2 - 2,Color(255,255,255,2));
-	draw.SimpleTextOutlined(self.Title,"DermaDefaultBold",self:GetWide()/2,self:GetTall()/2-1,Color(255,255,255,255),1,1,1,Color(0,0,0));
+	draw.SimpleTextOutlined(self.title,"DermaDefaultBold",self:GetWide()/2,self:GetTall()/2-1,Color(255,255,255,255),1,1,1,Color(0,0,0));
 	
 	self.PaintHook();
 end
@@ -123,7 +123,7 @@ vgui.Register( "exclInvisiblePanel", PNL, "Panel" );
 local PNL = {};
 
 function PNL:Init()
-	self.Title = "Unnamed";
+	self.title = "Unnamed";
 	self.Icon = "gui/silkicons/car";
 	self.Red = false;
 	self.Hover = false;
@@ -146,11 +146,11 @@ function PNL:Paint(w,h)
 
 	if not self.Selected then
 		draw.RoundedBox(0,1,1,self:GetWide()-2,self:GetTall()-1,ES.GetColorScheme(3));
-		draw.SimpleText(self.Title,"ESDefaultBold",6 + 16 + 6,self:GetTall()/2,ES.Color["#EEE"],0,1);
+		draw.SimpleText(self.title,"ESDefaultBold",6 + 16 + 6,self:GetTall()/2,ES.Color["#EEE"],0,1);
 	end
 	if self.Hover or self.Selected then
 		draw.RoundedBox(0,1,1,self:GetWide()-2,self:GetTall()-1,ES.GetColorScheme(1));
-		draw.SimpleText(self.Title,"ESDefaultBold",6 + 16 + 6,self:GetTall()/2,Color(255,255,255,255),0,1);
+		draw.SimpleText(self.title,"ESDefaultBold",6 + 16 + 6,self:GetTall()/2,Color(255,255,255,255),0,1);
 	end
 
 	surface.SetMaterial(self.Icon);
@@ -179,7 +179,7 @@ function PNL:AddTab(icon,title)
 	b.Position = #self.Tabs;
 	b.Selected = (#self.Tabs == 1);
 	b.Icon = Material(icon or "icon16/car.png");
-	b.Title = title or "Untitled";
+	b.title = title or "Untitled";
 	b.DoClick = function()
 		for k,v in pairs(self.Tabs)do
 			if b.Position != v.button.Position then
@@ -210,7 +210,7 @@ function ERP:CreateExclFrame(title,x,y,w,h,closeable) -- let's make it all more 
 	local p = vgui.Create("esFrame");
 	p:SetSize(w,h);
 	p:SetPos(x,y);
-	p.Title = title;
+	p.title = title;
 --[[	if closeable then
 		p.closebutton = vgui.Create("exclCloseButton",p);
 		p.closebutton:SetPos(p:GetWide()-32,1);
