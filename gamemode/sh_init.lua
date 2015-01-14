@@ -28,3 +28,4 @@ ES.DebugPrint("Loading ExclRP version "..ERP.Version);
 ES.IncludeFolder("exclrp/gamemode/util");
 ES.IncludeFolder("exclrp/gamemode/core");
 ES.IncludeFolder("exclrp/gamemode/items","sh");
+ES.IncludeFolder("exclrp/gamemode/jobs","sh");

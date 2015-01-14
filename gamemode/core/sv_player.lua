@@ -1,5 +1,4 @@
 
-
 function ERP:PlayerSpawn(p)
 	if p:IsLoaded() then
 		p:UnSpectate();

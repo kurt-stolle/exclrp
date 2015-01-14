@@ -65,6 +65,9 @@ function ERP.LoadCharacter(ply,id)
 
 			ply.character.Player = ply;
 			ply.character.inventory = ERP.DecodeInventory(ply.character.inventory);
+			if ply.character.job and ERP.Jobs[ply.character.job] then
+				ply:SetJob(ERP.Jobs[ply.character.job]:GetTeam());
+			end
 			ply:Spawn();	
 
 			ERP.SyncCharacter(ply);		

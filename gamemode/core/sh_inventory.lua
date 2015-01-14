@@ -32,10 +32,10 @@ function ERP.EncodeInventory(tbl)
 	end
 	return s;
 end
-local pmeta = FindMetaTable("Player");
+local PLAYER = FindMetaTable("Player");
 
 
-function pmeta:GiveItem(id,x,y)
+function PLAYER:GiveItem(id,x,y)
 	if not self:IsLoaded() then return end
 	
 	self.character.inventory[#self.character.inventory+1] = {item = id, pos = {x=x,y=x}};

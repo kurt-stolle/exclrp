@@ -61,8 +61,8 @@ function ERP:AddDoorToProperty(name,e)
 		ERP.LoadProperty();
 	end);
 end
-local pmeta = FindMetaTable("Player");
-function pmeta:SynchProperty()
+local PLAYER = FindMetaTable("Player");
+function PLAYER:SynchProperty()
 	net.Start("ERPSynchProperty");
 	net.WriteTable(ERP.Properties);
 	net.WriteTable(ERP.OwnedProperty);
@@ -102,7 +102,7 @@ concommand.Add("excl_admin_adddoor",function(p,c,a)
 	ERP:AddDoorToProperty(a[1],p:GetEyeTrace().Entity)
 end)
 
-function pmeta:GiveProperty(name)
+function PLAYER:GiveProperty(name)
 	local pr = false;		
 	for k,v in pairs(ERP.Properties)do
 		if v.name == name then

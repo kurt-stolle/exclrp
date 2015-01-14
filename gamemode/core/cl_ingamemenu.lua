@@ -85,10 +85,10 @@ usermessage.Hook("EOIERP",function()
 	local tabs = vgui.Create("esTabPanel",menu);
 	tabs:SetPos(5,35);
 	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-40);
-	tabs:AddTab("icon16/star.png","Help pages")
-	tabs:AddTab("icon16/user.png","Character")
-	local pnl = tabs:AddTab("icon16/world.png","Jobs");
-	for k,v in pairs(ERP:GetJobs())do
+	tabs:AddTab("Help pages","icon16/star.png")
+	tabs:AddTab("Character","icon16/user.png")
+	local pnl = tabs:AddTab("Jobs","icon16/world.png");
+	for k,v in pairs(ERP.Jobs)do
 		local job = vgui.Create("exclInGameMenuJob",pnl);
 		job:SetPos(10,10+(k-1)*90);
 		job:SetSize(pnl:GetWide()-20,80);
@@ -97,5 +97,5 @@ usermessage.Hook("EOIERP",function()
 		upgrade:SetPos(job:GetWide()-35,10)
 		upgrade:SetSize(25,25);
 	end
-	tabs:AddTab("icon16/wrench.png","Settings")
+	tabs:AddTab("Settings","icon16/wrench.png")
 end);
