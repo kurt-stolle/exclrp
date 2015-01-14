@@ -4,10 +4,8 @@
  local BLACK = Color(0,0,0);
  
 surface.CreateFont("JobFont",{
-
 	font = "Trebuchet MS";
 	size = 32;
-
 })
 
 surface.CreateFont( "HUDNumber1", { 
@@ -52,45 +50,23 @@ function PNL:Think()
 	end
 end
 function PNL:Paint()
-	draw.RoundedBoxEx(6,0,0,self:GetWide()*0.4,self:GetTall(),self.Job.color,true,false,true,false );
-	draw.RoundedBoxEx(4,2,2,self:GetWide()*0.4-4,self:GetTall()-4,Color(self.Job.color.r-self.Colorcenter,self.Job.color.g-self.Colorcenter,self.Job.color.b-self.Colorcenter),true,false,true,false  );
+	draw.RoundedBoxEx(4,0,0,self:GetWide()*0.4,self:GetTall(),self.Job.color,true,false,true,false );
+	draw.RoundedBoxEx(2,2,2,self:GetWide()*0.4-4,self:GetTall()-4,Color(self.Job.color.r-self.Colorcenter,self.Job.color.g-self.Colorcenter,self.Job.color.b-self.Colorcenter),true,false,true,false  );
 	
-	draw.RoundedBoxEx(6,self:GetWide()*0.4,0,self:GetWide()*0.6,self:GetTall(),ES.Color["#DDD"],false,true,false,true );
+	draw.RoundedBoxEx(2,self:GetWide()*0.4,0,self:GetWide()*0.6,self:GetTall(),ES.Color["#DDD"],false,true,false,true );
 	
-	--[[surface.SetDrawColor(Color(0,0,0));
-	surface.SetTexture(0);
-	surface.DrawPoly{
-	{x=self:GetWide()*0.36,y=0},
-	{x=self:GetWide()*0.4,y=self:GetTall()/2},
-	{x=self:GetWide()*0.38,y=self:GetTall()/2},
-	{x=self:GetWide()*0.34,y=0}};
-	surface.DrawPoly{
-	{x=self:GetWide()*0.4,y=self:GetTall()/2},
-	{x=self:GetWide()*0.36,y=self:GetTall()},
-	{x=self:GetWide()*0.34,y=self:GetTall()},
-	{x=self:GetWide()*0.38,y=self:GetTall()/2}};
-	surface.SetDrawColor(150,150,150);
-	surface.DrawPoly{
-	{x=self:GetWide()*0.35,y=0},
-	{x=self:GetWide()*0.40,y=0},
-	{x=self:GetWide()*0.40,y=self:GetTall()/2}};
-	surface.DrawPoly{
-	{x=self:GetWide()*0.40,y=self:GetTall()/2},
-	{x=self:GetWide()*0.40,y=self:GetTall()},
-	{x=self:GetWide()*0.35,y=self:GetTall()}};==]]
-	//skill object
-	draw.RoundedBox(4,self:GetWide()-35-25,10,40,25,ES.Color["#1E1E1E"]);
+	draw.RoundedBox(2,self:GetWide()-35-25,10,40,25,ES.Color["#1E1E1E"]);
 	draw.SimpleText("1","TargetID",self:GetWide()-35-(25/2),9+(25/2),ES.Color["#CCC"],1,1);
 	
 	//money object
-	draw.RoundedBox(4,self:GetWide()-35-25,self:GetTall()-35,50,25,ES.Color["#1E1E1E"]);
+	draw.RoundedBox(2,self:GetWide()-35-25,self:GetTall()-35,50,25,ES.Color["#1E1E1E"]);
 	draw.SimpleText((self.Job.pay or "error")..",-","TargetID",self:GetWide()-15,self:GetTall()-(11+(25/2)),ES.Color["#CCC"],2,1);
 	draw.SimpleText("$","TargetID",self:GetWide()-55,self:GetTall()-(11+(25/2)),ES.Color["#CCC"],0,1);
 	//name
 	draw.SimpleText(self.Job.name,"JobFont",10,self:GetTall()/2-2,WHITE,0,1);
 	
 	//description
-	draw.DrawText(ERP:exclFormatLine(self.Job.description,"ESDefaultBold",300),"ESDefaultBold",self:GetWide()-80,10,color_black,2);
+	draw.DrawText(ES.FormatLine(self.Job.description,"ESDefaultBold",300),"ESDefaultBold",self:GetWide()-80,10,color_black,2);
 end
 vgui.Register("exclInGameMenuJob", PNL, "Panel" );
 
@@ -106,7 +82,7 @@ usermessage.Hook("EOIERP",function()
 	menu:Center();
 	menu:MakePopup()
 	
-	local tabs = vgui.Create("exclTabbedPanel",menu);
+	local tabs = vgui.Create("esTabPanel",menu);
 	tabs:SetPos(5,35);
 	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-40);
 	tabs:AddTab("icon16/star.png","Help pages")

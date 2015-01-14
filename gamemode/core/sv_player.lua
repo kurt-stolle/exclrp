@@ -24,7 +24,7 @@ function ERP:PlayerSpawn(p)
 		
 		ERP:SetPlayerSpeed( p, 150, 270 )
 	else
-		p:OpenMainMenu()
+		ERP.OpenMainMenu(p)
 	end
 end
 hook.Add( "PlayerDeath", "exclHandleClothingRagdolls", function(pVictim,i,pAttack)

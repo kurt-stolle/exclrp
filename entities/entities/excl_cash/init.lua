@@ -18,9 +18,11 @@ end
 
 
 function ENT:Use(activator,caller)
+	if not activator.character then return end
+
 	local amount = self:GetAmount()
 
-	activator:AddMoney(self:GetAmount() or 0)
+	activator.character:AddCash(self:GetAmount() or 0)
 	activator:ESSendNotification("generic","You picked up $ "..self:GetAmount()..",-","generic");
 	self:Remove()
 end

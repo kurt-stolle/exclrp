@@ -63,10 +63,10 @@ if SERVER then
 			local v=players[i];
 			if v:IsLoaded() then
 				if v:GetJob() then
-					v:AddMoney(v:GetJob().pay)
+					v.character:AddBank(v:GetJob().pay)
 					v:ESSendNotification("generic","You have earned $ "..v:GetJob().pay..",- from your paycheque, it has been put on your bank account.");
 				else
-					v:AddMoney(10);
+					v.character:AddBank(10);
 					v:ESSendNotification("generic","You have earned $ 10,- from your unemployment cheque, it has been put on your bank account.");
 				end
 			end

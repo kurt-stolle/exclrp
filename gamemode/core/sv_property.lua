@@ -9,9 +9,9 @@ local doors = {
 
 util.AddNetworkString( "ERPSynchProperty" ) 
 
-function ERP:LoadProperty()
+function ERP.LoadProperty()
 	ES.DebugPrint("(re)loading properties.")
-	ES.DBQuery("SELECT * FROM es_erp_property_"..ES.DBEscape(game.GetMap())..";",function(c)	
+	ES.DBQuery("SELECT * FROM erp_property WHERE map='"..ES.DBEscape(game.GetMap()).."';",function(c)	
 		if c and c[1] then
 			for k,v in pairs(c)do
 				v.doors = (string.Explode("|",(v.doors or "")) or {});
@@ -36,12 +36,11 @@ function ERP:LoadProperty()
 	end)
 	ES.DBWait();
 end
-hook.Add("Initialize","exclInitProperties",function()
-	ERP:LoadProperty();
-end)
+ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` SMALLINT(5) unsigned NOT NULL, map varchar(255), name varchar(20), description varchar(255), factionRestriction varchar(10), doors varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",ERP.LoadProperty);
+
 function ERP:AddProperty(name,description,...)
-	ES.DBQuery(Format("INSERT INTO es_erp_property_"..ES.DBEscape(game.GetMap()).." SET name = '%s', description = '%s', factionRestriction = '%s'", tostring(name),tostring(description),string.Implode("|",({...})) or "nil"));
-	ERP:LoadProperty();
+	ES.DBQuery(Format("INSERT INTO erp_property SET map='"..ES.DBEscape(game.GetMap()).."', name = '%s', description = '%s', factionRestriction = '%s'", tostring(name),tostring(description),string.Implode("|",({...})) or "nil"));
+	ERP.LoadProperty();
 end
 function ERP:AddDoorToProperty(name,e)
 	local t = nil;
@@ -58,8 +57,8 @@ function ERP:AddDoorToProperty(name,e)
 	
 	if not t.doors then t.doors = {} end
 	table.insert(t.doors,e:EntIndex());
-	ES.DBQuery(Format("UPDATE es_erp_property_"..ES.DBEscape(game.GetMap()).." SET doors = '%s' WHERE name = '%s'  ;", string.Implode("|",t.doors),tostring(name)),function(r) 
-		ERP:LoadProperty();
+	ES.DBQuery(Format("UPDATE erp_property SET doors = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."'  ;", string.Implode("|",t.doors),tostring(name)),function(r) 
+		ERP.LoadProperty();
 	end);
 end
 local pmeta = FindMetaTable("Player");
@@ -118,7 +117,7 @@ function pmeta:GiveProperty(name)
 end	
 concommand.Add("excl_buyproperty",function(p)
 	if IsValid(p) and p:IsLoaded() and IsValid(p:GetEyeTrace().Entity) and p:GetEyeTrace().Entity.property and !ERP.OwnedProperty[p:GetEyeTrace().Entity.property] and p:GetEyeTrace().HitPos:Distance(p:EyePos()) < 100 then
-		if( p:GetMoney() - (50+(#ERP.Properties[p:GetEyeTrace().Entity.property].doors*6)) < 0 )then 
+		if( p.character:GetCash() - (50+(#ERP.Properties[p:GetEyeTrace().Entity.property].doors*6)) < 0 )then 
 			p:ESSendNotification("generic","You do not have enough cash on you.");
 			return;
 		end

@@ -13,7 +13,7 @@ function ENT:Draw()
 	cam.Start3D2D(pos + ang:Right()*-51 + ang:Up()*9.3, ang, 0.1)
 		surface.SetDrawColor(Color(0,0,0));
 		surface.DrawRect(-92,-51,120,73)
-		draw.DrawText("You currently have\n$ "..(LocalPlayer():GetMoneyBank() or 0)..",-\nin your bank account","DermaDefaultBold",-32,-35,Color(0,100,0),1);
+		draw.DrawText("You currently have\n$ "..(LocalPlayer().character:GetBank() or 0)..",-\nin your bank account","DermaDefaultBold",-32,-35,Color(0,100,0),1);
 	cam.End3D2D()
 end
 
@@ -41,7 +41,7 @@ usermessage.Hook("exclOpenATMMenu",function()
 		button:SetPos(5,fr:GetTall()-35);
 		button:SetText("Confirm");
 		button.DoClick = function()
-			if tonumber(textEntry:GetValue()) > LocalPlayer():GetMoney() then ES.Notify("generic","You do not have enough cash on you to do this."); return; end
+			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetCash() then ES.Notify("generic","You do not have enough cash on you to do this."); return; end
 			RunConsoleCommand("excl_bank_deposit",textEntry:GetValue());
 			fr:Remove();
 		end
@@ -66,7 +66,7 @@ usermessage.Hook("exclOpenATMMenu",function()
 		button:SetPos(5,fr:GetTall()-35);
 		button:SetText("Confirm");
 		button.DoClick = function()
-			if tonumber(textEntry:GetValue()) > LocalPlayer():GetMoneyBank() then ES.Notify("generic","You do not have enough cash in your account to do this."); return; end
+			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetBank() then ES.Notify("generic","You do not have enough cash in your account to do this."); return; end
 			RunConsoleCommand("excl_bank_withdraw",textEntry:GetValue());
 			fr:Remove();
 		end

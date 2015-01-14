@@ -104,24 +104,17 @@ hook.Add("Think","HandleSlide",function()
 	end
 end)
 
-local PNL = {};
-function PNL:Init() end
-function PNL:Paint() end
-vgui.Register( "exclMainMenuEmpty", PNL, "EditablePanel" );
-
 local randomfirst = {"Ruben","Kurt","Billy","Timmy","Peter","Steward","Stuart","Justin","Uglies","Jason","Price","Ben","Bruno","Excl","Alex","James","T-Dawg","Edward","Craig","Greg","Tom","Thomas","Niggan","Nigel","Nate","TB-Cookies","Pebbles","Chuck","Garry","Gabe","Mark","Moozle","Kay","Kaj","Kai","Werner","Harry","Charles","Charlie","Chris","Vito","Silvester","Minge","Mickey","Mick","Robin","Robert","Ardawan","Legogûy"};
 local randomlast = {"Rutten","Stolle","Jean","McCarter","Selie","Jackson","Bieber","Smellyfarts","Tummyrub","Ducktown","McMac","Raider","Smits","van der sloot","Laka","Gruggles","Firing","Obeseitan","Meowingtons","irritantamerikaan","crunchy","Mooty","Saladim","Saladem","Bergsla","van Casteren","Newman","Newell","DeJeanar","Nescafe","Bajen","Sousterrain","Eaudetoilette","tomatensiroop","Spaghetti","Carbiniri","Calsonez","Stalone"};
 
 local errorCreateTooMuch;
 
-net.Receive("ERPOpenMainMenu",function()
+net.Receive("ERP.Character.OpenMenu",function()
 	if ERP.MainMenu and ERP.MainMenu:IsValid() then
 		ERP.MainMenu:Remove();
 	end
 
 	local decoded = net.ReadTable();
-	
-	gui.EnableScreenClicker(true);
 	
 	ERP.MainMenu = vgui.Create("exclMainMenuPanel");
 	ERP.MainMenu:SetPos(0,0);
@@ -146,9 +139,9 @@ net.Receive("ERPOpenMainMenu",function()
 			first = randomfirst[math.random(1,#randomfirst)];
 			last = randomlast[math.random(1,#randomlast)];
 		
-			local modelselected=math.random(1,#ERP:GetAllowedCharacterModels());
+			local modelselected=math.random(1,#ERP.GetAllowedCharacterModels());
 		
-			local holder = vgui.Create("exclMainMenuEmpty",ERP.MainMenu);
+			local holder = vgui.Create("EditablePanel",ERP.MainMenu);
 			holder:SetSize(ERP.MainMenu:GetWide(),ERP.MainMenu:GetTall());
 			holder:SetPos(-ERP.MainMenu:GetWide(),0);
 			
@@ -161,7 +154,12 @@ net.Receive("ERPOpenMainMenu",function()
 				slideDirection = false; //  true for right, false for left
 				slideItems = {};
 				onDoneSliding = function() end
-				RunConsoleCommand("excl_createcharacter",first,last,ERP:GetAllowedCharacterModels()[modelselected]);
+
+				net.Start("ERP.Character.New");
+				net.WriteString(first);
+				net.WriteString(last);
+				net.WriteUInt(modelselected,8);
+				net.SendToServer();
 			end
 			
 			local dc = vgui.Create("esButton",holder);
@@ -177,7 +175,7 @@ net.Receive("ERPOpenMainMenu",function()
 			
 			local model = vgui.Create("DModelPanel",holder);
 			model:SetPos(0,ERP.MainMenu:GetTall()-120-400);
-			model:SetModel(ERP:GetAllowedCharacterModels()[modelselected]);
+			model:SetModel(ERP.GetAllowedCharacterModels()[modelselected]);
 			model:SetSize( 400, 400 );
 			model:SetCamPos( Vector( 100,0,40 ) );
 			model:SetLookAt( Vector( 0, 0,40 ) );
@@ -190,13 +188,13 @@ net.Receive("ERPOpenMainMenu",function()
 			prev.DoClick = function()
 				modelselected = modelselected-1;
 				if modelselected < 1 then
-					modelselected = #ERP:GetAllowedCharacterModels();
+					modelselected = #ERP.GetAllowedCharacterModels();
 				end
 
-				model:SetModel(ERP:GetAllowedCharacterModels()[modelselected]);
+				model:SetModel(ERP.GetAllowedCharacterModels()[modelselected]);
 			end
-			lMdl = Label("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(ERP:GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""),holder);
-			lMdl:SetFont("DefaultBold");
+			lMdl = Label("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(ERP.GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""),holder);
+			lMdl:SetFont("ESDefaultBold");
 			lMdl:SetColor(Color(255,255,255,200));
 			lMdl:SetPos(300,holder:GetTall()-220);
 			lMdl:SizeToContents();
@@ -205,18 +203,18 @@ net.Receive("ERPOpenMainMenu",function()
 			next:SetSize(70,30);
 			next.DoClick = function()
 				modelselected = modelselected+1;
-				if modelselected > #ERP:GetAllowedCharacterModels() then
+				if modelselected > #ERP.GetAllowedCharacterModels() then
 					modelselected = 1;
 				end
 
-				lMdl:SetText("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(ERP:GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""));
+				lMdl:SetText("Model: "..string.gsub(string.gsub(string.gsub(string.gsub(ERP.GetAllowedCharacterModels()[modelselected],"models/player/Group0",""),"1/",""),"2/",""),".mdl",""));
 				lMdl:SizeToContents();
-				model:SetModel(ERP:GetAllowedCharacterModels()[modelselected]);
+				model:SetModel(ERP.GetAllowedCharacterModels()[modelselected]);
 			end
 			next:SetText("Next");
 			
 			lName = Label("Name: "..first.." "..last ,holder);
-			lName:SetFont("DefaultBold");
+			lName:SetFont("ESDefaultBold");
 			lName:SetColor(Color(255,255,255,200));
 			lName:SetPos(300,holder:GetTall()-240);
 			lName:SizeToContents();
@@ -274,7 +272,7 @@ net.Receive("ERPOpenMainMenu",function()
 							lName:SizeToContents();
 						end
 
-						pnlName:Close();
+						pnlName:Remove();
 
 					end
 				end
@@ -290,6 +288,9 @@ net.Receive("ERPOpenMainMenu",function()
 	settings:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-190);
 	settings:SetSize(150,30);
 	settings:SetText("Settings");
+	settings.DoClick=function()
+		
+	end
 	table.insert(slideitems,settings);
 	
 	local dc = vgui.Create("esButton",ERP.MainMenu);
@@ -297,6 +298,9 @@ net.Receive("ERPOpenMainMenu",function()
 	dc:SetSize(150,30);
 	dc.Red = true;
 	dc:SetText("Disconnect");
+	dc.DoClick=function()
+		LocalPlayer():ConCommand("disconnect;");
+	end
 	table.insert(slideitems,dc);
 	
 	// characters
@@ -317,7 +321,9 @@ net.Receive("ERPOpenMainMenu",function()
 			button:SetSize(150,30);
 			button:SetText("Select");
 			button.DoClick = function()
-				RunConsoleCommand("excl_selectcharacter",v.id);
+				net.Start("ERP.Character.Select");
+				net.WriteUInt(v.id,4);
+				net.SendToServer();
 			end
 			table.insert(slideitems,button);
 		end)
@@ -335,6 +341,8 @@ net.Receive("ERPOpenMainMenu",function()
 		l:SizeToContents();
 		table.insert(slideitems,l);
 	end
+
+	ERP.MainMenu:MakePopup();
 end)
 usermessage.Hook("ECreateDone",function()
 	Go();
