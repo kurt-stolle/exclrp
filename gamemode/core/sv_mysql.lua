@@ -1,5 +1,3 @@
 -- sv_mysql
-hook.Add("ESDBDefineTables","ERPDefineDTTbls",function()
-	ES.DBDefineTable("erp_characters_",false,"steamid text(20), firstname text(20), lastname text(20), playtime int(25), job text(20), cash int(20), bank int(20), model text(100), jobbans text(6), stats varchar(255), inventory varchar(255)")
-	ES.DBDefineTable("erp_property_"..ES.DBEscape(game.GetMap()),false,"name text(20), description text(255), factionRestriction text(10), doors varchar(255)");
-end)
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` SMALLINT(5) unsigned NOT NULL, steamid varchar(25), firstname varchar(255), lastname varchar(255), playtime int(25), job varchar(20), cash int(20), bank int(20), model varchar(100), jobbans varchar(6), stats varchar(255), inventory varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` SMALLINT(5) unsigned NOT NULL, map varchar(255), name varchar(20), description varchar(255), factionRestriction varchar(10), doors varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
