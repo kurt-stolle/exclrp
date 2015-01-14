@@ -84,6 +84,10 @@ function ERP:HUDPaint()
 		return;
 	end
 
+
+	-- for debugging
+	draw.SimpleTextOutlined(LocalPlayer():ESGetNetworkedVariable("energy",100),"ESDefaultBold",ScrW()/2,ScrH()*.8,ES.Color.Red,1,1,1,ES.Color.Black);
+
 	surface.SetDrawColor(0,0,0,100);
 	surface.SetMaterial(Material("exclrp/gradient.png"));
 	surface.DrawTexturedRectRotated(ScrW()/2,40,ScrW(),80,0);
