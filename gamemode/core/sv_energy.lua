@@ -12,7 +12,7 @@ hook.Add("Think","ERP.ThinkEnergy",function()
 		if not ply.character then return end
 
 		local energy=ply:ESGetNetworkedVariable("energy",100);
-		if ply:GetVelocity():Length() > ply:GetWalkSpeed() and ply:KeyDown(IN_SPEED) then -- Only lose energy while running
+		if ply:GetVelocity():Length() > ply:GetWalkSpeed() and ply:KeyDown(IN_SPEED) and ply:IsOnGround() then -- Only lose energy while running
 			if energy > 0 then
 				ply:ESSetNetworkedVariable("energy", math.Clamp(energy - (FrameTime()*energyRate*2),0,100))  -- Set the new NWVar to the old NWVar minus 1.
 			else

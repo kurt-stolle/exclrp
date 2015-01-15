@@ -86,7 +86,7 @@ function ERP:HUDPaint()
 
 
 	-- for debugging
-	draw.SimpleTextOutlined("Energy "..tostring(LocalPlayer():ESGetNetworkedVariable("energy",100)),"ESDefaultBold",ScrW()/2,ScrH()*.8,ES.Color.Red,1,1,1,ES.Color.Black);
+	draw.SimpleTextOutlined("Energy "..tostring(math.Round(LocalPlayer():ESGetNetworkedVariable("energy",100))),"ESDefaultBold",ScrW()/2,ScrH()*.8,ES.Color.Red,1,1,1,ES.Color.Black);
 
 	surface.SetDrawColor(0,0,0,100);
 	surface.SetMaterial(Material("exclrp/gradient.png"));

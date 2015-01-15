@@ -1,1 +1,1 @@
-ES.DefineNetworkedVariable("energy","UInt",8);
+ES.DefineNetworkedVariable("energy","Float");

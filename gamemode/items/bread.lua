@@ -1,10 +1,10 @@
-local ITEM = ERP:Item();
+local ITEM = ERP.Item();
 ITEM:SetName("Bread")
 ITEM:SetDescription("A loaf of bread, used to restore 20 energy")	
 ITEM:SetModel("models/weapons/c_items/c_bread_plainloaf.mdl")
 
 if CLIENT then
-	ITEM:AddHook("Draw" function(self)
+	ITEM:AddHook("Draw", function(self)
 		local Pos = self:GetPos()
 		local Ang = self:GetAngles()
 		local Ang2 = self:GetAngles()
@@ -44,4 +44,4 @@ elseif SERVER then
 	end)
 end
 
-ITEM("bread");
+ITEM();
