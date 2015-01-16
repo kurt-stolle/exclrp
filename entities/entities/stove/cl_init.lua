@@ -1,1 +1,0 @@
--- ExclRP Stove

@@ -5,6 +5,7 @@ ITEM:SetModel("models/weapons/c_items/c_bread_plainloaf.mdl")
 
 if CLIENT then
 	ITEM:AddHook("Draw", function(self)
+		self.Entity:DrawModel()	
 		local Pos = self:GetPos()
 		local Ang = self:GetAngles()
 		local Ang2 = self:GetAngles()
@@ -36,12 +37,21 @@ if CLIENT then
 		cam.End3D2D()
 	end);
 elseif SERVER then
+	ITEM:AddHook("Initialize", function(self)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:SetUseType(SIMPLE_USE)
+		local phys = self:GetPhysicsObject()
+		phys:Wake()
+	end);
+
 	ITEM:AddHook("Use", function(activator, caller)
-		local enery = ESGetNetworkedVariable("energy")
-		activator:ESSetNetworkedVariable("energy", energy + 20)
+		local energy = activator:ESGetNetworkedVariable("energy",100);
+		activator:ESSetNetworkedVariable("energy", math.Clamp(energy + 5,0,100))
 		self:Remove()
 	--	activator:EmitSound("", 100, 100) TODO: Eating Sound
-	end)
+	end);
 end
 
 ITEM();
