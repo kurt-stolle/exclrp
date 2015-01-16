@@ -1,44 +1,70 @@
+local recipies = {};
+
+local function defineRecipe(item_out,item_in,...)
+	local recipe={};
+
+	recipe.output=item_out;
+	recipe.ingredients = {item_in, ...};
+
+	table.insert(recipies,recipe);
+end
+
+defineRecipe("Bread","Flour","Flour","Water","Love");
+defineRecipe("Nigger","Sand","Sand","Sand");
+defineRecipe("Cake","Butter","Butter","Flour","Milk","Egg","Egg");
+
 local ITEM = ERP.Item();
 ITEM:SetName("Stove")
-ITEM:SetDescription("Used to cook things")	
-ITEM:SetModel("models/props_interiors/stove02.mdl")
-ITEM.Ingredients = {}
-ITEM.Recipes = {}
-
-stove = {};
-
-function ERP.addIngredient(ing)
-	if (!stove.Ingredients[ing]) then
-		stove.Ingredients[ing] = { amount = 0 } 
-	end
-end
-
-function ERP.addRecipe(rec, ing)
-	if (!stove.Recipes[rec]) then
-		stove.Recipes[rec] = ing
-	end
-end
-
-ERP.addIngredient("Flour")
-ERP.addRecipe("Bread", { ["Flour"] = 1 })
-
+ITEM:SetDescription("Used to cook various recipies from base ingredients.");	
+ITEM:SetModel("models/props_c17/furnitureStove001a.mdl")
 if CLIENT then
-	ITEM.AddHook("Draw", function(self)
-		self.Entity:DrawModel()
+	-- Draw the model of the entity.
+	ITEM:AddHook("Draw", function(self)
+		self:DrawModel()
 	end);
 
-	else if SERVER then
-		ITEM.AddHook("Initialize", function(self)
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
-		self:SetUseType(SIMPLE_USE)
-		local physObj = self:GetPhysicsObject()
-		physObj:Wake()
-		physObj:SetMass(10)
-		self.Damage = 100
-		end);
-	end
+	-- Open a menu for cooking once this message is received on the client.
+	local frame;
+	net.Receive("ES.Stove.OpenCooking",function()
+		if IsValid(frame) then
+			frame:Remove()
+		end
+
+		frame=vgui.Create("ESFrame");
+		frame:SetTitle("Cooking");
+		frame:SetSize(400,200);
+		frame:Center();
+
+		-- buttons and stuff here
+		for k,v in pairs(recipies)do
+			local label=vgui.Create("DLabel",frame);
+			label:SetFont("ESDefault");
+			label:SetColor(ES.Color.White);
+			label:SetText(table.concat(v.ingredients," + ").." = "..v.output);
+			label:SizeToContents();
+			label:SetPos(10,40+(k-1)*(label:GetTall()+5));
+		end
+
+		frame:MakePopup();
+	end);
+
+elseif SERVER then
+	util.AddNetworkString("ERP.Stove.OpenCooking");
+
+	-- Set use type to simple, meaning no continuous use, but only once per +use call.
+	ITEM:AddHook("Initialize",function(self)
+		self:SetUseType(SIMPLE_USE);
+	end);
+
+	-- Send a message to the client that uses the entity, to open a cooking menu.
+	ITEM:AddHook("Use",function(self,ply)
+		if IsValid(ply) and ply:IsPlayer() and ply.character then
+			net.Start("ERP.Stove.OpenCooking");
+			net.Send(ply);
+		else
+			ES.DebugPrint("Stove use request received. Not valid.");
+		end
+	end);
 end
 
 ITEM();

@@ -2,18 +2,19 @@ AddCSLuaFile();
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
-ENT.PrintName = "exclObject"
-ENT.Author = "_NewBee (Excl)"
+ENT.PrintName = "EXCLRP ITEM"
+ENT.Author = "Excl"
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
-	self:NetworkVar("Entity",0,"Owner")
 	self:NetworkVar("Int",0,"ItemKey");
 end
 
 function ENT:Initialize()	
-	self._bItemLoaded=false;
+	self._bItemLoaded=SERVER;
+
+	self:SetModel(self:GetItem()._model);
 	
 	self:PhysicsInit(SOLID_VPHYSICS)
 	self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -33,21 +34,23 @@ function ENT:SetItem(item)
 	self:SetItemKey(item:GetKey());
 end
 
-function ENT:Think()
-	if not self._bItemLoaded then
-		if self:GetItem() then
-			for k,v in pairs(self:GetItem()._hooks)do
-				if k == "Initialize" then
-					v(self);
-					return;
-				elseif k == "Think" then
-					self.Think = v;
+if CLIENT then
+	function ENT:Think()
+		if not self._bItemLoaded then
+			if self:GetItem() then
+				for k,v in pairs(self:GetItem()._hooks)do
+					if k == "Initialize" then
+						v(self);
+						return;
+					elseif k == "Think" then
+						self.Think = v;
+					end
+					self[k] = v;
 				end
-				self[k] = v;
-			end
-			self._bItemLoaded=true;
+				self._bItemLoaded=true;
 
-			ES.DebugPrint("Object item tables set: "..(self:GetItem():GetName() or "ERROR"));
+				ES.DebugPrint("Object item tables set: "..(self:GetItem():GetName() or "ERROR"));
+			end
 		end
 	end
 end

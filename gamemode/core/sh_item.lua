@@ -35,6 +35,8 @@ end
 
 -- Use this hook to add ENT hooks.
 function ITEM:AddHook(n,f)
+		if type(n) != "string" or type(f) != "function" then return end
+
 	self._hooks[n] = f;
 end
 
