@@ -37,20 +37,15 @@ if CLIENT then
 		cam.End3D2D()
 	end);
 elseif SERVER then
-	ITEM:AddHook("Initialize", function(self)
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
-		self:SetUseType(SIMPLE_USE)
-		local phys = self:GetPhysicsObject()
-		phys:Wake()
+	ITEM:AddHook("Initialize",function(self)
+		self:SetUseType(SIMPLE_USE);
 	end);
 
-	ITEM:AddHook("Use", function(activator, caller)
-		local energy = activator:ESGetNetworkedVariable("energy",100);
-		activator:ESSetNetworkedVariable("energy", math.Clamp(energy + 5,0,100))
+	ITEM:AddHook("Use", function(ply, self)
+		local energy = ply:ESGetNetworkedVariable("energy",100);
+		ply:ESSetNetworkedVariable("energy", math.Clamp(energy + 5,0,100))
 		self:Remove()
-	--	activator:EmitSound("", 100, 100) TODO: Eating Sound
+	--	ply:EmitSound("", 100, 100) TODO: I'll find an eating sound later
 	end);
 end
 
