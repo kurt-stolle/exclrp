@@ -6,6 +6,13 @@ function ERP:HUDShouldDraw(name)
 	return true;
 end
 
+surface.CreateFont ("HUDFONT1", {
+	size = 15,
+	weight = 500,
+	antialias = true,
+	shadow = true,
+	font = "DejaVu Sans"})
+
 COLOR_BLACK = COLOR_BLACK or Color(0,0,0,255);
 
 local fov = 0;
@@ -84,9 +91,70 @@ function ERP:HUDPaint()
 		return;
 	end
 
+--	local salary = localplayer:GetJob().pay or 0
+--	local drawSalary = convertMoneyString(salary)
+	local Health = 0
+	draw.RoundedBox(4, 16, ScrH() - 90, 370, 80, Color(0,0,0,0))
+	draw.RoundedBox(4, 220, ScrH() - 60, 165, 24, Color(0,0,0,200))
+	draw.DrawText(convertMoneyString(), "HUDFONT1", 303, ScrH() - 56, Color(255,255,255,255), TEXT_ALIGN_CENTER)	
+
+	draw.RoundedBox(4, 16, ScrH() - 85, 202, 24, Color(0,0,0,200))
+	draw.DrawText(LocalPlayer():Nick(), "HUDFONT1", 118, ScrH() - 80, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+
+	draw.RoundedBox(4, 220, ScrH() - 85, 165, 24, Color(0,0,0,200))
+	draw.DrawText(getJobString(), "HUDFONT1", 303, ScrH() - 80, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+		
+	draw.RoundedBox(4, 220, ScrH() - 35, 165, 24, Color(0,0,0,200))
+--	draw.DrawText(drawSalary, "HUDFONT1", 303, ScrH() - 32.5, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+	
+	draw.RoundedBox(4, 16, ScrH() - 60, 202, 24, Color(0,0,0,200))
+	local DrawHealth = math.Min(localplayer:Health() / 100, 1)
+	if localplayer:Health() != 0 then
+		draw.RoundedBox(4, 18, ScrH() - 58, 198 * DrawHealth, 20, Color(255,0,0,100))
+	end
+	
+
+	-- Hunger 
+	local EnergyValue = math.ceil( LocalPlayer():ESGetNetworkedVariable("energy",100) )
+	local DrawEnergy = math.Min(EnergyValue / 100, 1)
+	draw.RoundedBox(4, 16, ScrH() - 35, 202, 24, Color(0,0,0,200))
+	if EnergyValue > 0 then 
+		draw.RoundedBox(4, 18, ScrH() - 33, 198 * DrawEnergy, 20, Color(0,250,0,100))
+	end
+
+	-- Materials
+	local jobMat  = Material( "icon16/user.png" )
+	local walletMat = Material( "icon16/money.png" )
+	local salaryMat = Material( "icon16/coins_add.png" )
+	local healthMat = Material( "icon16/heart.png")
+	local energyMat = Material( "icon16/cup.png")
+
+	-- Job
+	surface.SetDrawColor(255,255,255)
+	surface.SetMaterial(jobMat)
+	surface.DrawTexturedRect(245, ScrH() - 82, 16, 16)
+
+	-- Wallet + Salary
+	surface.SetDrawColor(255,255,255)
+	surface.SetMaterial(walletMat)
+	surface.DrawTexturedRect(245, ScrH() - 56, 16, 16)
+	surface.SetDrawColor(255,255,255)
+	surface.SetMaterial(salaryMat)
+	surface.DrawTexturedRect(245, ScrH() - 32, 16, 16)
+
+	-- Health Bar
+	surface.SetDrawColor(255,255,255)
+	surface.SetMaterial(healthMat)
+	surface.DrawTexturedRect(110, ScrH() - 56, 16, 16)
+
+	-- Hunger
+	surface.SetDrawColor(255,255,255)
+	surface.SetMaterial(energyMat)
+	surface.DrawTexturedRect(110, ScrH() - 32, 16, 16)
+end
 
 	-- for debugging
-	draw.SimpleTextOutlined("Energy "..tostring(math.Round(LocalPlayer():ESGetNetworkedVariable("energy",100))),"ESDefaultBold",ScrW()/2,ScrH()*.8,ES.Color.Red,1,1,1,ES.Color.Black);
+	--[[draw.SimpleTextOutlined("Energy "..tostring(math.Round(LocalPlayer():ESGetNetworkedVariable("energy",100))),"ESDefaultBold",ScrW()/2,ScrH()*.8,ES.Color.Red,1,1,1,ES.Color.Black);
 
 	surface.SetDrawColor(0,0,0,100);
 	surface.SetMaterial(Material("exclrp/gradient.png"));
@@ -112,9 +180,9 @@ function ERP:HUDPaint()
 		surface.DrawTexturedRect(ScrW()-256-30,ScrH()-80,256,64);
 		surface.SetFont("DermaDefaultBold");
 		draw.SimpleText(aw:Clip1(),"TargetID",ScrW()-95-surface.GetTextSize("/ "..(localplayer:GetAmmoCount(aw.Primary.Ammo) or 0)),ScrH()-80+32,Color(255,255,255),2,1);
-		draw.SimpleText("/ "..(localplayer:GetAmmoCount(aw.Primary.Ammo) or 0),"DermaDefaultBold",ScrW()-95,ScrH()-80+36,Color(255,255,255),2,1);
-	end
-end
+		draw.SimpleText("/ "..(localplayer:GetAmmoCount(aw.Primary.Ammo) or 0),"DermaDefaultBold",ScrW()-95,ScrH()-80+36,Color(255,255,255),2,1);--]]
+--	end
+--end
 
 hook.Add("ShouldDrawLocalPlayer","ThirdPersonDrawLocalPlayer", function()
 	if( thirdperson ) and distance > 2 then
