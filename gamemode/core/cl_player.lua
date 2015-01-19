@@ -8,11 +8,17 @@ end
 
 surface.CreateFont ("ERP.HudNormal", {
 	size = 16,
-	weight = 400,
+	weight = 700,
 	antialias = true,
-	shadow = true,
-	font = "Roboto"})
-
+	font = "Roboto"
+})
+surface.CreateFont ("ERP.HudNormal.Shadow", {
+	size = 16,
+	weight = 700,
+	antialias = true,
+	font = "Roboto",
+	blursize=2
+})
 
 local function convertMoneyString()
 	local str=",-"
@@ -43,14 +49,27 @@ local color_energy=ES.Color.Amber;
 local box_wide=200;
 local box_tall=24;
 
-local mat_money=Material( "icon16/money.png" );
-local mat_name=Material( "icon16/user_suit.png" );
+local mat_money=Material( "exclrp/hud/money.png" );
+local mat_name=Material( "exclrp/hud/character.png" );
+local mat_health=Material( "exclrp/hud/health.png" );
+local mat_energy=Material( "exclrp/hud/energy.png" );
 
 local box_margin=12; -- px between boxes
 local icon_margin=(box_tall/2)-8;
-local function drawHUDBox(x,y,icon,text)
+local function drawHUDBox(x,y,icon,text,color,inner_mul)
+	render.PushFilterMag(TEXFILTER.ANISOTROPIC);
+	render.PushFilterMin(TEXFILTER.ANISOTROPIC);
+
 	draw.RoundedBox(2,x-1,y-1,box_wide+2,box_tall+3,ES.Color.Black);
 	draw.RoundedBox(2,x,y,box_wide,box_tall,color_background);
+
+	if color and (not inner_mul or inner_mul > 0) then
+		draw.RoundedBox(2,x+1,y+1,(box_wide-2) * (inner_mul or 1), box_tall-2,color);
+		draw.RoundedBox(2,x+1,y+1+(box_tall-2)/2,(box_wide-2) * (inner_mul or 1), (box_tall-2)/2,ES.Color["#00000033"]);
+	end
+
+	render.PopFilterMag();
+	render.PopFilterMin();
 
 	if icon then
 		surface.SetDrawColor(ES.Color.White);
@@ -59,8 +78,10 @@ local function drawHUDBox(x,y,icon,text)
 	end
 
 	if text then
-		draw.SimpleText(text,"ERP.HudNormal",x+(icon_margin*2)+16,y+box_tall/2,ES.Color.White,0,1);
+		draw.SimpleText(text,"ERP.HudNormal.Shadow",x+(icon_margin*3)+16,y+box_tall/2,ES.Color["#000000EE"],0,1);
+		draw.SimpleText(text,"ERP.HudNormal",x+(icon_margin*3)+16,y+box_tall/2,ES.Color.White,0,1);
 	end
+
 end
 
 local screen_width,screen_height,mat;
@@ -83,10 +104,6 @@ function ERP:HUDPaint()
 	screen_width	= ScrW();
 	screen_height	= ScrH();
 
-	-- ENABLE AA
-	render.PushFilterMag(TEXFILTER.ANISOTROPIC);
-	render.PushFilterMin(TEXFILTER.ANISOTROPIC);
-
 	-- SET THE POSITION OF THE HUD
 	shift_hidden=Lerp(FrameTime()*animationSpeed,shift_hidden,0);
 
@@ -103,26 +120,14 @@ function ERP:HUDPaint()
 
 	-- HEALTH
 	smoothHealth = Lerp(FrameTime() * animationSpeed, smoothHealth, localplayer:Health());
-
-	drawHUDBox(box_margin,box_margin,nil,"Health");
-	if smoothHealth >= 1 then
-		draw.RoundedBox(2, box_margin+1, box_margin+1, (box_wide-2) * smoothHealth/100, box_tall-2, color_health)
-	end
+	drawHUDBox(box_margin,box_margin,mat_health,"Health",color_health,smoothHealth/100);
 
 	-- ENERGY
 	smoothEnergy = Lerp(FrameTime() * animationSpeed,smoothEnergy,math.ceil( localplayer:ESGetNetworkedVariable("energy",100) ));
-
-	drawHUDBox(box_margin,box_margin*2+box_tall,nil,"Energy");
-	if smoothEnergy >= 1 then 
-		draw.RoundedBox(2, box_margin+1, (box_margin*2+box_tall)+1, (box_wide-2) * smoothEnergy/100, box_tall-2, color_energy)
-	end
+	drawHUDBox(box_margin,box_margin*2+box_tall,mat_energy,"Energy",color_energy,smoothEnergy/100);
 
 	-- RESET RENDER POSITION;
 	cam.PopModelMatrix();
-
-	-- DISABLE AA
-	render.PopFilterMag();
-	render.PopFilterMin();
 end
 
 local fov = 0;
