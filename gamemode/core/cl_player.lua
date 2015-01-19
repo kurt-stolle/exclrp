@@ -76,11 +76,14 @@ local screen_width,screen_height,mat;
 local context_tall = (box_margin*3 + box_tall*2);
 local context_wide = (box_margin*3 + box_wide*2);
 
+local shift_hidden=context_tall;
+
 function ERP:HUDPaint()
 	hook.Call("PrePaintMainHUD");
 
 	local localplayer = LocalPlayer();
-	if (not localplayer:IsLoaded()) or hook.Call("ShouldDrawLocalPlayer()") then
+	if not localplayer.character or hook.Call("ShouldDrawLocalPlayer") or not localplayer:Alive() then
+		shift_hidden=context_tall;
 		return;
 	end
 
@@ -93,8 +96,10 @@ function ERP:HUDPaint()
 	render.PushFilterMin(TEXFILTER.ANISOTROPIC);
 
 	-- SET THE POSITION OF THE HUD
+	shift_hidden=Lerp(FrameTime()*animationSpeed,shift_hidden,0);
+
 	mat = Matrix();
-	mat:Translate( Vector( 0, screen_height - context_tall) );
+	mat:Translate( Vector( 0, screen_height - context_tall + shift_hidden ) );
 
 	cam.PushModelMatrix( mat )
 
