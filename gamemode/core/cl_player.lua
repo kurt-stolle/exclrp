@@ -7,7 +7,7 @@ function ERP:HUDShouldDraw(name)
 end
 
 surface.CreateFont ("ERP.HudNormal", {
-	size = 18,
+	size = 16,
 	weight = 400,
 	antialias = true,
 	shadow = true,
@@ -29,14 +29,6 @@ local function convertMoneyString()
 	
 	return str;
 end
-local function getJobString()
-	local str = "Unemployed";
-	if LocalPlayer():GetJob() and type(LocalPlayer():GetJob()) == "table" then
-		str = LocalPlayer():GetJob().name;
-	end
-	
-	return str;
-end
 
 local smoothHealth=0;
 local smoothEnergy=0;
@@ -48,13 +40,13 @@ local color_background=ES.Color["#1E1E1E"]
 local color_health=ES.Color.Red;
 local color_energy=ES.Color.Amber;
 
-local box_wide=220;
-local box_tall=26;
+local box_wide=200;
+local box_tall=24;
 
 local mat_money=Material( "icon16/money.png" );
 local mat_name=Material( "icon16/user_suit.png" );
 
-local box_margin=16; -- 16px between boxes
+local box_margin=12; -- px between boxes
 local icon_margin=(box_tall/2)-8;
 local function drawHUDBox(x,y,icon,text)
 	draw.RoundedBox(2,x-1,y-1,box_wide+2,box_tall+3,ES.Color.Black);
