@@ -6,58 +6,13 @@ function ERP:HUDShouldDraw(name)
 	return true;
 end
 
-surface.CreateFont ("HUDFONT1", {
-	size = 15,
-	weight = 500,
+surface.CreateFont ("ERP.HudNormal", {
+	size = 18,
+	weight = 400,
 	antialias = true,
 	shadow = true,
-	font = "DejaVu Sans"})
+	font = "Roboto"})
 
-COLOR_BLACK = COLOR_BLACK or Color(0,0,0,255);
-
-local fov = 0;
-local thirdperson = true;
-local newpos
-local tracedata = {}
-local ignoreent
-local distance = 0;
-local camPos = Vector(0, 0, 0)
-local camAng = Angle(0, 0, 0)
-
-local bulletsFrom = Vector(ScrW()-80,ScrH()-70,0);
-local matBullet = Material("exclrp/bulletHudParti.png");
-local bullets= {}
-function ERP:CreateHUDBullet()
-	table.insert(bullets,{
-		gravitySpeed = math.random(2,3),
-		predictUp = math.random(100,250),
-		predictSide = math.random(50,150),
-		spinAdd = math.random(2,20),
-		spin = math.random(0,180),
-		pos = bulletsFrom,
-	});
-end
-hook.Add("Think","ExclThinkHUDBullets",function()
-	for k,v in pairs(bullets)do
-			if (bulletsFrom.x - v.predictSide + 5 > v.pos.x ) then
-				v.pos = Vector(v.pos.x-v.gravitySpeed,v.pos.y+v.gravitySpeed,0);
-				v.spin = ((v.spin + v.spinAdd) % 360);
-			else
-				v.pos = Vector(v.pos.x-v.gravitySpeed,Lerp(0.05,v.pos.y,bulletsFrom.y-v.predictUp),0);
-				v.spin = ((v.spin + v.spinAdd) % 360);
-			end
-			if v.pos.y > ScrH()+10 then
-				v=nil;k=nil;
-			end
-	end
-end);
-hook.Add("HUDPaint","ExclDrawHUDBullets",function()
-	for k,v in pairs(bullets)do
-		surface.SetDrawColor(255,255,255,255);
-		surface.SetMaterial(matBullet);
-		surface.DrawTexturedRectRotated(v.pos.x,v.pos.y,16,16,v.spin);
-	end
-end);
 
 local function convertMoneyString()
 	local str=",-"
@@ -83,6 +38,44 @@ local function getJobString()
 	return str;
 end
 
+local smoothHealth=0;
+local smoothEnergy=0;
+
+local animationSpeed=3;
+
+local color_background=ES.Color["#1E1E1E"]
+
+local color_health=ES.Color.Red;
+local color_energy=ES.Color.Amber;
+
+local box_wide=220;
+local box_tall=26;
+
+local mat_money=Material( "icon16/money.png" );
+local mat_name=Material( "icon16/user_suit.png" );
+
+local box_margin=16; -- 16px between boxes
+local icon_margin=(box_tall/2)-8;
+local function drawHUDBox(x,y,icon,text)
+	draw.RoundedBox(2,x-1,y-1,box_wide+2,box_tall+3,ES.Color.Black);
+	draw.RoundedBox(2,x,y,box_wide,box_tall,color_background);
+
+	if icon then
+		surface.SetDrawColor(ES.Color.White);
+		surface.SetMaterial(icon);
+		surface.DrawTexturedRect(x+icon_margin,y+icon_margin,16,16);
+	end
+
+	if text then
+		draw.SimpleText(text,"ERP.HudNormal",x+(icon_margin*2)+16,y+box_tall/2,ES.Color.White,0,1);
+	end
+end
+
+local screen_width,screen_height,mat;
+
+local context_tall = (box_margin*3 + box_tall*2);
+local context_wide = (box_margin*3 + box_wide*2);
+
 function ERP:HUDPaint()
 	hook.Call("PrePaintMainHUD");
 
@@ -91,98 +84,58 @@ function ERP:HUDPaint()
 		return;
 	end
 
---	local salary = localplayer:GetJob().pay or 0
---	local drawSalary = convertMoneyString(salary)
-	local Health = 0
-	draw.RoundedBox(4, 16, ScrH() - 90, 370, 80, Color(0,0,0,0))
-	draw.RoundedBox(4, 220, ScrH() - 60, 165, 24, Color(0,0,0,200))
-	draw.DrawText(convertMoneyString(), "HUDFONT1", 303, ScrH() - 56, Color(255,255,255,255), TEXT_ALIGN_CENTER)	
+	-- SAVE THESE
+	screen_width	= ScrW();
+	screen_height	= ScrH();
 
-	draw.RoundedBox(4, 16, ScrH() - 85, 202, 24, Color(0,0,0,200))
-	draw.DrawText(LocalPlayer():Nick(), "HUDFONT1", 118, ScrH() - 80, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+	-- ENABLE AA
+	render.PushFilterMag(TEXFILTER.ANISOTROPIC);
+	render.PushFilterMin(TEXFILTER.ANISOTROPIC);
 
-	draw.RoundedBox(4, 220, ScrH() - 85, 165, 24, Color(0,0,0,200))
-	draw.DrawText(getJobString(), "HUDFONT1", 303, ScrH() - 80, Color(255,255,255,255), TEXT_ALIGN_CENTER)
-		
-	draw.RoundedBox(4, 220, ScrH() - 35, 165, 24, Color(0,0,0,200))
---	draw.DrawText(drawSalary, "HUDFONT1", 303, ScrH() - 32.5, Color(255,255,255,255), TEXT_ALIGN_CENTER)
-	
-	draw.RoundedBox(4, 16, ScrH() - 60, 202, 24, Color(0,0,0,200))
-	local DrawHealth = math.Min(localplayer:Health() / 100, 1)
-	if localplayer:Health() != 0 then
-		draw.RoundedBox(4, 18, ScrH() - 58, 198 * DrawHealth, 20, Color(255,0,0,100))
+	-- SET THE POSITION OF THE HUD
+	mat = Matrix();
+	mat:Translate( Vector( 0, screen_height - context_tall) );
+
+	cam.PushModelMatrix( mat )
+
+	-- WALLET
+	drawHUDBox(box_margin*2+box_wide,box_margin,mat_money,convertMoneyString());
+
+	-- CHARACTER NAME
+	drawHUDBox(box_margin*2+box_wide,box_margin*2+box_tall,mat_name,LocalPlayer().character:GetFullName());
+
+	-- HEALTH
+	smoothHealth = Lerp(FrameTime() * animationSpeed, smoothHealth, localplayer:Health());
+
+	drawHUDBox(box_margin,box_margin,nil,"Health");
+	if smoothHealth >= 1 then
+		draw.RoundedBox(2, box_margin+1, box_margin+1, (box_wide-2) * smoothHealth/100, box_tall-2, color_health)
 	end
 
-	-- Hunger 
-	local EnergyValue = math.ceil( LocalPlayer():ESGetNetworkedVariable("energy",100) )
-	local DrawEnergy = math.Min(EnergyValue / 100, 1)
-	draw.RoundedBox(4, 16, ScrH() - 35, 202, 24, Color(0,0,0,200))
-	if EnergyValue > 0 then 
-		draw.RoundedBox(4, 18, ScrH() - 33, 198 * DrawEnergy, 20, Color(0,0,250,150))
+	-- ENERGY
+	smoothEnergy = Lerp(FrameTime() * animationSpeed,smoothEnergy,math.ceil( localplayer:ESGetNetworkedVariable("energy",100) ));
+
+	drawHUDBox(box_margin,box_margin*2+box_tall,nil,"Energy");
+	if smoothEnergy >= 1 then 
+		draw.RoundedBox(2, box_margin+1, (box_margin*2+box_tall)+1, (box_wide-2) * smoothEnergy/100, box_tall-2, color_energy)
 	end
 
-	-- Materials
-	local jobMat  = Material( "icon16/user.png" )
-	local walletMat = Material( "icon16/money.png" )
-	local salaryMat = Material( "icon16/coins_add.png" )
-	local healthMat = Material( "icon16/heart.png")
-	local energyMat = Material( "icon16/lightning.png")
+	-- RESET RENDER POSITION;
+	cam.PopModelMatrix();
 
-	-- Job
-	surface.SetDrawColor(255,255,255)
-	surface.SetMaterial(jobMat)
-	surface.DrawTexturedRect(245, ScrH() - 82, 16, 16)
-
-	-- Wallet + Salary
-	surface.SetDrawColor(255,255,255)
-	surface.SetMaterial(walletMat)
-	surface.DrawTexturedRect(245, ScrH() - 56, 16, 16)
-	surface.SetDrawColor(255,255,255)
-	surface.SetMaterial(salaryMat)
-	surface.DrawTexturedRect(245, ScrH() - 32, 16, 16)
-
-	-- Health Bar
-	surface.SetDrawColor(255,255,255)
-	surface.SetMaterial(healthMat)
-	surface.DrawTexturedRect(110, ScrH() - 56, 16, 16)
-
-	-- Energy
-	surface.SetDrawColor(255,255,255)
-	surface.SetMaterial(energyMat)
-	surface.DrawTexturedRect(110, ScrH() - 32, 16, 16)
+	-- DISABLE AA
+	render.PopFilterMag();
+	render.PopFilterMin();
 end
 
-	-- for debugging
-	--[[draw.SimpleTextOutlined("Energy "..tostring(math.Round(LocalPlayer():ESGetNetworkedVariable("energy",100))),"ESDefaultBold",ScrW()/2,ScrH()*.8,ES.Color.Red,1,1,1,ES.Color.Black);
-
-	surface.SetDrawColor(0,0,0,100);
-	surface.SetMaterial(Material("exclrp/gradient.png"));
-	surface.DrawTexturedRectRotated(ScrW()/2,40,ScrW(),80,0);
-	surface.DrawTexturedRectRotated(ScrW()/2,ScrH()-40,ScrW(),80,180);
-	surface.DrawTexturedRectRotated(40,ScrH()/2,ScrH(),80,90);
-	surface.DrawTexturedRectRotated(ScrW()-40,ScrH()/2,ScrH(),80,270);
-	
-	surface.SetDrawColor(255,255,255,255);
-	surface.SetMaterial(Material("exclrp/cashbar.png"));
-	surface.DrawTexturedRect(10,ScrH()-150,256,64);
-	draw.SimpleText(convertMoneyString(),"ES.MainMenu.MainElementInfoBnnsSmall",65,ScrH()-150+32,Color(255,255,255),0,1);
-	
-	surface.SetDrawColor(255,255,255,255);
-	surface.SetMaterial(Material("exclrp/jobbar.png"));
-	surface.DrawTexturedRect(30,ScrH()-80,256,64);
-	draw.SimpleText(getJobString(),"ES.MainMenu.MainElementInfoBnnsSmall",95,ScrH()-80+32,Color(255,255,255),0,1);
-	
-	local aw = localplayer:GetActiveWeapon();
-	if( IsValid(aw) and aw.Primary and aw.Primary.Ammo and aw.Primary.Ammo != "none" )then
-		surface.SetDrawColor(255,255,255,255);
-		surface.SetMaterial(Material("exclrp/ammobar.png"));
-		surface.DrawTexturedRect(ScrW()-256-30,ScrH()-80,256,64);
-		surface.SetFont("DermaDefaultBold");
-		draw.SimpleText(aw:Clip1(),"TargetID",ScrW()-95-surface.GetTextSize("/ "..(localplayer:GetAmmoCount(aw.Primary.Ammo) or 0)),ScrH()-80+32,Color(255,255,255),2,1);
-		draw.SimpleText("/ "..(localplayer:GetAmmoCount(aw.Primary.Ammo) or 0),"DermaDefaultBold",ScrW()-95,ScrH()-80+36,Color(255,255,255),2,1);--]]
---	end
---end
-
+local fov = 0;
+local thirdperson = true;
+local newpos
+local tracedata = {}
+local ignoreent
+local distance = 0;
+local camPos = Vector(0, 0, 0)
+local camAng = Angle(0, 0, 0)
 hook.Add("ShouldDrawLocalPlayer","ThirdPersonDrawLocalPlayer", function()
 	if( thirdperson ) and distance > 2 then
 		return true
