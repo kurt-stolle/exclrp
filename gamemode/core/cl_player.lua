@@ -112,14 +112,13 @@ function ERP:HUDPaint()
 	if localplayer:Health() != 0 then
 		draw.RoundedBox(4, 18, ScrH() - 58, 198 * DrawHealth, 20, Color(255,0,0,100))
 	end
-	
 
 	-- Hunger 
 	local EnergyValue = math.ceil( LocalPlayer():ESGetNetworkedVariable("energy",100) )
 	local DrawEnergy = math.Min(EnergyValue / 100, 1)
 	draw.RoundedBox(4, 16, ScrH() - 35, 202, 24, Color(0,0,0,200))
 	if EnergyValue > 0 then 
-		draw.RoundedBox(4, 18, ScrH() - 33, 198 * DrawEnergy, 20, Color(0,250,0,100))
+		draw.RoundedBox(4, 18, ScrH() - 33, 198 * DrawEnergy, 20, Color(0,0,250,150))
 	end
 
 	-- Materials
@@ -127,7 +126,7 @@ function ERP:HUDPaint()
 	local walletMat = Material( "icon16/money.png" )
 	local salaryMat = Material( "icon16/coins_add.png" )
 	local healthMat = Material( "icon16/heart.png")
-	local energyMat = Material( "icon16/cup.png")
+	local energyMat = Material( "icon16/lightning.png")
 
 	-- Job
 	surface.SetDrawColor(255,255,255)
@@ -147,7 +146,7 @@ function ERP:HUDPaint()
 	surface.SetMaterial(healthMat)
 	surface.DrawTexturedRect(110, ScrH() - 56, 16, 16)
 
-	-- Hunger
+	-- Energy
 	surface.SetDrawColor(255,255,255)
 	surface.SetMaterial(energyMat)
 	surface.DrawTexturedRect(110, ScrH() - 32, 16, 16)
