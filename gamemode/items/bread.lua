@@ -41,7 +41,7 @@ elseif SERVER then
 		self:SetUseType(SIMPLE_USE);
 	end);
 
-	ITEM:AddHook("Use", function(ply, self)
+	ITEM:AddHook("Use", function(self,ply)
 		local energy = ply:ESGetNetworkedVariable("energy",100);
 		ply:ESSetNetworkedVariable("energy", math.Clamp(energy + 5,0,100))
 		self:Remove()

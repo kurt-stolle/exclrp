@@ -106,8 +106,10 @@ hook.Add("Think","HandleSlide",function()
 	end
 end)
 
-local randomfirst = {"Ruben","Kurt","Billy","Timmy","Peter","Steward","Stuart","Justin","Uglies","Jason","Price","Ben","Bruno","Excl","Alex","James","T-Dawg","Edward","Craig","Greg","Tom","Thomas","Niggan","Nigel","Nate","TB-Cookies","Pebbles","Chuck","Garry","Gabe","Mark","Moozle","Kay","Kaj","Kai","Werner","Harry","Charles","Charlie","Chris","Vito","Silvester","Minge","Mickey","Mick","Robin","Robert","Ardawan","Legogûy"};
-local randomlast = {"Rutten","Stolle","Jean","McCarter","Selie","Jackson","Bieber","Smellyfarts","Tummyrub","Ducktown","McMac","Raider","Smits","van der sloot","Laka","Gruggles","Firing","Obeseitan","Meowingtons","irritantamerikaan","crunchy","Mooty","Saladim","Saladem","Bergsla","van Casteren","Newman","Newell","DeJeanar","Nescafe","Bajen","Sousterrain","Eaudetoilette","tomatensiroop","Spaghetti","Carbiniri","Calsonez","Stalone"};
+-- Random first names.
+local randomfirst = {"Ruben","Kurt","Billy","Timmy","Peter","Steward","Stuart","Justin","Uglies","Jason","Price","Ben","Bruno","Alex","James","T-Dawg","Edward","Craig","Greg","Tom","Thomas","Niggan","Nigel","Nate","DJ","Pebbles","Chuck","Garry","Gabe","Mark","Moozle","Kaj","Harry","Charles","Charlie","Chris","Vito","Silvester","Minge","Mickey","Mick","Robin","Robert","Ardawan"};
+-- These should be fewer last names than first names.
+local randomlast = {"Rutten","Stolle","Jean","McCarter","Selie","Jackson","Spaghetti","Carbiniri","Calsonez","Stalone"};
 
 local errorCreateTooMuch;
 

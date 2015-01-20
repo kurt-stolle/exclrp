@@ -25,12 +25,12 @@ if CLIENT then
 
 	-- Open a menu for cooking once this message is received on the client.
 	local frame;
-	net.Receive("ES.Stove.OpenCooking",function()
+	net.Receive("ERPStoveOpenCooking",function()
 		if IsValid(frame) then
 			frame:Remove()
 		end
 
-		frame=vgui.Create("ESFrame");
+		frame=vgui.Create("esFrame");
 		frame:SetTitle("Cooking");
 		frame:SetSize(400,200);
 		frame:Center();
@@ -46,10 +46,12 @@ if CLIENT then
 		end
 
 		frame:MakePopup();
+
+		ES.DebugPrint("Opened cooking menu.");
 	end);
 
 elseif SERVER then
-	util.AddNetworkString("ERP.Stove.OpenCooking");
+	util.AddNetworkString("ERPStoveOpenCooking");
 
 	-- Set use type to simple, meaning no continuous use, but only once per +use call.
 	ITEM:AddHook("Initialize",function(self)
@@ -59,8 +61,10 @@ elseif SERVER then
 	-- Send a message to the client that uses the entity, to open a cooking menu.
 	ITEM:AddHook("Use",function(self,ply)
 		if IsValid(ply) and ply:IsPlayer() and ply.character then
-			net.Start("ERP.Stove.OpenCooking");
+			net.Start("ERPStoveOpenCooking");
 			net.Send(ply);
+
+			ES.DebugPrint(ply:Nick().. " started cooking.");
 		else
 			ES.DebugPrint("Stove use request received. Not valid.");
 		end

@@ -20,13 +20,22 @@ if CLIENT then
 	end);
 elseif SERVER then
 	ITEM:AddHook("Initialize",function(self)
-		timer.Create("exclTimeMoney"..self:EntIndex(),230,0,function(e)
-			if not e or not e:IsValid() then return; end
-			
-	end,self)
+		local timerTitle="ERP.Timer.MoneyPrinter."..tostring(self:EntIndex());
+		timer.Create(timerTitle,230,0,function()
+			if not IsValid(self) then
+				timer.Remove(timerTitle);
+			end
+		end);
+
+		self:SetUseType(SIMPLE_USE);
 	end);
 	ITEM:AddHook("OnRemove",function(self)
 		timer.Remove("exclTimeMoney"..self:EntIndex());
+	end);
+	ITEM:AddHook("Use",function(self,ply)
+		if not IsValid(ply) or not ply:IsPlayer() or not ply.character then return end
+
+		ES.DebugPrint("Clearing money printer of "..ply:Nick());	
 	end);
 end
 ITEM();
