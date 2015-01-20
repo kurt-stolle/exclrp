@@ -46,7 +46,7 @@ local color_background=ES.Color["#1E1E1E"]
 local color_health=ES.Color.Red;
 local color_energy=ES.Color.Amber;
 
-local box_wide=200;
+local box_wide=180;
 local box_tall=24;
 
 local mat_money=Material( "exclrp/hud/money.png" );
@@ -65,7 +65,7 @@ local function drawHUDBox(x,y,icon,text,color,inner_mul)
 
 	if color and (not inner_mul or inner_mul > 0) then
 		draw.RoundedBox(2,x+1,y+1,(box_wide-2) * (inner_mul or 1), box_tall-2,color);
-		draw.RoundedBox(2,x+1,y+1+(box_tall-2)/2,(box_wide-2) * (inner_mul or 1), (box_tall-2)/2,ES.Color["#00000033"]);
+		draw.RoundedBox(2,x+1,y+1+(box_tall-2)/2,(box_wide-2) * (inner_mul or 1), (box_tall-2)/2,ES.Color["#0000001F"]);
 	end
 
 	render.PopFilterMag();
