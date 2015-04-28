@@ -7,14 +7,14 @@ function ERP:HUDShouldDraw(name)
 end
 
 surface.CreateFont ("ERP.HudNormal", {
-	size = 16,
-	weight = 700,
+	size = 18,
+	weight = 400,
 	antialias = true,
 	font = "Roboto"
 })
 surface.CreateFont ("ERP.HudNormal.Shadow", {
-	size = 16,
-	weight = 700,
+	size = 18,
+	weight = 400,
 	antialias = true,
 	font = "Roboto",
 	blursize=2
@@ -29,10 +29,10 @@ local function convertMoneyString()
 			str = "."..str;
 		end
 		str=array[i]..str;
-		
+
 		count = (count+1)%3;
 	end
-	
+
 	return str;
 end
 
@@ -49,10 +49,10 @@ local color_energy=ES.Color.Amber;
 local box_wide=180;
 local box_tall=24;
 
-local mat_money=Material( "exclrp/hud/money.png" );
-local mat_name=Material( "exclrp/hud/character.png" );
-local mat_health=Material( "exclrp/hud/health.png" );
-local mat_energy=Material( "exclrp/hud/energy.png" );
+local mat_money=Material( "icon16/money.png" );
+local mat_name=Material( "icon16/user.png" );
+local mat_health=Material( "icon16/heart.png" );
+local mat_energy=Material( "icon16/lightning.png" );
 
 local box_margin=12; -- px between boxes
 local icon_margin=(box_tall/2)-8;
@@ -60,12 +60,11 @@ local function drawHUDBox(x,y,icon,text,color,inner_mul)
 	render.PushFilterMag(TEXFILTER.ANISOTROPIC);
 	render.PushFilterMin(TEXFILTER.ANISOTROPIC);
 
-	draw.RoundedBox(2,x-1,y-1,box_wide+2,box_tall+3,ES.Color.Black);
-	draw.RoundedBox(2,x,y,box_wide,box_tall,color_background);
+	draw.RoundedBox(2,x,y,box_wide,box_tall,ES.Color.Black);
+	draw.RoundedBox(2,x+1,y+1,box_wide-2,box_tall-2,color_background);
 
 	if color and (not inner_mul or inner_mul > 0) then
 		draw.RoundedBox(2,x+1,y+1,(box_wide-2) * (inner_mul or 1), box_tall-2,color);
-		draw.RoundedBox(2,x+1,y+1+(box_tall-2)/2,(box_wide-2) * (inner_mul or 1), (box_tall-2)/2,ES.Color["#0000001F"]);
 	end
 
 	render.PopFilterMag();
@@ -78,8 +77,9 @@ local function drawHUDBox(x,y,icon,text,color,inner_mul)
 	end
 
 	if text then
-		draw.SimpleText(text,"ERP.HudNormal.Shadow",x+(icon_margin*3)+16,y+box_tall/2,ES.Color["#000000EE"],0,1);
-		draw.SimpleText(text,"ERP.HudNormal",x+(icon_margin*3)+16,y+box_tall/2,ES.Color.White,0,1);
+		draw.SimpleText(text,"ERP.HudNormal.Shadow",x+box_tall,y+box_tall/2,ES.Color.Black,0,1);
+		draw.SimpleText(text,"ERP.HudNormal",x+box_tall + 1,y+box_tall/2 + 1,ES.Color.Black,0,1);
+		draw.SimpleText(text,"ERP.HudNormal",x+box_tall,y+box_tall/2,ES.Color.White,0,1);
 	end
 
 end
@@ -146,14 +146,14 @@ hook.Add("ShouldDrawLocalPlayer","ThirdPersonDrawLocalPlayer", function()
 	return false
 end)
 hook.Add("PlayerBindPress","ThirdpersonScroll",function(ply, bind, pressed)
-	if not (ply and ply:IsValid() and ply:KeyDown(IN_ATTACK) and (ply and ply:IsValid() and ply:GetActiveWeapon() and ply:GetActiveWeapon():IsValid() and ply:GetActiveWeapon().GetClass and ply:GetActiveWeapon():GetClass() == "weapon_physgun")) then 
-		if string.find(bind, "invnext") then 
+	if not (ply and ply:IsValid() and ply:KeyDown(IN_ATTACK) and (ply and ply:IsValid() and ply:GetActiveWeapon() and ply:GetActiveWeapon():IsValid() and ply:GetActiveWeapon().GetClass and ply:GetActiveWeapon():GetClass() == "weapon_physgun")) then
+		if string.find(bind, "invnext") then
 			distance = distance + 2;
 			if distance > 90 then
 				distance = 90;
 			end
 			return true;
-		elseif string.find(bind, "invprev") then 
+		elseif string.find(bind, "invprev") then
 			distance = math.abs(distance - 2);
 			return true;
 		end
@@ -171,12 +171,12 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 
 	if( thirdperson ) and distance > 2 then
 		ignoreent = ply
-					
+
 		if(ply:IsAiming()) then--Over the shoulder view.
 			tracedata.start = pos
 			tracedata.endpos = pos - ( angles:Forward() * distance ) + ( angles:Right()* ((distance/90)*35) )
 			tracedata.filter = ignoreent
-			trace = util.TraceLine(tracedata)  
+			trace = util.TraceLine(tracedata)
 	        pos = newpos
 			newpos = LerpVector( 0.3, pos, trace.HitPos + trace.HitNormal*2 )
 			angles = newangles
@@ -184,20 +184,20 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 
 			camPos = pos
 			camAng = angles;
-			
+
 			pos=newpos;
 		else
 			tracedata.start = pos
 			tracedata.endpos = pos - ( angles:Forward() * distance * 2 ) + ( angles:Up()* ((distance/60)*20) )
 			tracedata.filter = ignoreent
-			
+
 	    	trace = util.TraceLine(tracedata)
 	        pos = newpos
 			newpos = LerpVector( 0.3, pos, trace.HitPos + trace.HitNormal*2 )
 
 			camPos = pos
 			camAng = angles
-			
+
 
 			pos=newpos;
 		end
@@ -234,7 +234,7 @@ local doors = {
 function ERP:OnContextMenuOpen()
 	local e= LocalPlayer():GetEyeTrace().Entity
 	if not IsValid(e) or not LocalPlayer():IsLoaded() or LocalPlayer():GetEyeTrace().HitPos:Distance(LocalPlayer():EyePos()) > 100 then return false end
-	
+
 	if table.HasValue(doors,e:GetClass()) and availableProperty[e:EntIndex()] then
 		if !ERP.OwnedProperty[availableProperty[e:EntIndex()]] then
 			ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
@@ -252,7 +252,7 @@ function ERP:OnContextMenuOpen()
 			end}
 			})
 		else
-		
+
 		end
 	end
 

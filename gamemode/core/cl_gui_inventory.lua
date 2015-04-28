@@ -40,52 +40,48 @@ usermessage.Hook("EOINVM",function()
 		menu:Remove();
 		return;
 	end
-	
-	
-	menu = ERP:CreateExclFrame("Items & Inventory",0,0,12*52 + 20 + 10,620,true);
+
+
+	menu = ERP:CreateExclFrame("Inventory",0,0,12*52 + 20 + 10,620,true);
 	menu:Center();
 	menu:MakePopup();
-	
-	local tabs = vgui.Create("esTabPanel",menu);
-	tabs:SetPos(5,35);
-	tabs:SetSize(12*52 + 20,menu:GetTall()-40);
-	
-	//INVENTORY
-	local pnl =  tabs:AddTab("Inventory","icon16/application_view_tile.png")
-	
-	--GRID
-	local grid = vgui.Create("exclInventoryGrid",pnl);
-	grid:SetGridSize(12,8);
-	
-	--INFO
-	local info = vgui.Create("exclPanel",pnl);
-	info:SetPos(10,10);
-	info:SetSize(grid:GetWide(),pnl:GetTall()-grid:GetTall()-10-10-10)
 
-	grid:SetPos(10,info.y + info:GetTall() + 10);
+	--INFO
+	local info = vgui.Create("esPanel",menu);
+	info:Dock(TOP)
+	info:SetTall(128)
+	info:DockMargin(8,8,8,0)
+
+	local spawnicon = vgui.Create("Spawnicon",info)
+	spawnicon:Dock(LEFT)
+	spawnicon:SetWide(128)
+	spawnicon:SetModel("models/error.mdl")
 
 	local l = Label("Placeholder",info);
-	l:SetPos(info:GetTall()+10,5);
+	l:SetPos(spawnicon:GetWide()+16,8);
 	l:SetFont("ERP.InventoryInfoBig");
 	l:SetColor(ES.Color.White);
 	l:SizeToContents();
-	
-	local btn_tall = (info:GetTall()-5*4)/3
-	local use = vgui.Create("esButton",info);
-	use:SetPos(info:GetWide()-105,5);
-	use:SetSize(100,btn_tall);
-	use:SetText("Use");
-	local edit = vgui.Create("esButton",info);
-	edit:SetPos(info:GetWide()-105,btn_tall+10);
-	edit:SetSize(100,btn_tall);
-	edit:SetText("Edit");
-	local destroy = vgui.Create("esButton",info);
-	destroy:SetPos(info:GetWide()-105,(btn_tall*2)+15);
-	destroy:SetSize(100,btn_tall);
-	destroy:SetText("Destroy");
-	destroy.Red = true;
-	
-	//STORE
+
+	local tabs = vgui.Create("esTabPanel",menu);
+	tabs:Dock(FILL)
+	tabs:DockMargin(8,8,8,8)
+
+	local pnl =  tabs:AddTab("Inventory","icon16/application_view_tile.png")
+
+		local grid = vgui.Create("exclInventoryGrid",pnl);
+		grid:SetGridSize(12,8);
+		grid:SetPos(10,10);
+
 	tabs:AddTab("Store","icon16/add.png")
+
+		local grid = vgui.Create("exclInventoryGrid",pnl);
+		grid:SetGridSize(12,8);
+		grid:SetPos(10,10);
+
 	tabs:AddTab("Class wholesale","icon16/brick_add.png");
+
+		local grid = vgui.Create("exclInventoryGrid",pnl);
+		grid:SetGridSize(12,8);
+		grid:SetPos(10,10);
 end);

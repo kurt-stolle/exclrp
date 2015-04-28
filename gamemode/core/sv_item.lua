@@ -18,11 +18,11 @@ function ITEM:SpawnInWorld(pos,ang)
 		self._hooks.Initialize(e);
 	end
 	e:Activate();
-	
+
 end
 
 concommand.Add("excl_admin_spawnitem",function(p,c,a)
-	if not IsValid(p) or not p:IsSuperAdmin() then 
+	if not IsValid(p) or not p:IsSuperAdmin() then
 		p:ChatPrint("This command is for Super Administrators only.");
 		return
 	end
@@ -33,4 +33,11 @@ concommand.Add("excl_admin_spawnitem",function(p,c,a)
 	else
 		ES.DebugPrint("UNKNOWN ITEM: "..name);
 	end
+end)
+
+util.AddNetworkString("ERP.InteractItem")
+net.Receive("ERP.InteractItem",function(len,ply)
+		if not IsValid(ply) then return end
+
+		ES.DebugPrint("TODO: Interaction")
 end)

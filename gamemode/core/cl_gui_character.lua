@@ -1,15 +1,15 @@
 -- ingamemenu
- 
+
  local WHITE = Color(255,255,255);
  local BLACK = Color(0,0,0);
- 
+
 surface.CreateFont("JobFont",{
-	font = "Trebuchet MS";
-	size = 32;
+	font = "Roboto";
+	size = 48;
 })
 
-surface.CreateFont( "HUDNumber1", { 
- 	font = "Arial", 
+surface.CreateFont( "HUDNumber1", {
+ 	font = "Arial",
  	size = 22,
  	weight = 350
  })
@@ -21,12 +21,6 @@ surface.CreateFont( "TargetID", {
 	antialias = true,
 })
 
-local PNL = {};
-function PNL:Paint()
-	draw.RoundedBox(4,0,0,self:GetWide(),self:GetTall(),BLACK);
-	draw.SimpleText("+","HUDNumber1",self:GetWide()/2,self:GetTall()/2-2,ES.Color["#CCC"],1,1);
-end
-vgui.Register("exclInGameMenuJobUpgrade", PNL, "Panel" );
 local PNL = {};
 function PNL:Init()
 	self.Job = ERP:GetJobs()[1];
@@ -52,19 +46,16 @@ end
 function PNL:Paint()
 	draw.RoundedBoxEx(4,0,0,self:GetWide()*0.4,self:GetTall(),self.Job.color,true,false,true,false );
 	draw.RoundedBoxEx(2,2,2,self:GetWide()*0.4-4,self:GetTall()-4,Color(self.Job.color.r-self.Colorcenter,self.Job.color.g-self.Colorcenter,self.Job.color.b-self.Colorcenter),true,false,true,false  );
-	
+
 	draw.RoundedBoxEx(2,self:GetWide()*0.4,0,self:GetWide()*0.6,self:GetTall(),ES.Color["#DDD"],false,true,false,true );
-	
-	draw.RoundedBox(2,self:GetWide()-35-25,10,40,25,ES.Color["#1E1E1E"]);
-	draw.SimpleText("1","TargetID",self:GetWide()-35-(25/2),9+(25/2),ES.Color["#CCC"],1,1);
-	
+
 	//money object
 	draw.RoundedBox(2,self:GetWide()-35-25,self:GetTall()-35,50,25,ES.Color["#1E1E1E"]);
 	draw.SimpleText((self.Job.pay or "error")..",-","TargetID",self:GetWide()-15,self:GetTall()-(11+(25/2)),ES.Color["#CCC"],2,1);
 	draw.SimpleText("$","TargetID",self:GetWide()-55,self:GetTall()-(11+(25/2)),ES.Color["#CCC"],0,1);
 	//name
 	draw.SimpleText(self.Job.name,"JobFont",10,self:GetTall()/2-2,WHITE,0,1);
-	
+
 	//description
 	draw.DrawText(ES.FormatLine(self.Job.description,"ESDefaultBold",300),"ESDefaultBold",self:GetWide()-80,10,color_black,2);
 end
@@ -77,25 +68,30 @@ usermessage.Hook("EOIERP",function()
 		return;
 	end
 
-	
-	menu = ERP:CreateExclFrame("Control Menu",0,0,700,600,true);
+
+	menu = ERP:CreateExclFrame("Character",0,0,700,600,true);
 	menu:Center();
 	menu:MakePopup()
-	
+
 	local tabs = vgui.Create("esTabPanel",menu);
-	tabs:SetPos(5,35);
-	tabs:SetSize(menu:GetWide()-10,menu:GetTall()-40);
-	tabs:AddTab("Help pages","icon16/star.png")
-	tabs:AddTab("Character","icon16/user.png")
+	tabs:Dock(FILL)
+  tabs:DockMargin(8,8,8,8)
+	local pnl = tabs:AddTab("Character","icon16/user.png")
+
 	local pnl = tabs:AddTab("Jobs","icon16/world.png");
-	for k,v in pairs(ERP.Jobs)do
-		local job = vgui.Create("exclInGameMenuJob",pnl);
-		job:SetPos(10,10+(k-1)*90);
-		job:SetSize(pnl:GetWide()-20,80);
-		job.Job = v;
-		local upgrade = vgui.Create("exclInGameMenuJobUpgrade",job);
-		upgrade:SetPos(job:GetWide()-35,10)
-		upgrade:SetSize(25,25);
-	end
+
+    local _lbl=vgui.Create("esLabel",pnl)
+    _lbl:SetFont("ESDefault")
+    _lbl:SetText("Jobs in ExclRP work a little different than in roleplay gamemodes you may be used to playing.\nOnce you select a job, you are expected, though not forced, to stick to it.\nYour job will save when you log out, so when you log back in you can continue where you left off.\nIf you're not sure which job is for you, pick a job that is underpopulated. This will help you gain money faster, as \nthe goods or services you can offer will not be as common as the goods or services other jobs offer.")
+    _lbl:Dock(TOP)
+    _lbl:SizeToContents()
+    _lbl:DockMargin(10,10,10,0)
+    for k,v in pairs(ERP.Jobs)do
+  		local job = vgui.Create("exclInGameMenuJob",pnl);
+  		job:Dock(TOP)
+      job:DockMargin(10,10,10,0)
+      job:SetTall(64)
+  		job.Job = v;
+  	end
 	tabs:AddTab("Settings","icon16/wrench.png")
 end);

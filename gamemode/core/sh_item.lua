@@ -23,10 +23,11 @@ function ERP.Item()
 	obj={}
 	setmetatable(obj,ITEM);
 	ITEM.__index = ITEM;
-	
+
 	obj._name = "Undefined";
 	obj._description = "An unidentified object.";
-	obj._hooks = {}; -- entity hooks and onUse and onDrop
+	obj._hooks = {}; -- entity hooks
+	obj._interactions = {}
 	obj._model = "";
 	obj._key = 0;
 
@@ -35,9 +36,13 @@ end
 
 -- Use this hook to add ENT hooks.
 function ITEM:AddHook(n,f)
-		if type(n) != "string" or type(f) != "function" then return end
+		if type(n) ~= "string" or type(f) ~= "function" then return end
 
 	self._hooks[n] = f;
+end
+
+function ITEM:AddInteraction(n,f)
+	self._interactions[n] = f;
 end
 
 -- Use this hook to register the entity.
@@ -45,3 +50,5 @@ function ITEM:__call() -- register
 	self._key=(#ERP.Items+1);
 	ERP.Items[self._key]=self;
 end
+
+-- Utility

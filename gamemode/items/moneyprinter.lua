@@ -14,10 +14,11 @@ if CLIENT then
 			draw.SimpleTextOutlined("$"..tostring(0),"ESDefault",-1,-2,Color(200,0,0),1,1,1,Color(0,0,0));
 		cam.End3D2D()
 		cam.Start3D2D(Pos + Ang:Up() * 16.51 + Ang:Forward() * -3 + Ang:Right() * -3.5, Ang, 0.2)
-			draw.SimpleTextOutlined("STATUS","ESDefaultSmall",-1,-20,Color(255,255,255),1,1,1,Color(0,0,0));
+			draw.SimpleTextOutlined("STATUS","ESDefault-",-1,-20,Color(255,255,255),1,1,1,Color(0,0,0));
 			draw.SimpleTextOutlined("Printing","ESDefaultBold",-1,-2,Color(255,255,255),1,1,1,Color(0,0,0));
 		cam.End3D2D()
 	end);
+	ITEM:AddInteraction("Use",ERP.ItemInteractWithServer);
 elseif SERVER then
 	ITEM:AddHook("Initialize",function(self)
 		local timerTitle="ERP.Timer.MoneyPrinter."..tostring(self:EntIndex());
@@ -32,10 +33,10 @@ elseif SERVER then
 	ITEM:AddHook("OnRemove",function(self)
 		timer.Remove("exclTimeMoney"..self:EntIndex());
 	end);
-	ITEM:AddHook("Use",function(self,ply)
+	ITEM:AddInteraction("Use",function(self,ply)
 		if not IsValid(ply) or not ply:IsPlayer() or not ply.character then return end
 
-		ES.DebugPrint("Clearing money printer of "..ply:Nick());	
+		ES.DebugPrint("Clearing money printer of "..ply:Nick());
 	end);
 end
 ITEM();
