@@ -5,7 +5,7 @@ ERP.MainMenu = false;
 local color_outline=Color(255,255,255,5);
 
 surface.CreateFont("TabLarge", {
-	font = "Tahoma",
+	font = "Roboto",
 	size = 13,
 	weight = 700,
 	shadow = true,
@@ -23,7 +23,7 @@ hook.Add( "RenderScreenspaceEffects", "ERP.MM.PostProcess", function()
 		tab[ "$pp_colour_mulr" ] = 0
 		tab[ "$pp_colour_mulg" ] = 0
 		tab[ "$pp_colour_mulb" ] = 0
-	 
+
 		DrawColorModify( tab )
 	end
 end)
@@ -106,28 +106,40 @@ hook.Add("Think","HandleSlide",function()
 	end
 end)
 
--- Random first names.
-local randomfirst = {"Ruben","Kurt","Billy","Timmy","Peter","Steward","Stuart","Justin","Uglies","Jason","Price","Ben","Bruno","Alex","James","T-Dawg","Edward","Craig","Greg","Tom","Thomas","Niggan","Nigel","Nate","DJ","Pebbles","Chuck","Garry","Gabe","Mark","Moozle","Kaj","Harry","Charles","Charlie","Chris","Vito","Silvester","Minge","Mickey","Mick","Robin","Robert","Ardawan"};
--- These should be fewer last names than first names.
-local randomlast = {"Rutten","Stolle","Jean","McCarter","Selie","Jackson","Spaghetti","Carbiniri","Calsonez","Stalone"};
+local function genFirstName()
+	return table.Random{"Ruben","Kurt","Billy","Timmy","Peter","Steward","Stuart","Justin","Uglies","Jason","Price","Ben","Bruno","Alex","James","T-Dawg","Edward","Craig","Greg","Tom","Thomas","Niggan","Nigel","Nate","DJ","Pebbles","Chuck","Garry","Gabe","Mark","Moozle","Kaj","Harry","Charles","Charlie","Chris","Vito","Silvester","Minge","Mickey","Mick","Robin","Robert","Ardawan"};
+end
+
+local function genLastName()
+	local parts={"malo","zak","abo","wonk","sto","le","foo","bar","nig","ger","ten","tan","ver"}
+	local suffixes={"son","li","ssen","kor",""}
+	local syl=math.random(1,3)
+	local name="";
+	for i=1,syl,1 do
+		local rnd=math.random(1,#parts)
+		name=name..parts[rnd];
+		table.remove(parts,rnd);
+	end
+	name=name..table.Random(suffixes)
+	name=string.upper(string.Left(name,1))..string.Right(name,string.len(name)-1);
+	return name
+end
 
 local errorCreateTooMuch;
 
 net.Receive("ERP.Character.OpenMenu",function()
-	if ERP.MainMenu and ERP.MainMenu:IsValid() then
+	if IsValid(ERP.MainMenu) then
 		ERP.MainMenu:Remove();
 	end
 
 	local decoded = net.ReadTable();
-	
+
 	ERP.MainMenu = vgui.Create("exclMainMenuPanel");
 	ERP.MainMenu:SetPos(0,0);
 	ERP.MainMenu:SetSize(ScrW(),ScrH());
-	
+
 	// main items
 	local slideitems = {}
-	local first = randomfirst[math.random(1,#randomfirst)];
-	local last = randomlast[math.random(1,#randomlast)];
 	local create = vgui.Create("esButton",ERP.MainMenu);
 	create:SetPos(ERP.MainMenu:GetWide() - 160,ERP.MainMenu:GetTall()-232);
 	create:SetSize(150,30);
@@ -140,15 +152,15 @@ net.Receive("ERP.Character.OpenMenu",function()
 			return;
 		end
 		setUpSlide(false,slideitems,function()
-			first = randomfirst[math.random(1,#randomfirst)];
-			last = randomlast[math.random(1,#randomlast)];
-		
+			local first = genFirstName();
+			local last = genLastName();
+
 			local modelselected=math.random(1,#ERP.GetAllowedCharacterModels());
-		
+
 			local holder = vgui.Create("EditablePanel",ERP.MainMenu);
 			holder:SetSize(ERP.MainMenu:GetWide(),ERP.MainMenu:GetTall());
 			holder:SetPos(-ERP.MainMenu:GetWide(),0);
-			
+
 			local create = vgui.Create("esButton",holder);
 			create:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-232);
 			create:SetSize(150,30);
@@ -165,18 +177,18 @@ net.Receive("ERP.Character.OpenMenu",function()
 				net.WriteUInt(modelselected,8);
 				net.SendToServer();
 			end
-			
+
 			local dc = vgui.Create("esButton",holder);
 			dc:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-147);
 			dc:SetSize(150,30);
 			dc:SetText("Back");
-			dc.DoClick = function() 
+			dc.DoClick = function()
 				setUpSlide(false,{holder},function()
 					holder:Remove();
 					setUpSlide(true,slideitems,function() end)
 				end)
 			end
-			
+
 			local model = vgui.Create("DModelPanel",holder);
 			model:SetPos(0,ERP.MainMenu:GetTall()-120-400);
 			model:SetModel(ERP.GetAllowedCharacterModels()[modelselected]);
@@ -216,20 +228,27 @@ net.Receive("ERP.Character.OpenMenu",function()
 				model:SetModel(ERP.GetAllowedCharacterModels()[modelselected]);
 			end
 			next:SetText("Next");
-			
+
 			lName = Label("Name: "..first.." "..last ,holder);
 			lName:SetFont("ESDefaultBold");
 			lName:SetColor(Color(255,255,255,200));
 			lName:SetPos(300,holder:GetTall()-240);
 			lName:SizeToContents();
-			
-			local statedit = vgui.Create("esButton",holder);
-			statedit:SetPos(300,ERP.MainMenu:GetTall()-147);
-			statedit:SetSize(150,30);
-			statedit:SetText("Randomize Stats");
-			statedit.DoClick = function()
+
+			local regen = vgui.Create("esButton",holder);
+			regen:SetPos(300,ERP.MainMenu:GetTall()-147);
+			regen:SetSize(150,30);
+			regen:SetText("Regenerate Name");
+			regen.DoClick = function()
+				first = genFirstName();
+				last = genLastName();
+
+				if IsValid(lName) then
+					lName:SetText("Name: "..first.." "..last);
+					lName:SizeToContents();
+				end
 			end
-			
+
 			local nameedit = vgui.Create("esButton",holder);
 			nameedit:SetPos(300,ERP.MainMenu:GetTall()-190);
 			nameedit:SetSize(150,30);
@@ -267,7 +286,7 @@ net.Receive("ERP.Character.OpenMenu",function()
 
 				accept.DoClick = function(self)
 					if IsValid(firstText) and IsValid(lastText) then
-					
+
 						first = firstText:GetValue();
 						last = lastText:GetValue();
 
@@ -281,22 +300,22 @@ net.Receive("ERP.Character.OpenMenu",function()
 					end
 				end
 			end
-			
-			
+
+
 			setUpSlide(true,{holder},function() end)
 		end)
 	end
 	table.insert(slideitems,create);
-	
+
 	local settings = vgui.Create("esButton",ERP.MainMenu);
 	settings:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-190);
 	settings:SetSize(150,30);
 	settings:SetText("Settings");
 	settings.DoClick=function()
-		
+
 	end
 	table.insert(slideitems,settings);
-	
+
 	local dc = vgui.Create("esButton",ERP.MainMenu);
 	dc:SetPos(ERP.MainMenu:GetWide()-160,ERP.MainMenu:GetTall()-147);
 	dc:SetSize(150,30);
@@ -306,9 +325,9 @@ net.Receive("ERP.Character.OpenMenu",function()
 		LocalPlayer():ConCommand("disconnect;");
 	end
 	table.insert(slideitems,dc);
-	
+
 	// characters
-	
+
 	for k,v in pairs(decoded)do
 		local model = vgui.Create("DModelPanel",ERP.MainMenu);
 		model:SetPos((k-1)*200,ERP.MainMenu:GetTall()-120-400);
@@ -331,12 +350,12 @@ net.Receive("ERP.Character.OpenMenu",function()
 			end
 			table.insert(slideitems,button);
 		end)
-		model.LayoutEntity = function(self) 
+		model.LayoutEntity = function(self)
 			if IsValid(button) and button.Hover then
 				self:RunAnimation();
 			end
 		end
-		
+
 		local x,y = model:GetPos();
 		local l = Label(v.firstname.." "..v.lastname,ERP.MainMenu);
 		l:SetFont("ESDefaultBold");

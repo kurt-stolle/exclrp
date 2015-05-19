@@ -208,9 +208,9 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 	fov=fov-2+(math.sin(CurTime()*2))*.3;
 
 	local view = {origin = pos, angles = angles, fov = fov};
-	if ERP.MainMenu and ERP.MainMenu:IsValid() then
-		view.origin = Vector(-2677.004639, -645.997803, 92.479630);
-		view.angles = Angle(6.719857, -59.160347, 0.000000);
+	if IsValid(ERP.MainMenu) then
+		view.origin = ERP.Config.MainMenu.ViewOrigin;
+		view.angles = ERP.Config.MainMenu.ViewAngles;
 		view.fov = 90;
 	end
 	return view

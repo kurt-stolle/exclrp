@@ -71,7 +71,7 @@ usermessage.Hook("EOINVM",function()
 
 		local grid = vgui.Create("exclInventoryGrid",pnl);
 		grid:SetGridSize(12,8);
-		grid:SetPos(10,10);
+		grid:SetPos(0,0);
 
 	tabs:AddTab("Store","icon16/add.png")
 

@@ -1,16 +1,16 @@
 -- sv_characters.lua
 hook.Add("ESDatabaseReady","ERP.ES.CreateERPCharactersDB",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` SMALLINT(5) unsigned NOT NULL, steamid varchar(25), firstname varchar(255), lastname varchar(255), playtime int(25), job varchar(20), cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` SMALLINT(5) unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25), firstname varchar(255), lastname varchar(255), playtime int(25), job varchar(20), cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
 end)
 
 function ERP.CreateCharacter(ply,fname,lname,model)
 	if not fname or not lname or not model then return end
 
 	ES.DBQuery("SELECT id FROM erp_characters WHERE steamid = '"..ply:SteamID().."' LIMIT 4;",function(c)
-		if #c >= 4 then
+		if c and #c >= 4 then
 			return;
 		end
-		ES.DBQuery(Format("INSERT INTO erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 100 , bank = 500;", ES.DBEscape(fname), ES.DBEscape(lname), ply:SteamID(),ES.DBEscape(model)),function()
+		ES.DBQuery(Format("INSERT INTO erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 100, bank = 500;", ES.DBEscape(fname), ES.DBEscape(lname), ply:SteamID(),ES.DBEscape(model)),function()
 			ERP.OpenMainMenu(ply);
 		end)
 	end)

@@ -7,10 +7,10 @@ local doors = {
 	"func_door_rotating"
 };
 
-util.AddNetworkString( "ERPSynchProperty" )
+util.AddNetworkString( "ERPSynchProperty" );
 
 function ERP.LoadProperty()
-	ES.DebugPrint("(re)loading properties.")
+	ES.DebugPrint("(re)loading properties.");
 	ES.DBQuery("SELECT * FROM erp_property WHERE map='"..ES.DBEscape(game.GetMap()).."';",function(c)
 		if c and c[1] then
 			for k,v in pairs(c)do
@@ -33,8 +33,7 @@ function ERP.LoadProperty()
 				v:SynchProperty();
 			end
 		end
-	end)
-	ES.DBWait();
+	end):wait();
 end
 
 hook.Add("ESDatabaseReady","ERP.ES.SetupPropertySQL",function()
@@ -84,7 +83,7 @@ concommand.Add("excl_admin_addproperty",function(p,c,a)
 	end
 	if not property then
 		property = ERP:AddProperty(a[1],a[2],a[3] or nil, a[4]  or nil, a[5] or nil);
-		ES.DebugPrint("property created");
+		p:ESChatPrint("Property created "..a[1]);
 		return;
 	end
 end)
@@ -119,7 +118,7 @@ function PLAYER:GiveProperty(name)
 	end
 end
 concommand.Add("excl_buyproperty",function(p)
-	if IsValid(p) and p:IsLoaded() and IsValid(p:GetEyeTrace().Entity) and p:GetEyeTrace().Entity.property and !ERP.OwnedProperty[p:GetEyeTrace().Entity.property] and p:GetEyeTrace().HitPos:Distance(p:EyePos()) < 100 then
+	if IsValid(p) and p:IsLoaded() and IsValid(p:GetEyeTrace().Entity) and p:GetEyeTrace().Entity.property and not ERP.OwnedProperty[p:GetEyeTrace().Entity.property] and p:GetEyeTrace().HitPos:Distance(p:EyePos()) < 100 then
 		if( p.character:GetCash() - (50+(#ERP.Properties[p:GetEyeTrace().Entity.property].doors*6)) < 0 )then
 			p:ESSendNotification("generic","You do not have enough cash on you.");
 			return;
