@@ -24,3 +24,23 @@ end
 function CHARACTER:TakeBank(i)
 	self:AddBank(-i);
 end
+function CHARACTER:SetJob(job)
+	if not job then
+		return;
+	end
+
+	job=ERP.Jobs[job];
+	self.Player:SetTeam(job.team);
+
+	net.Start("ERP.Job.ChangedFX"); net.WriteEntity(self.Player); net.WriteUInt(job:GetTeam(),8); net.Broadcast();
+
+	local col = job.color;
+	col = Vector(col.a/255,col.g/255,col.b/255);
+
+	self.Player:SetPlayerColor(col);
+	self.Player:SetWeaponColor(col);
+
+	self.job=job:GetName();
+
+	ERP.SaveCharacter(self.Player,"job");
+end

@@ -1,29 +1,39 @@
-
+function ERP:PlayerInitialSpawn(p)
+	-- nothing to do here
+end
 function ERP:PlayerSpawn(p)
 	if p:IsLoaded() then
 		p:UnSpectate();
 		p:SetModel(p.character.model);
 		p:AddEffects(EF_NOSHADOW)
-		if p:GetJob() then
-			local col = p:GetJob().color;
+		if p.character.job then
+			local job=ERP.Jobs[p.character.job];
+
+			p:SetTeam(job:GetTeam())
+
+			local col = job.color;
 			col = Vector(col.a/255,col.g/255,col.b/255);
 			p:SetPlayerColor(col);
 			p:SetWeaponColor(col);
+
 		else
+			p:SetTeam(TEAM_UNASSIGNED)
+
 			local col = Vector(180/255,180/255,180/255);
 			p:SetPlayerColor(col);
 			col = Vector(0/255,180/255,255/255);
 			p:SetWeaponColor(col);
 		end
 
-		p:Give("weapon_physgun");
-		p:Give("gmod_tool");
+		p:Give("weapon_fists")
+		p:Give("erp_nothing")
+		p:SelectWeapon("erp_nothing")
 
 		p:SynchProperty()
 
 		ERP:SetPlayerSpeed( p, 150, 270 )
 	else
-		p:SetTeam( TEAM_UNASSIGNED )
+		p:SetTeam( TEAM_SPECTATOR )
 		p:StripWeapons()
 		p:Spectate( OBS_MODE_FIXED )
 		p:SetPos( ERP.Config.MainMenu.ViewOrigin )

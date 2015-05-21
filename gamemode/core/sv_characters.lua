@@ -67,16 +67,14 @@ function ERP.LoadCharacter(ply,id)
 
 			ply.character.Player = ply;
 			ply.character.inventory = ERP.DecodeInventory(ply.character.inventory);
-			if ply.character.job and ERP.Jobs[ply.character.job] then
-				ply:SetJob(ERP.Jobs[ply.character.job]:GetTeam());
-			end
 
-			ply:ESGetNetworkedVariable("firstName",ply.character.firstname);
-			ply:ESGetNetworkedVariable("lastName",ply.character.lastname);
+			ply:ESSetNetworkedVariable("firstName",ply.character.firstname);
+			ply:ESSetNetworkedVariable("lastName",ply.character.lastname);
 
 			ply.character.firstname=nil;
 			ply.character.lastname=nil;
 
+			ply:KillSilent();
 			ply:Spawn();
 
 			ERP.SyncCharacter(ply);
@@ -107,7 +105,7 @@ function ERP.SaveCharacter(ply,...)
 		v=ply.character[k];
 		if not v then continue end
 		if type(v) == "string" then
-			v="'"..v.."'";
+			v="'"..ES.DBEscape(v).."'";
 		else
 			v=tostring(v);
 		end
@@ -116,7 +114,7 @@ function ERP.SaveCharacter(ply,...)
 			query={};
 		end
 
-		table.insert(query,"`"..tostring(k).."`="..ES.DBEscape(v));
+		table.insert(query,"`"..tostring(k).."`="..v);
 	end
 
 	if not query then return end

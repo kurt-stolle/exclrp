@@ -9,3 +9,6 @@ function PLAYER:IsLoaded()
 	return (not not self.character);
 end
 
+function PLAYER:GetCharacter()
+	return self.character;
+end

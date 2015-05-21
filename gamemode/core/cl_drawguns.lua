@@ -3,30 +3,35 @@
 
 local clientModels = {}
 local function CheckWeaponTable(class)
-	if clientModels[class] then 
-		return clientModels[class] 
+	if clientModels[class] then
+		return clientModels[class]
 	end
 	local wclass = weapons.Get(class);
 	if not wclass or not wclass.WorldModel then return false end;
 	timer.Simple(0,function()
 		local wclass = weapons.Get(class);
-		if not wclass or not wclass.WorldModel then return false end;
+		if not wclass or not wclass.WorldModel or wclass.WorldModel == "" then return false end;
 
 		clientModels[class] = ClientsideModel(wclass.WorldModel,RENDERGROUP_OPAQUE);
-		clientModels[class]:SetNoDraw(true);
+
+		if IsValid(clientModels[class]) then
+
+			clientModels[class]:SetNoDraw(true);
+
+		end
 	end);
 	return false;
 end
 
 hook.Add("PostPlayerDraw","ERPDrawWeaponsOnPlayer",function(p)
 	local weps = p:GetWeapons();
-		
-	for k, v in pairs(weps)do		
+
+	for k, v in pairs(weps)do
 		local mdl = CheckWeaponTable(v:GetClass());
-		
+
 		if IsValid(mdl) and p:GetActiveWeapon() and p:GetActiveWeapon():IsValid() and p:GetActiveWeapon():GetClass() ~= v:GetClass() then
 			if string.find(mdl:GetModel(),"pist") then
-				
+
 				local boneindex = p:LookupBone("ValveBiped.Bip01_R_Thigh")
 				if boneindex then
 					local pos, ang = p:GetBonePosition(boneindex)
@@ -70,6 +75,6 @@ hook.Add("PostPlayerDraw","ERPDrawWeaponsOnPlayer",function(p)
 					mdl:DrawModel();
 				end*/
 			end
-		end	
+		end
 	end
 end)

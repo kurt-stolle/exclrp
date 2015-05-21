@@ -4,8 +4,8 @@ ES.DefineNetworkedVariable("job","UInt");
 ERP.Jobs = {}
 setmetatable(ERP.Jobs,{
 	__index=function(self,key)
-		for k,v in pairs(self) do
-			if v:GetName() == key or v:GetTeam() == key then
+		for k,v in ipairs(self) do
+			if key and string.lower(v:GetName()) == string.lower(key) or v:GetTeam() == key then
 				return v;
 			end
 		end
@@ -44,6 +44,7 @@ function ERP.Job()
 
 	return obj;
 end
+JOB.Team = JOB.GetTeam
 function JOB.__call(self)
 	self:SetTeam(#ERP.Jobs+1);
 
@@ -54,9 +55,5 @@ function JOB.__call(self)
 	return true;
 end
 
--- player meta
-local PLAYER = FindMetaTable("Player");
-function PLAYER:GetJob()
-	local job=self:ESGetNetworkedVariable("job",false);
-	return job and ERP.Jobs[job] or false;
-end
+-- setup the defaul tteam
+team.SetUp(TEAM_UNASSIGNED,"Unemployed",ES.Color["#AAA"]);

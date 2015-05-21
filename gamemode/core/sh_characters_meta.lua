@@ -11,3 +11,7 @@ end
 function CHARACTER:GetFullName()
 	return (self:GetFirstName().." "..self:GetLastName());
 end
+
+function CHARACTER:GetJob()
+	return ERP.Jobs[self.Player:Team()] or false;
+end
