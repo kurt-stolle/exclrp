@@ -73,17 +73,26 @@ vgui.Register("ERPScoreboard.PlayerRow",{
 	end,
 
 	Think = function( self )
+    local pl = self.Player
 
-		if ( !IsValid( self.Player ) ) then
+		if ( not IsValid( pl ) ) then
 			self:MakeInvalid()
 			return
 		end
 
-		if ( !self.Player:Alive() ) then
+		if ( not pl:Alive() ) then
 			self:SetZPos( 1000 )
 		else
 			self:SetZPos(0);
 		end
+
+    --self.Model:SetModel( pl:GetModel() )
+    self.Name:SetText( pl:GetCharacter() and pl:GetCharacter():GetFullName() or "NO CHARACTER" )
+    self.Name:SizeToContents();
+    self.Nick:SetText( pl:Nick() )
+    self.Nick:SizeToContents();
+    self.Ping:SetText( pl:Ping() )
+    self.Ping:SizeToContents()
 
 	end,
 	MakeInvalid = function(self)
@@ -94,7 +103,7 @@ vgui.Register("ERPScoreboard.PlayerRow",{
 
 	end,
 	Paint = function(self,w,h)
-		if ( !IsValid( self.Player ) ) then
+		if ( not IsValid( self.Player ) ) then
 			return
 		end
 

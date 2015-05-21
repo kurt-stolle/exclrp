@@ -21,16 +21,12 @@ function ERP.GetAllowedCharacterModels()
 	return allowedModels;
 end
 
--- Define networked variables.
-ES.DefineNetworkedVariable("firstName","String");
-ES.DefineNetworkedVariable("lastName","String");
-
 -- Meta table for characters
 local CHARACTER=FindMetaTable("Character");
 
 -- Meta functions
-AccessorFunc(CHARACTER,"firstName","FirstName",FORCE_STRING);
-AccessorFunc(CHARACTER,"lastName","LastName",FORCE_STRING);
+AccessorFunc(CHARACTER,"firstname","FirstName",FORCE_STRING);
+AccessorFunc(CHARACTER,"lastname","LastName",FORCE_STRING);
 AccessorFunc(CHARACTER,"cash","Cash",FORCE_NUMBER);
 AccessorFunc(CHARACTER,"bank","Bank",FORCE_NUMBER);
 AccessorFunc(CHARACTER,"id","ID",FORCE_NUMBER);

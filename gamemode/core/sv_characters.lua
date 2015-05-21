@@ -3,6 +3,27 @@ hook.Add("ESDatabaseReady","ERP.ES.CreateERPCharactersDB",function()
 	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` SMALLINT(5) unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25), firstname varchar(255), lastname varchar(255), playtime int(25), job varchar(20), cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
 end)
 
+-- the following fields of characters will be sent to ALL PLAYERS
+local PublicFields={"firstname","lastname"}
+
+hook.Add("ESPlayerReady","ERP.PlayerReady.SendCurrentCharacterState",function(ply)
+	for k,v in ipairs(player.GetAll())do
+		if v.character then
+			local public={};
+			for k,v in pairs(v.character)do
+				if table.HasValue(PublicFields,v) then
+					public[k]=v;
+				end
+			end
+			net.Start("ERP.Character.Load")
+			net.WriteEntity(v)
+			net.WriteTable(public);
+			net.Send(ply);
+		end
+	end
+end)
+
+-- create a new character
 function ERP.CreateCharacter(ply,fname,lname,model)
 	if not fname or not lname or not model then return end
 
@@ -40,17 +61,39 @@ function ERP.SyncCharacter(ply,...)
 
 	if not (...) then
 		net.Start("ERP.Character.Load")
+		net.WriteEntity(ply)
 		net.WriteTable(ply.character);
 		net.Send(ply);
+
+		local public={};
+		for k,v in pairs(ply.character)do
+			if table.HasValue(PublicFields,v) then
+				public[k]=v;
+			end
+		end
+		net.Start("ERP.Character.Load")
+		net.WriteEntity(ply)
+		net.WriteTable(public);
+		net.SendOmit(ply);
 	else
 		local syncThis={};
+		local syncOthers={};
 		for k,v in ipairs{...}do
 			syncThis[v]=ply.character[v];
+			if table.HasValue(PublicFields,v) then
+				syncOthers[k]=ply.character[v];
+			end
 		end
 
 		net.Start("ERP.Character.Update");
+		net.WriteEntity(ply)
 		net.WriteTable(syncThis);
 		net.Send(ply);
+
+		net.Start("ERP.Character.Update");
+		net.WriteEntity(ply)
+		net.WriteTable(syncOthers);
+		net.SendOmit(ply);
 	end
 end
 
@@ -67,12 +110,6 @@ function ERP.LoadCharacter(ply,id)
 
 			ply.character.Player = ply;
 			ply.character.inventory = ERP.DecodeInventory(ply.character.inventory);
-
-			ply:ESSetNetworkedVariable("firstName",ply.character.firstname);
-			ply:ESSetNetworkedVariable("lastName",ply.character.lastname);
-
-			ply.character.firstname=nil;
-			ply.character.lastname=nil;
 
 			ply:KillSilent();
 			ply:Spawn();
