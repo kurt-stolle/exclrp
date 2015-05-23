@@ -99,7 +99,7 @@ end)
 net.Receive("ERP.property.adddoor",function(len)
 	local property=ERP.Properties[net.ReadString()]
 
-	if not property then
+	if not property then return end
 
 	table.insert(property.doors,net.ReadUInt(16))
 end)
