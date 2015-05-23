@@ -226,35 +226,3 @@ usermessage.Hook("ESBM",function(u)
 
 	LocalPlayer().character.bank = u:ReadLong() or 0;
 end)
-
-local doors = {
-	"prop_door_rotating",
-	"func_door",
-	"func_door_rotating"};
-function ERP:OnContextMenuOpen()
-	local e= LocalPlayer():GetEyeTrace().Entity
-	if not IsValid(e) or not LocalPlayer():IsLoaded() or LocalPlayer():GetEyeTrace().HitPos:Distance(LocalPlayer():EyePos()) > 100 then return false end
-
-	if table.HasValue(doors,e:GetClass()) and availableProperty[e:EntIndex()] then
-		if !ERP.OwnedProperty[availableProperty[e:EntIndex()]] then
-			ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
-			{text="Buy property",func=function()
-				RunConsoleCommand("excl_buyproperty");
-			end}
-			})
-		elseif ERP.OwnedProperty[availableProperty[e:EntIndex()]].id == LocalPlayer():UniqueID() then
-			ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
-			{text="Lock",func=function()
-				RunConsoleCommand("excl_lockdoor");
-			end},
-			{text="Unlock",func=function()
-				RunConsoleCommand("excl_unlockdoor");
-			end}
-			})
-		else
-
-		end
-	end
-
-	return false;
-end

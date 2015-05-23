@@ -1,9 +1,6 @@
-
 AddCSLuaFile()
 
-SWEP.PrintName		= "Fists";
-
-SWEP.UseHands = true;
+SWEP.PrintName		= "Nothing";
 
 SWEP.Author			= "Excl"
 SWEP.Purpose		= ""
@@ -13,7 +10,7 @@ SWEP.WorldModel	= ""
 
 SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0
-SWEP.SlotPos		= 5
+SWEP.SlotPos		= 3
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= -1
@@ -25,12 +22,16 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
+
 function SWEP:Initialize()
   self:SetHoldType( "normal" )
 end
 function SWEP:Reload()
 end
 
+function SWEP:PrimaryAttack()
+
+end
 function SWEP:SecondaryAttack()
 end
 

@@ -37,7 +37,7 @@ function ERP.LoadProperty()
 end
 
 hook.Add("ESDatabaseReady","ERP.ES.SetupPropertySQL",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` SMALLINT(5) unsigned NOT NULL, map varchar(255), name varchar(20), description varchar(255), factionRestriction varchar(10), doors varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",ERP.LoadProperty);
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` SMALLINT(5) unsigned NOT NULL, map varchar(255), name varchar(20), description varchar(255), factionRestriction varchar(10), doors varchar(255), owner INT unsigned, admins varchar(255), members varchar(255), expire_unix varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",ERP.LoadProperty);
 end)
 
 function ERP:AddProperty(name,description,...)

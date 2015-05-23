@@ -2,7 +2,9 @@ local ITEM = ERP.Item();
 ITEM:SetName("Money Printer");
 ITEM:SetDescription("A printer used to illegally print cash.");
 ITEM:SetModel("models/props_c17/consolebox01a.mdl");
+
 if CLIENT then
+
 	ITEM:AddHook("Draw",function(self)
 		self.Entity:DrawModel()
 		local Pos = self:GetPos()
@@ -18,11 +20,14 @@ if CLIENT then
 			draw.SimpleTextOutlined("Printing","ESDefaultBold",-1,-2,Color(255,255,255),1,1,1,Color(0,0,0));
 		cam.End3D2D()
 	end);
-	ITEM:AddInteraction("Use",ERP.ItemInteractWithServer);
+	
+	ITEM:AddInteraction( "Use", ERP.ItemInteractWithServer("Use") );
+
 elseif SERVER then
+
 	ITEM:AddHook("Initialize",function(self)
 		local timerTitle="ERP.Timer.MoneyPrinter."..tostring(self:EntIndex());
-		timer.Create(timerTitle,230,0,function()
+		timer.Create(timerTitle,60,0,function()
 			if not IsValid(self) then
 				timer.Remove(timerTitle);
 			end
@@ -33,10 +38,12 @@ elseif SERVER then
 	ITEM:AddHook("OnRemove",function(self)
 		timer.Remove("exclTimeMoney"..self:EntIndex());
 	end);
+
 	ITEM:AddInteraction("Use",function(self,ply)
 		if not IsValid(ply) or not ply:IsPlayer() or not ply.character then return end
 
 		ES.DebugPrint("Clearing money printer of "..ply:Nick());
 	end);
+
 end
 ITEM();

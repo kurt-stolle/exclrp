@@ -49,6 +49,27 @@ end
 function ITEM:__call() -- register
 	self._key=(#ERP.Items+1);
 	ERP.Items[self._key]=self;
+
+	local ENT={
+		Base="excl_object",
+		PrintName=self._name,
+		Item=self._key
+	};
+	for k,v in pairs(self._hooks)do
+		--some hooks must be wrapped
+		if k == "Use" or k == "Initialize" then
+			ENT[k]=function(entity,...)
+				entity.BaseClass[k](entity,...)
+				v(entity,...)
+			end
+		else
+			ENT[k]=v;
+		end
+	end
+
+	scripted_ents.Register( ENT, "excl_object_"..util.CRC(self._name) )
+
+	ES.DebugPrint( "Registered item entity excl_object_"..util.CRC(self._name) );
 end
 
 -- Utility

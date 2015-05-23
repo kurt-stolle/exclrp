@@ -6,10 +6,7 @@ ENT.PrintName = "EXCLRP ITEM"
 ENT.Author = "Excl"
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"ItemKey");
-end
+ENT.Item = 0
 
 function ENT:Initialize()
 	self._bItemLoaded=SERVER;
@@ -27,39 +24,18 @@ function ENT:Initialize()
 end
 
 function ENT:GetItem()
-	return ERP.Items[self:GetItemKey()];
+	return ERP.Items[self.Item];
 end
 
-function ENT:SetItem(item)
-	self:SetItemKey(item:GetKey());
+function ENT:GetClass()
+	return "excl_object";
 end
 
 if CLIENT then
-	function ENT:Think()
-		if not self._bItemLoaded then
-			if self:GetItem() then
-				for k,v in pairs(self:GetItem()._hooks)do
-					if k == "Initialize" then
-						v(self);
-						return;
-					elseif k == "Think" then
-						self.Think = v;
-					end
-					self[k] = v;
-				end
-				self._bItemLoaded=true;
-
-				ES.DebugPrint("Object item tables set: "..(self:GetItem():GetName() or "ERROR"));
-			end
-		end
-	end
-
 	net.Receive("ERP.Item.UseTransmit",function()
 		local ent=net.ReadEntity()
 
 		if not IsValid(ent) or ent:GetClass() ~= "excl_object" then return end
-
-		ES.DebugPrint("Entity use received!")
 
 		local opts={}
 		for k,v in pairs(ent:GetItem()._interactions)do

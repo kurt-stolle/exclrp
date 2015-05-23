@@ -3,35 +3,15 @@ function ERP:PlayerInitialSpawn(p)
 end
 function ERP:PlayerSpawn(p)
 	if p:IsLoaded() then
-		p:UnSpectate();
-		p:SetModel(p.character.model);
-		p:AddEffects(EF_NOSHADOW)
-		if p.character.job then
-			local job=ERP.Jobs[p.character.job];
+		player_manager.SetPlayerClass( p, "player_erp_default" )
 
-			p:SetTeam(job:GetTeam())
+		p:UnSpectate()
+		p:SetupHands()
 
-			local col = job.color;
-			col = Vector(col.a/255,col.g/255,col.b/255);
-			p:SetPlayerColor(col);
-			p:SetWeaponColor(col);
-
-		else
-			p:SetTeam(TEAM_UNASSIGNED)
-
-			local col = Vector(180/255,180/255,180/255);
-			p:SetPlayerColor(col);
-			col = Vector(0/255,180/255,255/255);
-			p:SetWeaponColor(col);
-		end
-
-		p:Give("weapon_fists")
-		p:Give("erp_nothing")
-		p:SelectWeapon("erp_nothing")
-
-		p:SynchProperty()
-
-		ERP:SetPlayerSpeed( p, 150, 270 )
+		player_manager.OnPlayerSpawn( p )
+		player_manager.RunClass( p, "Spawn" )
+		player_manager.RunClass( p, "Loadout" )
+		player_manager.RunClass( p, "SetModel" )
 	else
 		p:SetTeam( TEAM_SPECTATOR )
 		p:StripWeapons()
@@ -56,7 +36,7 @@ function ERP:CanPlayerSuicide()
 end
 function ERP:ScalePlayerDamage( p, hitgroup, dmginfo )
 	if ( hitgroup == HITGROUP_HEAD ) then
-		dmginfo:ScaleDamage( 5 )
+		dmginfo:ScaleDamage( 3 )
 	elseif ( hitgroup == HITGROUP_LEFTARM ||
 		hitgroup == HITGROUP_RIGHTARM ||
 		hitgroup == HITGROUP_LEFTLEG ||

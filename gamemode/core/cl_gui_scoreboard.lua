@@ -227,7 +227,7 @@ vgui.Register("ERPScoreboard",{
 			elseif self:IsVisible() and not self.Expand and math.floor(self.ySmooth) <= -h + 1 then
 				self:Hide();
 				color_text.a = 0;
-				ES:DebugPrint("Scoreboard hidden");
+				ES.DebugPrint("Scoreboard hidden");
 			end
 
 			return
@@ -255,7 +255,7 @@ vgui.Register("ERPScoreboard",{
 		for id, pl in pairs( player.GetAll() ) do
 			if ( IsValid( pl.ScoreEntry ) ) then
 				if (not IsValid(pl.ScoreEntry.scoreboard)) or pl.ScoreEntry.scoreboard ~= self then
-					ES:DebugPrint("Removed invalid score panel");
+					ES.DebugPrint("Removed invalid score panel");
 					pl.ScoreEntry:MakeInvalid();
 				else
 					continue;

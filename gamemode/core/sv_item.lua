@@ -2,23 +2,13 @@ local ITEM=FindMetaTable("Item");
 
 function ITEM:SpawnInWorld(pos,ang)
 
-	local e = ents.Create("excl_object");
+	local e = ents.Create("excl_object_"..util.CRC(self._name));
 	e:SetPos(pos);
 	e:SetAngles(ang);
-	e:SetItem(self);
-
-	for k,v in pairs(self._hooks)do
-		if k ~= "Drop" and k ~= "Initialize" and k ~= "SetupDataTables" then -- Drop can only be called from the inventory. Defined what happens when the item is dropped/spawned.
-			e[k]=v;
-		end
-	end
-
 	e:Spawn();
-	if self._hooks.Initialize then
-		self._hooks.Initialize(e);
-	end
 	e:Activate();
 
+	return e;
 end
 
 concommand.Add("excl_admin_spawnitem",function(p,c,a)
@@ -39,5 +29,10 @@ util.AddNetworkString("ERP.InteractItem")
 net.Receive("ERP.InteractItem",function(len,ply)
 		if not IsValid(ply) then return end
 
-		ES.DebugPrint("TODO: Interaction")
+		local ent=net.ReadEntity()
+		local interaction=net.ReadString()
+
+	  if not ent:GetItem() or not ent:GetItem()._interactions[interaction] then return end
+
+		ent:GetItem()._interactions[interaction](ply);
 end)
