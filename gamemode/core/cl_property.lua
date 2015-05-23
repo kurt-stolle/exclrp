@@ -127,13 +127,7 @@ hook.Add("HUDPaint","exclDoorPropertyHints",function()
 
 		p = p:ToScreen();
 
-		draw.SimpleTextOutlined(ERP.Properties[availableProperty[e:EntIndex()]].name or "Error! Unidentified property!","ESDefault+",p.x,p.y,Color(255,255,255,alpha),1,1,1,Color(0,0,0,alpha));
-		if ERP.OwnedProperty[availableProperty[e:EntIndex()]] then
-			draw.SimpleTextOutlined("Owned by: "..ERP.OwnedProperty[availableProperty[e:EntIndex()]].nick,"ESDefaultBold",p.x,p.y+25,Color(255,255,255,alpha),1,1,1,Color(0,0,0,alpha));
-		else
-			draw.SimpleTextOutlined("Press C to rent","ESDefaultBold",p.x,p.y+25,Color(200,200,200,alpha),1,1,1,Color(0,0,0,alpha));
-			draw.SimpleTextOutlined("This property costs $"..tostring(50+(#ERP.Properties[availableProperty[e:EntIndex()]].doors*6))..",- per hour.","ESDefaultBold",p.x,p.y+40,Color(200,200,200,alpha),1,1,1,Color(0,0,0,alpha));
-		end
+		draw.SimpleTextOutlined("Door","ESDefault+",p.x,p.y,Color(255,255,255,alpha),1,1,1,Color(0,0,0,alpha));
 	else
 		if alpha > .5 then
 			alpha = Lerp(0.1,alpha,0);
