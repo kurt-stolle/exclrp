@@ -1,48 +1,44 @@
-ERP.Properties = {};
-ERP.OwnedProperty = {};
-
 local doors = {
 	"prop_door_rotating",
 	"func_door",
 	"func_door_rotating"
 };
 
-util.AddNetworkString( "ERPSynchProperty" );
-
-function ERP.LoadProperty()
-	ES.DebugPrint("(re)loading properties.");
-	ES.DBQuery("SELECT * FROM erp_property WHERE map='"..ES.DBEscape(game.GetMap()).."';",function(c)
-		if c and c[1] then
-			for k,v in pairs(c)do
-				v.doors = (string.Explode("|",(v.doors or "")) or {});
-				for s,d in pairs(v.doors)do
-					if tonumber(d) then
-						d = tonumber(d);
-					else
-						table.remove(v.doors,s);
-					end
-				end
-			end
-			ERP.Properties = c;
-			for k,v in pairs(c) do
-				for a,b in pairs(v.doors or {}) do
-					Entity(b).property = k;
-				end
-			end
-			for k,v in pairs(player.GetAll())do
-				v:SynchProperty();
-			end
-		end
-	end):wait();
-end
-
 hook.Add("ESDatabaseReady","ERP.ES.SetupPropertySQL",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` SMALLINT(5) unsigned NOT NULL, map varchar(255), name varchar(20), description varchar(255), factionRestriction varchar(10), doors varchar(255), owner INT unsigned, admins varchar(255), members varchar(255), expire_unix varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",ERP.LoadProperty);
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` SMALLINT(5) unsigned NOT NULL, map varchar(255), name varchar(20), description varchar(255), factions varchar(255), doors varchar(255), owner INT unsigned, admins varchar(255), members varchar(255), expire_unix varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",function()
+		ES.DBQuery("SELECT name,description,doors,factions,owner,admins,members,expire_unix FROM erp_property WHERE map='"..ES.DBEscape(game.GetMap()).."';",function(c)
+			if c and c[1] then
+				for k,v in ipairs(c)do
+					v.doors = util.JSONToTable(v.doors);
+					for k,v in ipairs(v.doors)do
+						v.doors[k] = ( v.doors + game.MaxPlayers() );
+					end
+					v.factions = util.JSONToTable(v.factions);
+
+					ES.DebugPrint("Property loaded: ",v.name)
+				end
+				ERP.Properties = c;
+			end
+		end):wait();
+	end):wait();
 end)
 
-function ERP:AddProperty(name,description,...)
-	ES.DBQuery(Format("INSERT INTO erp_property SET map='"..ES.DBEscape(game.GetMap()).."', name = '%s', description = '%s', factionRestriction = '%s'", tostring(name),tostring(description),string.Implode("|",({...})) or "nil"));
-	ERP.LoadProperty();
+function ERP:AddProperty(name,description,factions)
+	ES.DBQuery(Format("INSERT INTO erp_property SET map='"..ES.DBEscape(game.GetMap()).."', name = '%s', description = '%s', factions = '%s'", tostring(name),tostring(description),util.TableToJSON(factions)));
+
+	table.insert(ERP.Properties,{
+		name=name,
+		description=description,
+		factions=factions
+	})
+
+	net.Start("ERP.property.addproperty")
+		net.WriteString(name)
+		net.WriteString(description)
+		net.WriteTable(factions)
+	net.Broadcast()
+
+	ES.DebugPrint("New property added!",name)
 end
 function ERP:AddDoorToProperty(name,e)
 	local t = nil;
@@ -51,28 +47,44 @@ function ERP:AddDoorToProperty(name,e)
 			t=v;
 		end
 	end
+
 	if not t then
-		print("No valid properties found by the name: "..name);
-		PrintTable(ERP.Properties);
+		ES.DebugPrint("No valid properties found by the name: ",name);
 		return
 	end;
 
 	if not t.doors then t.doors = {} end
+
 	table.insert(t.doors,e:EntIndex());
-	ES.DBQuery(Format("UPDATE erp_property SET doors = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."'  ;", string.Implode("|",t.doors),tostring(name)),function(r)
-		ERP.LoadProperty();
-	end);
+
+	local doorsSave={}
+	for k,v in ipairs(t.doors)do
+		table.insert(doorsSave,v-game.MaxPlayers())
+	end
+	ES.DBQuery(Format("UPDATE erp_property SET doors = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."'  ;", util.TableToJSON(doorsSave),tostring(name)));
+
+	net.Start("ERP.admin.property.adddoor")
+		net.WriteUInt(e:EntIndex(),16)
+		net.WriteString(name)
+	net.Broadcast()
+
+	ES.DebugPrint("Door added to property",name)
 end
-local PLAYER = FindMetaTable("Player");
-function PLAYER:SynchProperty()
-	net.Start("ERPSynchProperty");
+
+util.AddNetworkString( "ERP.property.sync" );
+hook.Add("ESPlayerReady","ERP.PlayerReady.SyncProperty",function(pl)
+	net.Start("ERP.property.sync");
 	net.WriteTable(ERP.Properties);
-	net.WriteTable(ERP.OwnedProperty);
 	net.Send(self);
-end
+end)
 
-concommand.Add("excl_admin_addproperty",function(p,c,a)
-	if not p:IsSuperAdmin() then return end
+util.AddNetworkString("ERP.property.addproperty")
+net.Receive("ERP.property.addproperty",function(len,pl)
+	local name = net.ReadString()
+	local description = net.ReadString()
+	local factions = net.ReadTable()
+
+	if not pl:IsSuperAdmin() then return end
 
 	local property = false;
 	for k,v in pairs(ERP.Properties)do
@@ -81,19 +93,22 @@ concommand.Add("excl_admin_addproperty",function(p,c,a)
 			break;
 		end
 	end
-	if not property then
-		property = ERP:AddProperty(a[1],a[2],a[3] or nil, a[4]  or nil, a[5] or nil);
-		p:ESChatPrint("Property created "..a[1]);
-		return;
-	end
+	if property then return end
+
+	ERP:AddProperty(name,description,factions);
 end)
-concommand.Add("excl_admin_adddoor",function(p,c,a)
-	if not p:IsSuperAdmin() or not IsValid(p:GetEyeTrace().Entity) or not table.HasValue(doors,p:GetEyeTrace().Entity:GetClass()) then return end
+
+util.AddNetworkString("ERP.property.adddoor")
+net.Receive("ERP.property.adddoor",function(len,pl)
+	local ent=Entity(net.ReadUInt(16))
+	local property=net.ReadString()
+
+	if not pl:IsSuperAdmin() then return end
 
 	local property = false;
 	for k,v in pairs(ERP.Properties)do
 		if v.name == a[1] then
-			property = v;
+			property = v.name;
 			break;
 		end
 	end
@@ -101,43 +116,5 @@ concommand.Add("excl_admin_adddoor",function(p,c,a)
 		return;
 	end
 
-	ERP:AddDoorToProperty(a[1],p:GetEyeTrace().Entity)
-end)
-
-function PLAYER:GiveProperty(name)
-	local pr = false;
-	for k,v in pairs(ERP.Properties)do
-		if v.name == name then
-			pr = k;
-		end
-	end
-	if not pr then return end
-	ERP.OwnedProperty[pr] = {nick = self:GetRPNameFull(), id = self:UniqueID()};
-	for k,v in pairs(player.GetAll())do
-		v:SynchProperty();
-	end
-end
-concommand.Add("excl_buyproperty",function(p)
-	if IsValid(p) and p:IsLoaded() and IsValid(p:GetEyeTrace().Entity) and p:GetEyeTrace().Entity.property and not ERP.OwnedProperty[p:GetEyeTrace().Entity.property] and p:GetEyeTrace().HitPos:Distance(p:EyePos()) < 100 then
-		if( p.character:GetCash() - (50+(#ERP.Properties[p:GetEyeTrace().Entity.property].doors*6)) < 0 )then
-			p:ESSendNotification("generic","You do not have enough cash on you.");
-			return;
-		end
-		p:AddMoney(-(50+(#ERP.Properties[p:GetEyeTrace().Entity.property].doors*6)));
-		p:GiveProperty(ERP.Properties[ p:GetEyeTrace().Entity.property ].name);
-		p:ESSendNotification("generic","The property has been bought.");
-	end
-end)
-
-concommand.Add("excl_lockdoor",function(p)
-	if IsValid(p) and p:IsLoaded() and IsValid(p:GetEyeTrace().Entity) and p:GetEyeTrace().Entity.property and ERP.OwnedProperty[p:GetEyeTrace().Entity.property] and ERP.OwnedProperty[p:GetEyeTrace().Entity.property].id and ERP.OwnedProperty[p:GetEyeTrace().Entity.property].id==p:UniqueID() and p:GetEyeTrace().HitPos:Distance(p:EyePos()) < 100 then
-		p:EmitSound("doors/door_latch2.wav")
-		p:GetEyeTrace().Entity:Fire("lock", "", 0)
-	end
-end)
-concommand.Add("excl_unlockdoor",function(p)
-	if IsValid(p) and p:IsLoaded() and IsValid(p:GetEyeTrace().Entity) and p:GetEyeTrace().Entity.property and ERP.OwnedProperty[p:GetEyeTrace().Entity.property] and ERP.OwnedProperty[p:GetEyeTrace().Entity.property].id and ERP.OwnedProperty[p:GetEyeTrace().Entity.property].id==p:UniqueID() and p:GetEyeTrace().HitPos:Distance(p:EyePos()) < 100 then
-		p:EmitSound("doors/door_latch3.wav")
-		p:GetEyeTrace().Entity:Fire("unlock", "", 0)
-	end
+	ERP:AddDoorToProperty(property,ent)
 end)

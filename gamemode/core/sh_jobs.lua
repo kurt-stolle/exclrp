@@ -17,9 +17,9 @@ function ERP:GetJobs()
 end
 
 --enum vars for faction path
-JOB_CIVILLIAN = 1;
-JOB_GOVERNMENT = 2;
-JOB_CRIME = 3;
+FACTION_CIVILLIAN = 1;
+FACTION_GOVERNMENT = 2;
+FACTION_CRIME = 4;
 
 --function to make this easier.
 local JOB={};
@@ -38,7 +38,7 @@ function ERP.Job()
 	obj.team=-1;
 	obj.name="Unknown";
 	obj.description="No description given.";
-	obj.class=JOB_CIVILLIAN;
+	obj.class=FACTION_CIVILLIAN;
 	obj.pay=10;
 	obj.color=ES.Color.White;
 
