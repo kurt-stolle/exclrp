@@ -5,7 +5,9 @@ function PLAYER:UnLoad()
 	-- meaning they can select a new character.
 
 	self.character=nil;
-	ERP.OpenMainMenu(self);
+
+	self:KillSilent()
+	self:Spawn()
 end
 
 function PLAYER:SprintEnable()

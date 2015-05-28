@@ -1,307 +1,148 @@
+-- Variables
+local matrix = Matrix();
+local matrixScale = Vector(0, 0, 0);
+local matrixTranslation = Vector(0, 0, 0);
+local menu;
 
-local scoreboard;
+-- VGUI
+local PNL={}
+AccessorFunc(PNL,"_text","Text",FORCE_STRING);
+AccessorFunc(PNL,"_icon","Icon");
+AccessorFunc(PNL,"_fn","DoClick");
+function PNL:Init()
+	self:SetColor(ES.Color["#1E1E1E"])
+	self:SetText("Undefined")
+end
+function PNL:OnCursorEntered()
+	self:SetColor(ES.Color["#282828"])
+end
+function PNL:OnCursorExited()
+	self:SetColor(ES.Color["#1E1E1E"])
+end
+function PNL:PaintOver(w,h)
+	ES.UIDrawRippleEffect(self,w,h)
 
-local _Material = Material( "pp/toytown-top" )
-_Material:SetTexture( "$fbtexture", render.GetScreenEffectTexture() )
+	if self:GetIcon() then
+		surface.SetDrawColor(ES.Color.White)
+		surface.SetMaterial(self:GetIcon())
+		surface.DrawTexturedRect(w/2 - 8, h/3-8,16,16)
+	end
 
-vgui.Register("ERPScoreboard.PlayerRow",{
-	Init = function( self )
+	draw.SimpleText(self:GetText(),"ESDefault-",w/2,3*h/4,ES.Color.White,1,1)
+end
+function PNL:OnMousePressed()
+	ES.UIMakeRippleEffect(self)
+end
+function PNL:OnMouseReleased()
+	if self._fn then
+		self._fn();
+	end
+end
+vgui.Register("ERP.TabMenu.Button",PNL,"esPanel")
 
-		self.Avatar		= vgui.Create( "AvatarImage", self )
-		self.Avatar:SetSize( 42,42 )
-    self.Avatar:Dock(LEFT)
-		self.Avatar:SetMouseInputEnabled( false )
-
-    --[[self.Model		= vgui.Create( "Spawnicon", self )
-		self.Model:SetSize( 42,42 )
-    self.Model:Dock(LEFT)
-    self.Model:DockMargin(-42,0,0,0)]]
-
-    local textarea=vgui.Create("Panel",self)
-    textarea:Dock(FILL)
-    textarea:DockMargin(10,4,10,4)
-
-    self.Name = vgui.Create("esLabel", textarea)
-    self.Name:SetFont("ESDefault+")
-    self.Name:SetColor(ES.Color.White)
-    self.Name:Dock(TOP)
-    self.Name:SetText("")
-    self.Name:SizeToContents()
-
-    self.Nick = vgui.Create("esLabel", textarea)
-    self.Nick:SetFont("ESDefault")
-    self.Nick:SetColor(ES.Color.White)
-    self.Nick:Dock(BOTTOM)
-    self.Nick:SetText("")
-    self.Nick:SizeToContents()
-
-    self.Ping = vgui.Create("esLabel", self)
-    self.Ping:SetFont("ESDefault+")
-    self.Ping:SetColor(ES.Color.White)
-    self.Ping:Dock(RIGHT)
-    self.Ping:DockMargin(0,0,16,0)
-    self.Ping:SetTall(42)
-
-		self:Dock( TOP )
-		self:SetHeight(44)
-		self:DockMargin( 10,10,10,0 )
-    self:DockPadding(1,1,1,1)
-
-	end,
-	PerformLayout = function(self)
-		if not IsValid(self.Player) then return end
-
-		local w,h = self:GetWide(), self:GetTall();
-		self.Avatar:SetPos(h/2 - self.Avatar:GetTall()/2, h/2 - self.Avatar:GetTall()/2);
-	end,
-	Setup = function( self, pl )
-
-		self.Player = pl
-
-		self.Avatar:SetPlayer( pl, 64 )
-    --self.Model:SetModel( pl:GetModel() )
-    self.Name:SetText( pl:GetCharacter() and pl:GetCharacter():GetFullName() or "NO CHARACTER" )
-    self.Name:SizeToContents();
-    self.Nick:SetText( pl:Nick() )
-    self.Nick:SizeToContents();
-    self.Ping:SetText( pl:Ping() )
-    self.Ping:SizeToContents()
-
-		self:Think();
-		self:PerformLayout();
-
-	end,
-
-	Think = function( self )
-    local pl = self.Player
-
-		if ( not IsValid( pl ) ) then
-			self:MakeInvalid()
-			return
+vgui.Register("ERP.TabMenu",{
+	Init = function(self)
+		if IsValid(menu) then
+			menu:Remove()
 		end
 
-		if ( not pl:Alive() ) then
-			self:SetZPos( 1000 )
-		else
-			self:SetZPos(0);
-		end
+		menu=self;
 
-    --self.Model:SetModel( pl:GetModel() )
-    self.Name:SetText( pl:GetCharacter() and pl:GetCharacter():GetFullName() or "NO CHARACTER" )
-    self.Name:SizeToContents();
-    self.Nick:SetText( pl:Nick() )
-    self.Nick:SizeToContents();
-    self.Ping:SetText( pl:Ping() )
-    self.Ping:SizeToContents()
-
+		self.scale=0;
+		self.color=Color(0,0,0,0)
+		self.bubbles={}
+		self._applyPop=false;
 	end,
-	MakeInvalid = function(self)
-		self:SetZPos(2000);
-		self:Remove();
+	AddBubble=function(self,text,icon,fn)
+		local btn=vgui.Create("ERP.TabMenu.Button",self)
+		btn:SetSize(70,70)
+		btn:SetVisible(false)
+		btn:SetText(text)
+		btn:SetIcon(icon)
+		btn:SetDoClick(fn)
+
+		table.insert(self.bubbles,btn)
 	end,
 	OnMouseReleased=function(self)
+		self:Close()
+	end,
+	Think=function(self)
+	 	self.scale = Lerp(FrameTime()*4,self.scale,1);
+		self.color.a = self.scale*200;
 
+		local c=#self.bubbles;
+		for k,v in ipairs(self.bubbles)do
+			v._rad=Lerp(FrameTime()*5,v._rad or 0,2*math.pi*k*(1/c));
+
+			v.x = self:GetWide()/2 - math.sin(v._rad) * 200 - v:GetWide()/2;
+			v.y = self:GetTall()/2 - math.cos(v._rad) * 200 - v:GetTall()/2;
+
+			v:SetVisible(true);
+		end
 	end,
 	Paint = function(self,w,h)
-		if ( not IsValid( self.Player ) ) then
-			return
-		end
+		mul=FrameTime()*10;
 
-		local col = team.GetColor(self.Player:Team());
-		if not self.Player:Alive() then
-			col.r = math.Clamp(col.r *.6,0,255);
-			col.g = math.Clamp(col.g *.6,0,255);
-			col.b = math.Clamp(col.b *.6,0,255);
-		end
+		if (self.color.a < 1) then return end
 
-		if self.Player == LocalPlayer() then
-			local add = math.abs(math.sin(CurTime() * 1) * 50);
-			col.r = math.Clamp(col.r +add,0,255);
-			col.g = math.Clamp(col.g +add,0,255);
-			col.b = math.Clamp(col.b +add,0,255);
-		end
+		draw.RoundedBox(0,0,0,w,h,self.color)
 
-    surface.SetDrawColor(col)
-		surface.DrawRect(0,0,w,h)
+		local x,y = ScrW()/2 - self.scale * ScrW()/2,ScrH()/2 - self.scale * ScrH()/2
+		render.PushFilterMag( TEXFILTER.ANISOTROPIC )
+		render.PushFilterMin( TEXFILTER.ANISOTROPIC )
 
-    surface.SetDrawColor(Color(0,0,0,100))
-		surface.DrawRect(0,0,w,1)
-		surface.DrawRect(0,h-1,w,1)
-		surface.DrawRect(0,1,1,h-2)
-		surface.DrawRect(w-1,1,1,h-2)
+		matrix=Matrix();
+		matrixTranslation.x = x;
+		matrixTranslation.y = y;
+		matrix:SetTranslation( matrixTranslation )
+		matrixScale.x = self.scale;
+		matrixScale.y = self.scale;
+		matrix:Scale( matrixScale )
 
-		surface.SetDrawColor(Color(255,255,255,5));
-		surface.DrawRect(1,1,w-2,1)
-		surface.DrawRect(1,h-2,w-2,1)
-		surface.DrawRect(1,2,1,h-4)
-		surface.DrawRect(w-2,2,1,h-4)
+		cam.PushModelMatrix( matrix )
+
+		self._applyPop=true;
+	end,
+	PaintOver=function(self,w,h)
+		if not self._applyPop then return end
+
+		self._applyPop=false;
+
+		cam.PopModelMatrix()
+		render.PopFilterMag()
+		render.PopFilterMin()
 	end
 },"Panel");
 
-local color_text = Color(255,255,255,0);
-local color_shadow = Color(0,0,0,0);
-local color_hidden = Color(0,0,0,0);
-vgui.Register("ERPScoreboard",{
-	Init = function( self )
-		self.Expand = true;
-
-		self.Header = self:Add( "Panel" )
-		self.Header:Dock( TOP )
-		self.Header:SetHeight( 100 )
-
-		self.Footer = self:Add( "Panel" )
-		self.Footer:Dock( BOTTOM )
-
-    self.Host = self.Footer:Add( "DLabel" )
-		self.Host:SetFont("ESDefaultBold");
-		self.Host:SetTextColor( color_text );
-		self.Host:Dock(TOP);
-		self.Host:SetContentAlignment( 5 )
-		self.Host:SetText("Hosted by the CasualBananas community");
-		self.Host:SizeToContents();
-
-    self.Credit = self.Footer:Add( "DLabel" )
-		self.Credit:SetFont("ESDefaultBold");
-		self.Credit:SetTextColor( color_text );
-		self.Credit:Dock(TOP);
-		self.Credit:SetContentAlignment( 5 )
-		self.Credit:SetText("Created by Excl"); -- don't be a douche and remove my name here
-		self.Credit:SizeToContents();
-		self.Credit:DockMargin(0,3,0,0);
-
-		self.Name = self.Header:Add( "DLabel" )
-		self.Name:SetFont( "ESDefault+++" )
-		self.Name:SetTextColor( color_text )
-		self.Name:Dock( TOP )
-		self.Name:SizeToContents();
-		self.Name:SetContentAlignment( 5 )
-		self.Name:SetText("ExclRP");
-
-		self.Rows=vgui.Create("Panel",self)
-    self.Rows:Dock(FILL)
-
-
-		self:SetSize( 700, ScrH() - 200 )
-		self.y = -self:GetTall();
-		self.x = ScrW()/2 - self:GetWide()/2;
-
-		self.ySmooth = self.y;
-	end,
-
-	PerformLayout = function( self )
-		self.Header:SetHeight( self.Name:GetTall()+20 )
-		local max = 0;
-		for k,v in pairs(self.Footer:GetChildren())do
-			if v.y + v:GetTall() > max then
-				max = v.y + v:GetTall();
-			end
-		end
-
-		self.Footer:SetHeight(max);
-	end,
-
-	Paint = function( self, w, h )
-	end,
-
-	Think = function( self  )
-
-		local w,h = self:GetWide(),self:GetTall();
-
-		if not self.Expand then
-			if math.floor(self.y) > -h then
-				color_text.a = Lerp(FrameTime()*12,color_text.a,0);
-				color_shadow.a = color_text.a * .8;
-
-				if math.floor(color_text.a) <= 1 then
-					self.ySmooth = Lerp(FrameTime()*3,self.ySmooth,-h);
-					self.y = math.Round(self.ySmooth);
-				end
-
-				self.Name:SetTextColor( color_text )
-				self.Host:SetTextColor( color_text );
-				self.Credit:SetTextColor( color_text );
-				self.Name:SetExpensiveShadow( 2, color_shadow )
-				self.Credit:SetExpensiveShadow( 1, color_shadow )
-				self.Host:SetExpensiveShadow( 1, color_shadow )
-
-			elseif self:IsVisible() and not self.Expand and math.floor(self.ySmooth) <= -h + 1 then
-				self:Hide();
-				color_text.a = 0;
-				ES.DebugPrint("Scoreboard hidden");
-			end
-
-			return
-		end
-
-		local target = (ScrH()/2 - h/2);
-
-		self.ySmooth = Lerp(FrameTime()*10,self.ySmooth,target);
-		self.y = math.Round(self.ySmooth);
-
-		if math.ceil(self.ySmooth) >= target then
-			color_text.a = Lerp(FrameTime()*2,color_text.a,255);
-			color_shadow.a = color_text.a * .8;
-
-			self.Name:SetTextColor( color_text )
-				self.Host:SetTextColor( color_text );
-				self.Credit:SetTextColor( color_text );
-
-				self.Name:SetExpensiveShadow( 2, color_shadow )
-				self.Credit:SetExpensiveShadow( 1, color_shadow )
-				self.Host:SetExpensiveShadow( 1, color_shadow )
-
-		end
-
-		for id, pl in pairs( player.GetAll() ) do
-			if ( IsValid( pl.ScoreEntry ) ) then
-				if (not IsValid(pl.ScoreEntry.scoreboard)) or pl.ScoreEntry.scoreboard ~= self then
-					ES.DebugPrint("Removed invalid score panel");
-					pl.ScoreEntry:MakeInvalid();
-				else
-					continue;
-				end
-			end
-
-			if pl:Team() ~= TEAM_SPECTATOR then
-
-				pl.ScoreEntry = vgui.Create("ERPScoreboard.PlayerRow",self.Rows );
-				pl.ScoreEntry:Setup( pl );
-        pl.ScoreEntry:Dock(TOP)
-				pl.ScoreEntry.scoreboard = self;
-
-      end
-		end
-
-	end,
-},"Panel");
-
-timer.Create("ERP.Scoreboard.UpdateLayout",1,0,function()
-	if IsValid(scoreboard) then
-		scoreboard:PerformLayout();
-	end
-end);
-
-
+-- Scoreboard hooks
 function ERP:ScoreboardShow()
-	if ( !IsValid( scoreboard ) ) then
-		scoreboard = vgui.Create("ERPScoreboard");
-	end
+	if not LocalPlayer():IsLoaded() then return end
 
-	if ( IsValid( scoreboard ) ) then
-		scoreboard.Expand = true;
-		scoreboard:Show()
+	local _menu=vgui.Create("ERP.TabMenu")
+	_menu:Dock(FILL)
 
-		gui.EnableScreenClicker(true);
+	_menu:AddBubble("Scoreboard",Material("icon16/user.png"),function()
 
-		scoreboard:SetKeyboardInputEnabled( false )
-	end
+	end)
+	_menu:AddBubble("ID",Material("icon16/user_suit.png"),function()
+
+	end)
+	_menu:AddBubble("Inventory",Material("icon16/user.png"),function()
+
+	end)
+	_menu:AddBubble("Job",Material("icon16/wrench.png"),function()
+
+	end)
+	_menu:AddBubble("Log out",Material("icon16/world.png"),function()
+		net.Start("ERP.LogOut"); net.SendToServer();
+		LocalPlayer().character=nil;
+	end)
+
+	_menu:MakePopup()
 end
 
 function ERP:ScoreboardHide()
-	if ( IsValid( scoreboard ) ) then
-
-		scoreboard.Expand = false;
-
-		gui.EnableScreenClicker(false);
+	if IsValid(menu) then
+		menu:Remove()
 	end
 end
