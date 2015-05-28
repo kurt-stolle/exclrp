@@ -117,6 +117,8 @@ function ERP.LoadCharacter(ply,id)
 			ERP.SyncCharacter(ply);
 
 			ES.DebugPrint("Successfully loaded character "..ply:Nick().."#"..tostring(id));
+		else
+			ES.DebugPrint("No character, nigga.")
 		end
 	end)
 end
@@ -125,9 +127,11 @@ util.AddNetworkString("ERP.Character.Select")
 net.Receive("ERP.Character.Select",function(len,ply)
 	if not IsValid(ply) or ply:IsLoaded() then return end
 
-	local char_id = net.ReadUInt(4);
+	local char_id = net.ReadUInt(16);
 
 	if not char_id then return end
+
+	ES.DebugPrint(ply," is selecting character ",char_id)
 
 	ERP.LoadCharacter(ply,char_id);
 end)
@@ -163,7 +167,7 @@ end
 
 util.AddNetworkString("ERP.Character.OpenMenu")
 function ERP.OpenMainMenu(ply)
-	ES.DBQuery("SELECT * FROM erp_characters WHERE steamid = '"..ply:SteamID().."' LIMIT 4;",function(c)
+	ES.DBQuery("SELECT * FROM `erp_characters` WHERE steamid = '"..ply:SteamID().."' LIMIT 4;",function(c)
 		net.Start("ERP.Character.OpenMenu");
 		net.WriteTable(c or {});
 		net.Send(ply);

@@ -254,34 +254,36 @@ net.Receive("ERP.Character.OpenMenu",function()
 			nameedit:SetSize(150,30);
 			nameedit:SetText("Customize Name");
 			nameedit.DoClick = function()
-				local pnlName = ERP:CreateExclFrame("Edit name",1,1,225,120,true);
-				pnlName:Center();
-				pnlName:MakePopup();
+				local pnlName = vgui.Create("esFrame")
+				pnlName:SetTitle("Edit Name")
+				pnlName:SetSize(300,160)
 				local firstText;
 				local lastText;
 				local accept = vgui.Create("esButton",pnlName);
 				accept:SetText("Accept");
-				accept:SetSize(pnlName:GetWide()-10,30);
-				accept:SetPos(5,pnlName:GetTall()-35);
+				accept:SetSize(pnlName:GetWide()-40,30);
+				accept:SetPos(20,pnlName:GetTall()-30-20);
 
 				local l = Label("First:",pnlName);
-				l:SetPos(10,38);
-				l:SetColor(Color(200,200,200));
+				l:SetPos(20,48);
+				l:SetColor(ES.Color.White);
+				l:SetFont("ESDefault")
 				l:SizeToContents();
 				local l = Label("Last:",pnlName);
-				l:SetPos(10,58);
-				l:SetColor(Color(200,200,200));
+				l:SetPos(20,78);
+				l:SetColor(ES.Color.White);
+				l:SetFont("ESDefault")
 				l:SizeToContents();
 
 				local firstText = vgui.Create("DTextEntry", pnlName)
 				firstText:SetText(first)
-				firstText:SetSize(pnlName:GetWide()-40-5,17)
-				firstText:SetPos(40,37);
+				firstText:SetSize(pnlName:GetWide()-70-10,18)
+				firstText:SetPos(60,44);
 				firstText.OnEnter = function(self) if IsValid(lastText) then lastText:RequestFocus() end  end
 				local lastText = vgui.Create("DTextEntry", pnlName)
 				lastText:SetText(last)
-				lastText:SetSize(pnlName:GetWide()-40-5,17)
-				lastText:SetPos(40,57);
+				lastText:SetSize(pnlName:GetWide()-70-10,18)
+				lastText:SetPos(60,76);
 				lastText.OnEnter = function(self) if IsValid(accept) then accept:DoClick() end end
 
 				accept.DoClick = function(self)
@@ -299,6 +301,9 @@ net.Receive("ERP.Character.OpenMenu",function()
 
 					end
 				end
+
+				pnlName:Center();
+				pnlName:MakePopup();
 			end
 
 
@@ -345,7 +350,7 @@ net.Receive("ERP.Character.OpenMenu",function()
 			button:SetText("Select");
 			button.DoClick = function()
 				net.Start("ERP.Character.Select");
-				net.WriteUInt(v.id,4);
+				net.WriteUInt(v.id,16);
 				net.SendToServer();
 			end
 			table.insert(slideitems,button);

@@ -34,5 +34,14 @@ function PROPERTY:GetPrice(timeHours)
   return math.ceil( ( 10 * ( 1 + doors / ( math.pow(1.2,doors) ) ) ) * timeHours );
 end
 function PROPERTY:HasOwner()
-  return false
+  return not (not self.owner);
+end
+function PROPERTY:PlayerHasPermissions(ply)
+  if not ply:IsLoaded() then return false end
+
+  if ply:GetCharacter():GetJob() and table.HasValue(self.jobs or {},ply:GetCharacter():GetJob():GetName()) then
+    return true
+  end
+
+  return self.owner and self.owner == ply:GetCharacter():GetID()
 end

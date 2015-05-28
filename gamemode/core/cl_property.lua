@@ -42,13 +42,15 @@ concommand.Add("excl_admin_property_create",function(_,_,a)
 	local name = a[1];
 	local description = a[2];
 
-	if not name or not description then print("Invalid arguments.") return end
+	if not description then print("Invalid arguments.") return end
 
 	table.remove(a,1)
 	table.remove(a,1)
 
 	local factions=0;
-	if a[1] == "all" then
+	if not name or name == "none" then
+		factions=0;
+	elseif name == "all" then
 		factions=bit.bor( FACTION_CIVILLIAN,FACTION_GOVERNMENT,FACTION_CRIME )
 	else
 		for k,v in ipairs(a)do
@@ -71,7 +73,7 @@ concommand.Add("excl_admin_property_create",function(_,_,a)
 	print("Property added.")
 end,function(_,str)
 	return {"undefined"}
-end,"Create a new property. Format: <Property Name> <Description> <Factions: all OR crime OR government OR civillian>")
+end,"Create a new property. Format: <Property Name> <Description> <Factions: none OR all OR crime OR government OR civillian>")
 
 concommand.Add("excl_admin_property_add_door",function(_,_,a)
 	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
@@ -98,10 +100,31 @@ end,function(_,str)
 	return {"undefined"}
 end,"Add the door you're facing to a property. Format: <Property name>")
 
+concommand.Add("excl_admin_property_add_job",function(_,_,a)
+	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
+
+	local property = a[1];
+
+	if not property or not ERP.Properties[property] then print("Invalid arguments: "..tostring(property)) return end
+
+	local job = a[2];
+
+	if not job or not ERP.Jobs[job] then print("No job found. Are you using the right spelling and capitals?") return end
+
+	net.Start("ERP.property.addjob")
+	net.WriteString(property)
+	net.WriteString(job)
+	net.SendToServer()
+
+	print("Job added to property "..property..".")
+end,function(_,str)
+	return {"undefined"}
+end,"Add a job to a property. The job will ALWAYS have permissions on the door, regardless of the owner. Format: <Property name> <Job name>")
+
 concommand.Add("excl_admin_property_list",function(_,_,a)
 	print("-- START PROPERTY LIST --")
 	for k,v in pairs(ERP.Properties)do
-		print(v.name.." \t["..v.description.."] ["..math.IntToBin(v.factions).."]\n")
+		print(v.name.." ["..v.description.."][Flag: "..v.factions.." | Binary: "..math.IntToBin(v.factions).."]")
 	end
 	print("--  END PROPERTY LIST --")
 end,function(_,str)
