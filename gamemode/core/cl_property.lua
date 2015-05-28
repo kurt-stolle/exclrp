@@ -135,6 +135,10 @@ net.Receive("ERP.property.adddoor",function(len)
 	local index=net.ReadUInt(16);
 	Doors[index]=property;
 
+	if not property.doors then
+		property.doors = {}
+	end
+
 	table.insert(property.doors,index)
 
 	ES.DebugPrint("Doors updated!")
