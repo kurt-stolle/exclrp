@@ -1,9 +1,13 @@
 ENT.Type = "anim"
 ENT.Base = "base_anim"
-ENT.PrintName = "Cash"
+
+ENT.PrintName	= "Cash"
+ENT.Information	= "Cash money"
+ENT.Category = "ExclRP"
 ENT.Author = "Excl"
-ENT.Spawnable = false
-ENT.AdminSpawnable = true
+ENT.Spawnable = true
+ENT.AdminOnly = true
+
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"Amount")

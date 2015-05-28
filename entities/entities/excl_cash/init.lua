@@ -14,6 +14,8 @@ function ENT:Initialize()
 
 	local phys = self.Entity:GetPhysicsObject()
 	if phys and phys:IsValid() then phys:Wake() end
+
+	self:DropToFloor()
 end
 
 

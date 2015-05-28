@@ -46,8 +46,8 @@ local color_background=ES.Color["#1E1E1E"]
 local color_health=ES.Color.Red;
 local color_energy=ES.Color.Amber;
 
-local box_wide=180;
-local box_tall=24;
+local box_wide=200;
+local box_tall=32;
 
 local mat_money=Material( "icon16/money.png" );
 local mat_name=Material( "icon16/user.png" );
@@ -64,7 +64,7 @@ local function drawHUDBox(x,y,icon,text,color,inner_mul)
 	draw.RoundedBox(2,x+1,y+1,box_wide-2,box_tall-2,color_background);
 
 	if color and (not inner_mul or inner_mul > 0) then
-		draw.RoundedBox(2,x+1,y+1,(box_wide-2) * (inner_mul or 1), box_tall-2,color);
+		draw.RoundedBox(2,x+1,y+box_tall-3,(box_wide-2) * (inner_mul or 1),2,color);
 	end
 
 	render.PopFilterMag();
@@ -120,11 +120,11 @@ function ERP:HUDPaint()
 
 	-- HEALTH
 	smoothHealth = Lerp(FrameTime() * animationSpeed, smoothHealth, localplayer:Health());
-	drawHUDBox(box_margin,box_margin,mat_health,"Health",color_health,smoothHealth/100);
+	drawHUDBox(box_margin,box_margin,mat_health,math.Round(smoothHealth).."% Health",color_health,smoothHealth/100);
 
 	-- ENERGY
 	smoothEnergy = Lerp(FrameTime() * animationSpeed,smoothEnergy,math.ceil( localplayer:ESGetNetworkedVariable("energy",100) ));
-	drawHUDBox(box_margin,box_margin*2+box_tall,mat_energy,"Energy",color_energy,smoothEnergy/100);
+	drawHUDBox(box_margin,box_margin*2+box_tall,mat_energy,math.Round(smoothEnergy).."% Energy",color_energy,smoothEnergy/100);
 
 	-- RESET RENDER POSITION;
 	cam.PopModelMatrix();

@@ -1,8 +1,10 @@
-local doors = {
+local DoorTypes = {
 	"prop_door_rotating",
 	"func_door",
 	"func_door_rotating"
 };
+local Doors = {}
+local PROPERTY = FindMetaTable("Property")
 
 hook.Add("OnContextMenuOpen","ERP.ContextMenu.Properties",function()
 	local e = LocalPlayer():GetEyeTrace().Entity;
@@ -45,17 +47,17 @@ concommand.Add("excl_admin_property_create",function(_,_,a)
 	table.remove(a,1)
 	table.remove(a,1)
 
-	local factions={};
+	local factions=0;
 	if a[1] == "all" then
-		factions={FACTION_CIVILLIAN,FACTION_GOVERNMENT,FACTION_CRIME}
+		factions=bit.bor( FACTION_CIVILLIAN,FACTION_GOVERNMENT,FACTION_CRIME )
 	else
 		for k,v in ipairs(a)do
 			if string.lower(v)=="civillian" then
-				table.insert(factions,FACTION_CIVILLIAN)
+				factions=bit.bor(factions,FACTION_CIVILLIAN)
 			elseif string.lower(v)=="government" then
-				table.insert(factions,FACTION_GOVERNMENT)
+				factions=bit.bor(factions,FACTION_GOVERNMENT)
 			elseif string.lower(v)=="crime" then
-				table.insert(factions,FACTION_CRIME)
+				factions=bit.bor(factions,FACTION_CRIME)
 			end
 		end
 	end
@@ -63,74 +65,120 @@ concommand.Add("excl_admin_property_create",function(_,_,a)
 	net.Start("ERP.property.addproperty")
 	net.WriteString(name)
 	net.WriteString(description)
-	net.WriteTable(factions)
+	net.WriteUInt(factions,8)
 	net.SendToServer()
 
 	print("Property added.")
 end,function(_,str)
 	return {"undefined"}
-end,"Create a new property. Format: Name, Description, Factions")
+end,"Create a new property. Format: <Property Name> <Description> <Factions: all OR crime OR government OR civillian>")
 
 concommand.Add("excl_admin_property_add_door",function(_,_,a)
 	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
 
 	local property = a[1];
 
-	if not property or not ERP.Properties[property] then print("Invalid arguments.") return end
+	if not property or not ERP.Properties[property] then print("Invalid arguments: "..tostring(property)) return end
 
 	local ent=LocalPlayer():GetEyeTrace().Entity
 
-	if not IsValid(ent) then return end
+	if not IsValid(ent) then print("No door found.") return end
+
+	ent=ent:EntIndex();
+
+	if Doors[ent] then print("Door already has a proprty.") return end
 
 	net.Start("ERP.property.adddoor")
 	net.WriteString(property)
-	net.WriteUInt(ent:EntIndex(),16)
+	net.WriteUInt(ent,16)
 	net.SendToServer()
 
 	print("Door added to property "..property..".")
 end,function(_,str)
 	return {"undefined"}
-end,"Add the door you're facing to a property. Format: Property name")
+end,"Add the door you're facing to a property. Format: <Property name>")
+
+concommand.Add("excl_admin_property_list",function(_,_,a)
+	print("-- START PROPERTY LIST --")
+	for k,v in pairs(ERP.Properties)do
+		print(v.name.." \t["..v.description.."] ["..math.IntToBin(v.factions).."]\n")
+	end
+	print("--  END PROPERTY LIST --")
+end,function(_,str)
+	return {"undefined"}
+end,"Add the door you're facing to a property. Format: <Property name>")
 
 -- Networking
 net.Receive("ERP.property.sync",function(len)
-	ERP.Properties = net.ReadTable();
+	ES.DebugPrint("Properties loaded!")
+
+	while(#ERP.Properties > 0)do
+		table.remove(ERP.Properties,#ERP.Properties);
+	end
+	for k,v in ipairs(net.ReadTable())do
+		ERP.Properties[k]=v;
+		setmetatable(v,PROPERTY)
+		PROPERTY.__index = PROPERTY
+	end
+
+	for k,v in pairs(ERP.Properties)do
+		for _,door in ipairs(v.doors)do
+			Doors[door]=v;
+		end
+	end
 end)
 net.Receive("ERP.property.adddoor",function(len)
 	local property=ERP.Properties[net.ReadString()]
 
 	if not property then return end
 
-	table.insert(property.doors,net.ReadUInt(16))
+	local index=net.ReadUInt(16);
+	Doors[index]=property;
+
+	table.insert(property.doors,index)
+
+	ES.DebugPrint("Doors updated!")
 end)
 net.Receive("ERP.property.addproperty",function(len)
-	table.insert(ERP.Properties,{
+	local tab={
 		name=net.ReadString(),
 		description=net.ReadString(),
-		factions=net.ReadTable()
-	})
+		factions=net.ReadUInt(8)
+	}
+	setmetatable(tab,PROPERTY)
+	PROPERTY.__index = PROPERTY
+	table.insert(ERP.Properties,tab)
+
+	ES.DebugPrint("Properties updated!")
 end)
 
 -- HUD
 local alpha = 0
 hook.Add("HUDPaint","exclDoorPropertyHints",function()
 	local lp = LocalPlayer();
-	if lp:GetEyeTrace() and IsValid(lp:GetEyeTrace().Entity) and table.HasValue(doors,lp:GetEyeTrace().Entity:GetClass()) and availableProperty[lp:GetEyeTrace().Entity:EntIndex()] then
-		local e = lp:GetEyeTrace().Entity;
-		local p = e:LocalToWorld(e:OBBCenter());
+	local door = lp:GetEyeTrace().Entity;
 
-		if lp:GetEyeTrace().HitPos:Distance(lp:EyePos()) < 100 then
-			alpha = Lerp(0.01,alpha,255);
-		else
-			alpha = Lerp(0.1,alpha,0);
-		end
+	if IsValid(door) and table.HasValue(DoorTypes,door:GetClass()) and Doors[door:EntIndex()] then
+		local pos = door:LocalToWorld(door:OBBCenter());
 
-		p = p:ToScreen();
+		if pos:Distance(lp:EyePos()) < 150 then
+			pos=pos:ToScreen();
 
-		draw.SimpleTextOutlined("Door","ESDefault+",p.x,p.y,Color(255,255,255,alpha),1,1,1,Color(0,0,0,alpha));
-	else
-		if alpha > .5 then
-			alpha = Lerp(0.1,alpha,0);
+			local pr=Doors[door:EntIndex()];
+
+			local x,y=pos.x,pos.y - 16
+
+			local propertyName=pr:GetName() or "Undefined"
+			draw.SimpleText(propertyName,"ESDefault+.Shadow",x,y,ES.Color.Black,1,1)
+			draw.SimpleText(propertyName,"ESDefault+.Shadow",x,y+1,ES.Color.Black,1,1)
+			local _,yAdd = draw.SimpleText(propertyName,"ESDefault+",x,y,ES.Color.White,1,1)
+
+			y=y+yAdd+4;
+
+			local ownerString=pr:HasOwner() and "Undefined" or "FOR RENT ($"..pr:GetPrice(1).." per hour)";
+			draw.SimpleText(ownerString,"ESDefault.Shadow",x,y,ES.Color.Black,1,1)
+			draw.SimpleText(ownerString,"ESDefault.Shadow",x,y+1,ES.Color.Black,1,1)
+			draw.SimpleText(ownerString,"ESDefault",x,y,ES.Color.White,1,1)
 		end
 	end
 end);

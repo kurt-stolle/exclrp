@@ -9,7 +9,7 @@ setmetatable(ERP.Properties,{
     end
 
     for k,v in ipairs(tbl)do
-      if v.name == key then
+      if string.lower(v.name) == string.lower(key) then
         return v;
       end
     end
@@ -17,3 +17,22 @@ setmetatable(ERP.Properties,{
     return nil
   end
 })
+
+local PROPERTY = FindMetaTable("Property")
+AccessorFunc(PROPERTY,"name","Name",FORCE_STRING)
+AccessorFunc(PROPERTY,"description","Description",FORCE_STRING)
+AccessorFunc(PROPERTY,"owner","Owner",FORCE_NUMBER)
+function PROPERTY:GetPrice(timeHours)
+  if not timeHours or type(timeHours) ~= "number" then Error("No time passed to GetPrice function!") return end
+
+  timeHours = math.ceil(timeHours);
+
+  if not self.doors then return 0 end
+  local doors=#self.doors;
+  if not doors or doors < 1 then return 0 end
+
+  return math.ceil( ( 10 * ( 1 + doors / ( math.pow(1.2,doors) ) ) ) * timeHours );
+end
+function PROPERTY:HasOwner()
+  return false
+end

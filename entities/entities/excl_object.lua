@@ -2,10 +2,12 @@ AddCSLuaFile();
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
-ENT.PrintName = "EXCLRP ITEM"
+ENT.PrintName	= "Item"
+ENT.Information	= "An ExclRP item"
+ENT.Category = "ExclRP"
 ENT.Author = "Excl"
-ENT.Spawnable = false
-ENT.AdminSpawnable = false
+ENT.Spawnable			= false
+ENT.AdminOnly			= true
 ENT.Item = 0
 
 function ENT:Initialize()

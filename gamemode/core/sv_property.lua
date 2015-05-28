@@ -3,17 +3,22 @@ local doors = {
 	"func_door",
 	"func_door_rotating"
 };
+local PROPERTY=FindMetaTable("Property");
 
 hook.Add("ESDatabaseReady","ERP.ES.SetupPropertySQL",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` SMALLINT(5) unsigned NOT NULL, map varchar(255), name varchar(20), description varchar(255), factions varchar(255), doors varchar(255), owner INT unsigned, admins varchar(255), members varchar(255), expire_unix varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",function()
-		ES.DBQuery("SELECT name,description,doors,factions,owner,admins,members,expire_unix FROM erp_property WHERE map='"..ES.DBEscape(game.GetMap()).."';",function(c)
+	ES.DebugPrint("Loading property information...")
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` int unsigned NOT NULL AUTO_INCREMENT, map varchar(255), name varchar(20), description varchar(255), factions int(8) unsigned, doors varchar(255), owner INT unsigned, members varchar(255), expire_unix varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",function()
+		ES.DBQuery("SELECT name,description,doors,factions,owner,members,expire_unix FROM erp_property WHERE map='"..ES.DBEscape(game.GetMap()).."';",function(c)
 			if c and c[1] then
 				for k,v in ipairs(c)do
-					v.doors = util.JSONToTable(v.doors);
-					for k,v in ipairs(v.doors)do
-						v.doors[k] = ( v.doors + game.MaxPlayers() );
+					v.doors = util.JSONToTable(v.doors or "[]");
+					for index,door in ipairs(v.doors)do
+						v.doors[index] = ( door + game.MaxPlayers() );
 					end
-					v.factions = util.JSONToTable(v.factions);
+					v.members = util.JSONToTable(v.members or "[]");
+
+					setmetatable(v,PROPERTY)
+					PROPERTY.__index = PROPERTY;
 
 					ES.DebugPrint("Property loaded: ",v.name)
 				end
@@ -23,98 +28,106 @@ hook.Add("ESDatabaseReady","ERP.ES.SetupPropertySQL",function()
 	end):wait();
 end)
 
-function ERP:AddProperty(name,description,factions)
-	ES.DBQuery(Format("INSERT INTO erp_property SET map='"..ES.DBEscape(game.GetMap()).."', name = '%s', description = '%s', factions = '%s'", tostring(name),tostring(description),util.TableToJSON(factions)));
+-- Fnctions
+function ERP.Property(name,description,factions)
+	ES.DBQuery(Format("INSERT INTO `erp_property` (map,name,description,factions) VALUES('%s','%s','%s',%s);", game.GetMap(),tostring(name),tostring(description),factions or 0));
 
-	table.insert(ERP.Properties,{
+	local tab={
 		name=name,
 		description=description,
-		factions=factions
-	})
+		factions=factions,
+		members={},
+		doors={}
+	};
+	setmetatable(tab,PROPERTY)
+	PROPERTY.__index = PROPERTY;
+
+	table.insert(ERP.Properties,tab)
 
 	net.Start("ERP.property.addproperty")
 		net.WriteString(name)
 		net.WriteString(description)
-		net.WriteTable(factions)
+		net.WriteUInt(factions,8)
 	net.Broadcast()
 
 	ES.DebugPrint("New property added!",name)
 end
-function ERP:AddDoorToProperty(name,e)
-	local t = nil;
-	for k,v in pairs(ERP.Properties)do
-		if v.name == name then
-			t=v;
-		end
-	end
 
-	if not t then
-		ES.DebugPrint("No valid properties found by the name: ",name);
-		return
-	end;
+-- Meta object
+function PROPERTY:AddDoor(e)
+	if not self.doors then self.doors = {} end
 
-	if not t.doors then t.doors = {} end
-
-	table.insert(t.doors,e:EntIndex());
+	table.insert(self.doors,e:EntIndex());
 
 	local doorsSave={}
-	for k,v in ipairs(t.doors)do
+	for k,v in ipairs(self.doors)do
 		table.insert(doorsSave,v-game.MaxPlayers())
 	end
-	ES.DBQuery(Format("UPDATE erp_property SET doors = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."'  ;", util.TableToJSON(doorsSave),tostring(name)));
+	ES.DBQuery(Format("UPDATE erp_property SET doors = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."'  ;", util.TableToJSON(doorsSave),tostring(self:GetName())));
 
-	net.Start("ERP.admin.property.adddoor")
-		net.WriteUInt(e:EntIndex(),16)
-		net.WriteString(name)
+	net.Start("ERP.property.adddoor")
+	net.WriteString(self:GetName())
+	net.WriteUInt(e:EntIndex(),16)
 	net.Broadcast()
 
-	ES.DebugPrint("Door added to property",name)
+	ES.DebugPrint("Door added to property",self:GetName())
+end
+function PROPERTY:SetOwner(ply,timeHours)
+
 end
 
+-- Networking
 util.AddNetworkString( "ERP.property.sync" );
 hook.Add("ESPlayerReady","ERP.PlayerReady.SyncProperty",function(pl)
+	ES.DebugPrint("Networking properties.")
+
 	net.Start("ERP.property.sync");
 	net.WriteTable(ERP.Properties);
-	net.Send(self);
+	net.Send(pl);
 end)
 
 util.AddNetworkString("ERP.property.addproperty")
 net.Receive("ERP.property.addproperty",function(len,pl)
 	local name = net.ReadString()
 	local description = net.ReadString()
-	local factions = net.ReadTable()
+	local factions = net.ReadUInt(8)
 
 	if not pl:IsSuperAdmin() then return end
 
 	local property = false;
 	for k,v in pairs(ERP.Properties)do
-		if v.name == a[1] then
+		if v.name == name then
 			property = v;
 			break;
 		end
 	end
 	if property then return end
 
-	ERP:AddProperty(name,description,factions);
+	ERP.Property(name,description,factions);
 end)
 
 util.AddNetworkString("ERP.property.adddoor")
 net.Receive("ERP.property.adddoor",function(len,pl)
-	local ent=Entity(net.ReadUInt(16))
 	local property=net.ReadString()
+	local ent=Entity(net.ReadUInt(16))
 
 	if not pl:IsSuperAdmin() then return end
 
-	local property = false;
-	for k,v in pairs(ERP.Properties)do
-		if v.name == a[1] then
-			property = v.name;
-			break;
+	for k,v in ipairs(ERP.Properties)do
+		for _,door in ipairs(v.doors or {})do
+			if door == ent:EntIndex() then
+				ES.DebugPrint("Failed to add door; Door already linked.")
+				return;
+			end
 		end
 	end
-	if not property then
-		return;
+
+	for k,v in ipairs(ERP.Properties)do
+		if v.IsProperty and v:GetName() == property then
+			v:AddDoor(ent);
+			return;
+		end
 	end
 
-	ERP:AddDoorToProperty(property,ent)
+	ES.DebugPrint("Property not found :(")
 end)

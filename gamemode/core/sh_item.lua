@@ -53,7 +53,11 @@ function ITEM:__call() -- register
 	local ENT={
 		Base="excl_object",
 		PrintName=self._name,
-		Item=self._key
+		Item=self._key,
+		Spawnable = true,
+		Category = "ExclRP",
+		Autor = "Excl",
+		AdminOnly = true
 	};
 	for k,v in pairs(self._hooks)do
 		--some hooks must be wrapped
@@ -67,9 +71,11 @@ function ITEM:__call() -- register
 		end
 	end
 
-	scripted_ents.Register( ENT, "excl_object_"..util.CRC(self._name) )
+	local classname="excl_object_"..util.CRC(self._name);
 
-	ES.DebugPrint( "Registered item entity excl_object_"..util.CRC(self._name) );
+	scripted_ents.Register( ENT, classname )
+
+	ES.DebugPrint( "Registered item entity "..classname );
 end
 
 -- Utility
