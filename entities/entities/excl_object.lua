@@ -1,6 +1,5 @@
 AddCSLuaFile();
 
-ENT.Type = "anim"
 ENT.Base = "base_anim"
 ENT.PrintName	= "Item"
 ENT.Information	= "An ExclRP item"
@@ -10,43 +9,46 @@ ENT.Spawnable			= false
 ENT.AdminOnly			= true
 ENT.Item = 0
 
-function ENT:Initialize()
-	self._bItemLoaded=SERVER;
-
-	self:SetModel(self:GetItem()._model);
-
-	self:PhysicsInit(SOLID_VPHYSICS)
-	self:SetMoveType(MOVETYPE_VPHYSICS)
-	self:SetSolid(SOLID_VPHYSICS)
-
-	local phys = self:GetPhysicsObject();
-	if phys and phys:IsValid() then
-		phys:Wake();
-	end
-end
-
 function ENT:GetItem()
 	return ERP.Items[self.Item];
 end
 
-function ENT:GetClass()
-	return "excl_object";
-end
-
 if CLIENT then
+
+
 	net.Receive("ERP.Item.UseTransmit",function()
 		local ent=net.ReadEntity()
 
-		if not IsValid(ent) or ent:GetClass() ~= "excl_object" then return end
+		if not IsValid(ent) or not ent.GetItem then
+			ES.DebugPrint("Item is not of proper class.")
+			return
+		end
 
 		local opts={}
 		for k,v in pairs(ent:GetItem()._interactions)do
-			opts[#opts+1]={text=k,func=v}
+			opts[#opts+1]={text=k,func=function()
+				v(ent,LocalPlayer())
+			end}
 		end
 
 		ERP:CreateActionMenu(ent:LocalToWorld(ent:OBBCenter()),opts)
 	end)
 elseif SERVER then
+	function ENT:Initialize()
+		self:SetModel(self:GetItem()._model);
+
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+
+		self:SetUseType(SIMPLE_USE);
+
+		local phys = self:GetPhysicsObject();
+		if phys and phys:IsValid() then
+			phys:Wake();
+		end
+	end
+
 	util.AddNetworkString("ERP.Item.UseTransmit")
 
 	function ENT:Use(p)

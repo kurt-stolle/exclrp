@@ -111,7 +111,7 @@ local function genFirstName()
 end
 
 local function genLastName()
-	local parts={"malo","zak","abo","wonk","sto","le","foo","bar","nig","ger","ten","tan","ver"}
+	local parts={"malo","zak","abo","ko","sto","le","foo","bar","nig","ger","ten","tan","ver"}
 	local suffixes={"son","li","ssen","kor",""}
 	local syl=math.random(1,3)
 	local name="";

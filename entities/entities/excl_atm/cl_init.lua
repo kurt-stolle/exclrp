@@ -5,6 +5,8 @@ end
 
 function ENT:Draw()
 	self.Entity:DrawModel()
+
+	if not LocalPlayer():IsLoaded() then return end
 	
 	local pos = self:GetPos()
 	local ang = self:GetAngles()
@@ -25,52 +27,68 @@ usermessage.Hook("exclOpenATMMenu",function()
 		if fr and fr:IsValid() then
 			fr:Remove();
 		end
-		
-		fr = ERP:CreateExclFrame("Deposit",1,1,200,89,true);
+
+		fr = vgui.Create("esFrame")
+		fr:SetTitle("Deposit")
+		fr:SetSize(200,30+20+20+20+30+20)
+
 		fr:Center();
 		fr:MakePopup();
-		
+
 		local textEntry = vgui.Create("DTextEntry", fr)
 		textEntry:SetText("0")
-		textEntry:SetSize(fr:GetWide()-10,16)
+		textEntry:SetTall(20)
+		textEntry:Dock(TOP)
+		textEntry:DockMargin(20,20,20,0)
 		textEntry:SetPos(5,35);
 		textEntry.OnEnter = function(self) end
-		
+
 		local button = vgui.Create("esButton",fr)
-		button:SetSize(fr:GetWide()-10,30);
-		button:SetPos(5,fr:GetTall()-35);
+		button:SetTall(30)
+		button:Dock(BOTTOM)
+		button:DockMargin(20,20,20,20)
 		button:SetText("Confirm");
 		button.DoClick = function()
 			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetCash() then ES.Notify("generic","You do not have enough cash on you to do this."); return; end
 			RunConsoleCommand("excl_bank_deposit",textEntry:GetValue());
 			fr:Remove();
 		end
+
+		fr:MakePopup();
 	end},
 	{text = "Withdraw",func = function()
 		if fr and fr:IsValid() then
 			fr:Remove();
 		end
-		
-		fr = ERP:CreateExclFrame("Withdraw",1,1,200,89,true);
+
+		fr = vgui.Create("esFrame")
+		fr:SetTitle("Withdraw")
+		fr:SetSize(200,30+20+20+20+30+20)
+
 		fr:Center();
-		fr:MakePopup();
-		
+
+
 		local textEntry = vgui.Create("DTextEntry", fr)
 		textEntry:SetText("0")
-		textEntry:SetSize(fr:GetWide()-10,16)
+		textEntry:SetTall(20)
+		textEntry:Dock(TOP)
+		textEntry:DockMargin(20,20,20,0)
 		textEntry:SetPos(5,35);
 		textEntry.OnEnter = function(self) end
-		
+
 		local button = vgui.Create("esButton",fr)
-		button:SetSize(fr:GetWide()-10,30);
-		button:SetPos(5,fr:GetTall()-35);
+		button:SetTall(30)
+		button:Dock(BOTTOM)
+		button:DockMargin(20,20,20,20)
 		button:SetText("Confirm");
 		button.DoClick = function()
 			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetBank() then ES.Notify("generic","You do not have enough cash in your account to do this."); return; end
 			RunConsoleCommand("excl_bank_withdraw",textEntry:GetValue());
 			fr:Remove();
 		end
-		
+
+		fr:MakePopup();
+
 	end}
 	})
 end)

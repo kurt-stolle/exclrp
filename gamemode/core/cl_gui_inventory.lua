@@ -41,16 +41,14 @@ usermessage.Hook("EOINVM",function()
 		return;
 	end
 
-
-	menu = ERP:CreateExclFrame("Inventory",0,0,12*52 + 20 + 10,620,true);
-	menu:Center();
-	menu:MakePopup();
+	menu = vgui.Create("esFrame");
+  menu:SetTitle("Inventory");
 
 	--INFO
 	local info = vgui.Create("esPanel",menu);
 	info:Dock(TOP)
 	info:SetTall(128)
-	info:DockMargin(8,8,8,0)
+	info:DockMargin(10,10,10,0)
 
 	local spawnicon = vgui.Create("Spawnicon",info)
 	spawnicon:Dock(LEFT)
@@ -63,25 +61,15 @@ usermessage.Hook("EOINVM",function()
 	l:SetColor(ES.Color.White);
 	l:SizeToContents();
 
-	local tabs = vgui.Create("esTabPanel",menu);
-	tabs:Dock(FILL)
-	tabs:DockMargin(8,8,8,8)
-
-	local pnl =  tabs:AddTab("Inventory","icon16/application_view_tile.png")
+	local pnl =  vgui.Create("esPanel",menu)
+	pnl:Dock(FILL)
+	pnl:DockMargin(10,10,10,10)
 
 		local grid = vgui.Create("exclInventoryGrid",pnl);
 		grid:SetGridSize(12,8);
 		grid:SetPos(0,0);
 
-	local pnl =  tabs:AddTab("Store","icon16/add.png")
-
-		local grid = vgui.Create("exclInventoryGrid",pnl);
-		grid:SetGridSize(12,8);
-		grid:SetPos(0,0);
-
-	local pnl =  tabs:AddTab("Class wholesale","icon16/brick_add.png");
-
-		local grid = vgui.Create("exclInventoryGrid",pnl);
-		grid:SetGridSize(12,8);
-		grid:SetPos(0,0);
+	menu:SetSize(10+grid:GetWide()+10,30+10+info:GetTall()+10+grid:GetTall()+10);
+	menu:Center();
+	menu:MakePopup();
 end);

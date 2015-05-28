@@ -15,18 +15,19 @@ local NPC=FindMetaTable("NPC");
 AccessorFunc(NPC,"_key","Key",FORCE_NUMBER);
 AccessorFunc(NPC,"_name","Name",FORCE_STRING);
 AccessorFunc(NPC,"_description","Description",FORCE_STRING);
-AccessorFunc(NPC,"_fn","DialogConstructor");
+if CLIENT then
+	AccessorFunc(NPC,"_fn","DialogConstructor");
 
--- The defaultDialog
-local defaultDialog = function(self,context,frame)
-  local lbl=vgui.Create("esLabel",context)
-  lbl:SetText("Hello, "..(LocalPlayer():GetCharacter():GetFirstPrintName()).."!");
-  lbl:SizeToContents()
-  lbl:SetPos(10,10)
-  lbl:SetFont("ESDefault")
-  lbl:SetColor(ES.Color.White)
+	-- The defaultDialog
+	local defaultDialog = function(self,context,frame)
+	  local lbl=vgui.Create("esLabel",context)
+	  lbl:SetText("Hello, "..(LocalPlayer():GetCharacter():GetFirstPrintName()).."!");
+	  lbl:SizeToContents()
+	  lbl:SetPos(10,10)
+	  lbl:SetFont("ESDefault")
+	  lbl:SetColor(ES.Color.White)
+	end
 end
-
 -- The constructor.
 function ERP.NPC()
 	obj={}
@@ -36,8 +37,9 @@ function ERP.NPC()
 
 	obj._name = "Undefined";
 	obj._description = "An unidentified object.";
-  obj._fn = defaultDialog;
-
+	if CLIENT then
+	  obj._fn = defaultDialog;
+	end
 
 	return obj;
 end

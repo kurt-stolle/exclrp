@@ -11,9 +11,9 @@ usermessage.Hook("EOIERP",function()
 	end
 
 
-	menu = ERP:CreateExclFrame("Character",0,0,500,500,true);
-	menu:Center();
-	menu:MakePopup()
+	menu = vgui.Create("esFrame");
+  menu:SetSize(500,500);
+  menu:SetTitle("Character");
 
 	local tabs = vgui.Create("esTabPanel",menu);
 	tabs:Dock(FILL)
@@ -80,4 +80,7 @@ usermessage.Hook("EOIERP",function()
     end
     createJobs()
 	tabs:AddTab("Settings","icon16/wrench.png")
+
+  menu:Center();
+	menu:MakePopup()
 end);

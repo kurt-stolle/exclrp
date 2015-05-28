@@ -32,7 +32,10 @@ net.Receive("ERP.InteractItem",function(len,ply)
 		local ent=net.ReadEntity()
 		local interaction=net.ReadString()
 
-	  if not ent:GetItem() or not ent:GetItem()._interactions[interaction] then return end
+	  if not ent.GetItem or not ent:GetItem() or not ent:GetItem()._interactions[interaction] then
+			ES.DebugPrint("Invalid interaction requested: ",interaction);
+			return
+		end
 
-		ent:GetItem()._interactions[interaction](ply);
+		ent:GetItem()._interactions[interaction](ent,ply);
 end)

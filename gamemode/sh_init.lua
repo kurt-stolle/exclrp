@@ -74,6 +74,7 @@ function ERP.IncludeFolder(folder,runtype)
 end
 ERP.IncludeFolder("exclrp/gamemode/util");
 ERP.IncludeFolder("exclrp/gamemode/core");
+ERP.IncludeFolder("exclrp/gamemode/vgui","cl");
 ERP.IncludeFolder("exclrp/gamemode/classes","sh");
 ERP.IncludeFolder("exclrp/gamemode/items","sh");
 ERP.IncludeFolder("exclrp/gamemode/npcs","sh");

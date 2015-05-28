@@ -10,7 +10,7 @@ end
 
 function PLAYER:SprintEnable()
 	if not self._cachedSprintSpeed then return end
-	
+
 	self:SetRunSpeed(self._cachedSprintSpeed);
 end
 
