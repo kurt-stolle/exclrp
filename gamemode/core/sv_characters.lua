@@ -173,3 +173,11 @@ function ERP.OpenMainMenu(ply)
 		net.Send(ply);
 	end)
 end
+
+util.AddNetworkString("ERP.Character.UnLoad")
+net.Receive("ERP.Character.UnLoad",function(len,ply)
+	ply:UnLoad();
+	net.Start("ERP.Character.UnLoad");
+	net.WriteEntity(ply);
+	net.Broadcast();
+end)

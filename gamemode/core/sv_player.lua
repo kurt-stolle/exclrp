@@ -71,7 +71,3 @@ function ERP:PlayerSwitchFlashlight()
 end
 
 -- Network commands
-util.AddNetworkString("ERP.LogOut")
-net.Receive("ERP.LogOut",function(len,ply)
-	ply:UnLoad();
-end)

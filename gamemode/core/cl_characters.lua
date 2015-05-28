@@ -19,7 +19,13 @@ net.Receive("ERP.Character.Load",function()
 
 	ES.DebugPrint("Received new character. "..ply:Nick());
 end);
+net.Receive("ERP.character.UnLoad",function()
+	local ply=net.ReadEntity()
 
+	if not IsValid(ply) then return end
+
+	ply.character=nil;
+end);
 net.Receive("ERP.Character.Update",function()
 	local ply=net.ReadEntity()
 
