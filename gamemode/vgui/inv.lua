@@ -9,10 +9,11 @@ function PNL:SetGridSize(x,y)
 end
 function PNL:Paint()
 	draw.RoundedBox(2,0,0,self:GetWide(),self:GetTall(),ES.Color["#111"]);
-	for x=0,self.gridSize.x-1,2 do
-		for y=1,self.gridSize.y-1,2 do
+	for x=0,self.gridSize.x-1,1 do
+		for y=(x%2),self.gridSize.y-1,2 do
+
 		    draw.RoundedBox(0,x*self.tileSize,y*self.tileSize,self.tileSize,self.tileSize,ES.Color["#222"]);
 		end
 	end
 end
-vgui.Register("ERP.Inventory",PNL,"EditablePanel")
+vgui.Register("ERP.Inventory",PNL,"Panel")

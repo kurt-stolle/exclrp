@@ -34,7 +34,7 @@ function ES.OpenUI_Inventory()
 	l:SetColor(ES.Color.White);
 	l:SizeToContents();
 
-	local pnl =  vgui.Create("esPanel",menu)
+	local pnl =  vgui.Create("Panel",menu)
 	pnl:Dock(FILL)
 	pnl:DockMargin(10,10,10,10)
 
