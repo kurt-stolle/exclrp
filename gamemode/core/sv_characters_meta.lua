@@ -30,6 +30,9 @@ function CHARACTER:SetJob(job)
 	end
 
 	job=ERP.Jobs[job];
+
+	if not job then return end
+
 	self.Player:SetTeam(job.team);
 
 	net.Start("ERP.Job.ChangedFX"); net.WriteEntity(self.Player); net.WriteUInt(job:GetTeam(),8); net.Broadcast();
@@ -41,6 +44,8 @@ function CHARACTER:SetJob(job)
 	self.Player:SetWeaponColor(col);
 
 	self.job=job:GetName();
+	self.joblevel=0;
 
 	ERP.SaveCharacter(self.Player,"job");
+	ERP.SaveCharacter(self.Player,"joblevel");
 end

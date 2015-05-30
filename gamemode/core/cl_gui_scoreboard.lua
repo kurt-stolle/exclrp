@@ -63,9 +63,6 @@ vgui.Register("ERP.TabMenu",{
 
 		table.insert(self.bubbles,btn)
 	end,
-	OnMouseReleased=function(self)
-		self:Close()
-	end,
 	Think=function(self)
 	 	self.scale = Lerp(FrameTime()*4,self.scale,1);
 		self.color.a = self.scale*200;
@@ -122,19 +119,19 @@ function ERP:ScoreboardShow()
 	_menu:Dock(FILL)
 
 	_menu:AddBubble("Scoreboard",Material("icon16/user.png"),function()
-
+		ES.OpenUI_Playerlist()
 	end)
 	_menu:AddBubble("ID",Material("icon16/user_suit.png"),function()
-
+		ERP.OpenUI_ID()
 	end)
 	_menu:AddBubble("Inventory",Material("icon16/user.png"),function()
-
+		ES.OpenUI_Inventory()
 	end)
 	_menu:AddBubble("Job",Material("icon16/wrench.png"),function()
-
+		ERP.OpenUI_Job()
 	end)
 	_menu:AddBubble("Log out",Material("icon16/world.png"),function()
-		net.Start("ERP.LogOut"); net.SendToServer();
+		net.Start("ERP.Character.UnLoad"); net.SendToServer();
 		LocalPlayer().character=nil;
 	end)
 

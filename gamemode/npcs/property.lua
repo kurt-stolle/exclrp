@@ -3,7 +3,7 @@ npc:SetName("Property salesman")
 npc:SetDescription("Hello!\n\nI can sell you a number of properties around "..game.GetMap()..".\nJust click on one of the panels below to buy the property.")
 
 if CLIENT then
-  npc:SetDialogConstructor(function(self,context,frame)
+  npc:SetDialogConstructor(function(self,context,npc)
     ES.DebugPrint("Opening property sales menu")
 
     for k,v in ipairs(ERP.Properties)do

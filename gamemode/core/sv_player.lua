@@ -69,5 +69,3 @@ end
 function ERP:PlayerSwitchFlashlight()
     return false;
 end
-
--- Network commands

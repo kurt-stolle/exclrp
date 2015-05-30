@@ -15,17 +15,22 @@ local NPC=FindMetaTable("NPC");
 AccessorFunc(NPC,"_key","Key",FORCE_NUMBER);
 AccessorFunc(NPC,"_name","Name",FORCE_STRING);
 AccessorFunc(NPC,"_description","Description",FORCE_STRING);
+AccessorFunc(NPC,"_model","Model",FORCE_STRING);
 if CLIENT then
 	AccessorFunc(NPC,"_fn","DialogConstructor");
 
 	-- The defaultDialog
-	local defaultDialog = function(self,context,frame)
+	local defaultDialog = function(self,context,npc)
 	  local lbl=vgui.Create("esLabel",context)
 	  lbl:SetText("Hello, "..(LocalPlayer():GetCharacter():GetFirstPrintName()).."!");
 	  lbl:SizeToContents()
 	  lbl:SetPos(10,10)
 	  lbl:SetFont("ESDefault")
 	  lbl:SetColor(ES.Color.White)
+	end
+elseif SERVER then
+	function NPC:AddInteraction(name,fn)
+		self._interactions[name]=fn;
 	end
 end
 -- The constructor.
@@ -37,8 +42,11 @@ function ERP.NPC()
 
 	obj._name = "Undefined";
 	obj._description = "An unidentified object.";
+	obj._model = "models/Humans/Group02/Male_04.mdl"
 	if CLIENT then
 	  obj._fn = defaultDialog;
+	elseif SERVER then
+		obj._interactions={};
 	end
 
 	return obj;
@@ -54,7 +62,8 @@ function NPC:__call() -- register
 		Spawnable = true,
     AdminOnly = true,
     Category = "ExclRP",
-    Author = "Excl"
+    Author = "Excl",
+		Model = self._model;
 	};
 
   local classname="excl_npc_"..util.CRC(self._name);

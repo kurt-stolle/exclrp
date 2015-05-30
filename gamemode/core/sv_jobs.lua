@@ -17,14 +17,3 @@ timer.Create("exclTimePayday",120,0,function()
 		end
 	end
 end)
-concommand.Add("excl_job",function(p,c,a)
-	local j = a[1] and ERP.Jobs[a[1]] or nil;
-	if not j or (p:GetCharacter():GetJob() and p:GetCharacter():GetJob() == j) then
-		ES.DebugPrint(p:Nick()..": "..(a[1] or "").." is not a valid job!")
-		return
-	end
-
-	ES.DebugPrint(p:Nick()..": set job to "..j:GetName())
-
-	p:GetCharacter():SetJob(j:GetName());
-end)

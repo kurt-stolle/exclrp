@@ -64,6 +64,18 @@ elseif CLIENT then
       return;
     end
 
+    -- Hacky stuff below, but sadly no other way to do it.
+    if not ent.Interact then
+      function ent:Interact(name,...)
+        net.Start("ERP.NPC.Interact");
+        net.WriteEntity(self)
+        net.WriteString(name)
+        net.WriteTable{...}
+        net.SendToServer()
+      end
+    end
+
+    -- Create the dialog.
     local frame=vgui.Create("esFrame");
     frame:SetTitle("NPC Interaction");
     frame:SetSize(780,500);
@@ -71,9 +83,10 @@ elseif CLIENT then
     local context=vgui.Create("esPanel",frame)
     context:Dock(FILL)
     context:DockMargin(10,10,10,10)
+    context:DockPadding(10,10,10,10)
     context:SetColor(ES.Color["#1E1E1E"])
 
-      ERP.NPCs[name]:GetDialogConstructor()(ent,context,frame)
+      ERP.NPCs[name]:GetDialogConstructor()(ent,context,ent)
 
     local npcInfo=vgui.Create("esPanel",frame)
     npcInfo:SetWide(200)
