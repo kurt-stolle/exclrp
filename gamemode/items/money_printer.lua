@@ -7,6 +7,8 @@ ITEM:AddHook("SetupDataTables",function(self)
 	self:NetworkVar( "Int", 0, "Money" )
 end)
 
+ITEM:SetInventorySize(2,1)
+
 if CLIENT then
 
 	ITEM:AddHook("Draw",function(self)

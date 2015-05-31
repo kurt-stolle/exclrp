@@ -31,7 +31,7 @@ function ERP.CreateCharacter(ply,fname,lname,model)
 		if c and #c >= 4 then
 			return;
 		end
-		ES.DBQuery(Format("INSERT INTO erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 100, bank = 500;", ES.DBEscape(fname), ES.DBEscape(lname), ply:SteamID(),ES.DBEscape(model)),function()
+		ES.DBQuery(Format("INSERT INTO erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 100, bank = 500, inventory = '%s';", ES.DBEscape(fname), ES.DBEscape(lname), ply:SteamID(),ES.DBEscape(model),ERP.EncodeInventory(ERP.Inventory())),function()
 			ERP.OpenMainMenu(ply);
 		end)
 	end)

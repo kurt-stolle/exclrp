@@ -11,12 +11,18 @@ setmetatable(ERP.Items,{
 	end
 })
 
+function ERP.ValidItem(item)
+	return item and type(item) == "table" and item.IsItem;
+end
+
 local ITEM=FindMetaTable("Item");
 AccessorFunc(ITEM,"_value","Value",FORCE_NUMBER);
 AccessorFunc(ITEM,"_model","Model",FORCE_STRING);
 AccessorFunc(ITEM,"_name","Name",FORCE_STRING);
 AccessorFunc(ITEM,"_description","Description",FORCE_STRING);
 AccessorFunc(ITEM,"_key","Key",FORCE_NUMBER);
+AccessorFunc(ITEM,"_invWidth","InventoryWidth",FORCE_NUMBER);
+AccessorFunc(ITEM,"_invHeight","InventoryHeight",FORCE_NUMBER);
 
 -- The constructor.
 function ERP.Item()
@@ -30,6 +36,8 @@ function ERP.Item()
 	obj._interactions = {}
 	obj._model = "";
 	obj._key = 0;
+	obj._invWidth = 1;
+	obj._invHeight = 1;
 
 	return obj;
 end
@@ -43,6 +51,15 @@ end
 
 function ITEM:AddInteraction(n,f)
 	self._interactions[n] = f;
+end
+
+function ITEM:GetInventorySize()
+	return self._invWidth,self._invHeight;
+end
+
+function ITEM:SetInventorySize(w,h)
+	self:SetInventoryWidth(w)
+	self:SetInventoryHeight(h)
 end
 
 -- Use this hook to register the entity.

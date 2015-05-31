@@ -1,7 +1,15 @@
 local PNL = {}
 function PNL:Init()
-	self.grid = {}
+	self.inventory = ERP.Inventory();
   self.tileSize=52
+end
+function PNL:Setup(inv)
+	self.inventory = inv;
+
+	self:Update();
+end
+function PNL:Update()
+
 end
 function PNL:SetGridSize(x,y)
 	self.gridSize = Vector(x,y,0);
