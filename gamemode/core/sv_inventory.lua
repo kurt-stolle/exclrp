@@ -10,3 +10,16 @@ function INV:AddItem(item,x,y)
 
 	grid[x][y] = item:GetName()
 end
+function INV:RemoveItem(item,x,y)
+	if not ERP.ValidItem(item) then return error("Invalid item") end
+	if not self:HasItemAt(item,x,y) then return end
+
+	self:GetGrid()[x][y]=nil;
+end
+function INV:MoveItem(item,xOld,yOld,xNew,yNew)
+	if not ERP.ValidItem(item) then return error("Invalid item") end
+	if not self:HasItemAt(item,xOld,yOld) or not tobool(self:FitItemAt(item,xNew,yNew)) then return ES.DebugPrint("Failed item move") end
+
+	self:RemoveItem(item,xOld,yOld)
+	self:AddItem(item,xNew,yNew)
+end

@@ -67,9 +67,20 @@ function CHARACTER:GiveItem(item,x,y)
 		x,y = inv:FitItem(item)
 	end
 
-	if not x or x < 0 or not y or y < 0 then return ES.DebugPrint("No space in inventory for item given to character!"); end
+	if not x or x <= 0 or not y or y <= 0 then return ES.DebugPrint("No space in inventory for item given to character!"); end
 
 	inv:AddItem(item,x,y)
+
+	ERP.SaveCharacter(self.Player,"inventory");
+end
+function CHARACTER:MoveItem(item,xOld,yOld,xNew,yNew)
+	if not ERP.ValidItem(item) then return ES.DebugPrint("Invalid item given to character!"); end
+
+	local inv = self:GetInventory();
+
+	if not inv then return ES.DebugPrint("Character has an invalid inventory.") end
+
+	inv:MoveItem(item,xOld,yOld,xNew,yNew)
 
 	ERP.SaveCharacter(self.Player,"inventory");
 end

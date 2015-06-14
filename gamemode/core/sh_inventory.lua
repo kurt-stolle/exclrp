@@ -50,6 +50,9 @@ end
 function INV:HasItem(item)
 	return table.HasValue(self:GetItems(),item:GetName());
 end
+function INV:HasItemAt(item,x,y)
+	return tobool(ERP.ValidItem(item) and self.grid[x] and self.grid[x][y] and self.grid[x][y] == item:GetName())
+end
 
 -- Get the grid with item IDs at [x][y]. No fillers.
 function INV:GetGrid()
@@ -93,7 +96,7 @@ end
 -- Find a spot for the item
 -- TODO: Needs serious optimization
 function INV:FitItem(item)
-	if not ERP.ValidItem(item) then return end
+	if not ERP.ValidItem(item) then return 0,0 end
 
 	local w,h = self:GetSize();
 	local grid = self:GetSpace();
@@ -104,7 +107,7 @@ function INV:FitItem(item)
 				local nope=false;
 				for _x=x,x+item:GetInventoryWidth()-1 do
 					for _y=y,y+item:GetInventoryHeight()-1 do
-						if grid[x] and grid[x][y] then
+						if _x > w or y > h or grid[x] and grid[x][y] then
 							local nope=true;
 							break;
 						end
@@ -117,5 +120,24 @@ function INV:FitItem(item)
 		end
 	end
 
-	return -1,-1
+	return 0,0
+end
+function INV:FitItemAt(item,x,y)
+	if not ERP.ValidItem(item) then return 0,0 end
+
+	local w,h = self:GetSize();
+	local grid = self:GetSpace()
+
+	if x > w or y > h or x < 1 or y < 1 then return 0,0 end
+
+	local nope=false;
+	for _x=x,x+item:GetInventoryWidth()-1 do
+		for _y=y,y+item:GetInventoryHeight()-1 do
+			if _x > w or y > h or grid[x] and grid[x][y] then
+				return 0,0
+			end
+		end
+	end
+
+	return x,y
 end

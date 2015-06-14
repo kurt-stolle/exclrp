@@ -192,3 +192,16 @@ net.Receive("ERP.Character.UnLoad",function(len,ply)
 	net.WriteEntity(ply);
 	net.Broadcast();
 end)
+
+util.AddNetworkString("ERP.Character.ReorganizeInventory")
+net.Receive("ERP.Character.ReorganizeInventory",function(len,ply)
+	if not ply:IsLoaded() then return end
+
+	local item = net.ReadString()
+	local xOld = net.ReadUInt(8)
+	local yOld = net.ReadUInt(8)
+	local xNew = net.ReadUInt(8)
+	local yNew = net.ReadUInt(8)
+
+	ply:GetCharacter():MoveItem(item,xOld,yOld,xNew,yNew)	
+end

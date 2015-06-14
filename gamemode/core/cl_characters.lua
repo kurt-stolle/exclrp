@@ -20,6 +20,8 @@ net.Receive("ERP.Character.Load",function()
 	end
 
 	ES.DebugPrint("Received new character. "..ply:Nick());
+
+	hook.Call("ERPCharacterLoaded",ERP,ply:GetCharacter())
 end);
 net.Receive("ERP.character.UnLoad",function()
 	local ply=net.ReadEntity()
@@ -42,6 +44,8 @@ net.Receive("ERP.Character.Update",function()
 			v = ERP.DecodeInventory(v);
 		end
 		ply.character[k]=v;
+
+		hook.Call("ERPCharacterUpdated",ERP,ply:GetCharacter(),k,v)
 	end
 
 	ES.DebugPrint("Received updates about character. Values updated locally."..ply:Nick());

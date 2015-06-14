@@ -3,8 +3,9 @@ AccessorFunc(PNL,"item","Item",FORCE_STRING)
 ES.UIAddHoverListener(PNL)
 function PNL:Init()
 	ES.UIInitRippleEffect(self)
+	self.itempos = Vector(-1,-1,0)
 end
-function PNL:Setup(item)
+function PNL:Setup(item,x,y)
 	if item then
 		self:SetItem(item)
 	end
@@ -12,6 +13,9 @@ function PNL:Setup(item)
 	item = ERP.Items[item]
 
 	if not ERP.ValidItem(item) then return ES.DebugPrint("Invalid item passed.") end
+
+	self.itempos.x = x;
+	self.itempos.y = y;
 
 	local tileSize = self:GetParent().tileSize or 52;
 
@@ -22,6 +26,7 @@ function PNL:Setup(item)
 	mdl:SetTall(mdl:GetWide())
 	mdl:SetModel(item:GetModel())
 	mdl:Center();
+	mdl:SetMouseInputEnabled(false)
 
 	self.model = mdl
 end
@@ -33,17 +38,28 @@ end
 function PNL:OnMousePressed()
 	ES.UIMakeRippleEffect(self)
 end
+function PNL:OnMouseReleased()
+	self:GetParent():OnItemSelected(self.item,self.itempos.x,self.itempos.y)
+end
 local matGradient = Material("exclserver/gradient.png")
 function PNL:Paint(w,h)
-	surface.SetDrawColor(ES.Color["#000000AF"])
-	surface.SetMaterial(matGradient)
-	surface.DrawTexturedRect(0,0,w,h)
+
+
+	if self:GetHover() then
+		local clr = table.Copy(ES.GetColorScheme(3))
+		clr.a = 100;
+		draw.RoundedBox(2,0,0,w,h,clr)
+	end
+
 end
 function PNL:PaintOver(w,h)
 	if self:GetHover() then
-		local clr = table.Copy(ES.GetColorScheme(2))
-		clr.a = 150;
-		draw.RoundedBox(2,0,0,w,h,clr)
+		local clr = table.Copy(ES.GetColorScheme(3))
+		clr.a = 100;
+
+		surface.SetDrawColor(clr)
+		surface.SetMaterial(matGradient)
+		surface.DrawTexturedRect(0,0,w,h)
 	end
 
 	ES.UIDrawRippleEffect(self,w,h)
@@ -84,6 +100,9 @@ function PNL:Update()
 			table.insert(self._itemPanels,pnl)
 		end
 	end
+end
+function PNL:OnItemSelected(item,x,y)
+	-- override me
 end
 function PNL:SetGridSize(x,y)
 	self.gridSize = Vector(x,y,0);
