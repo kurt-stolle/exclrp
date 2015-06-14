@@ -12,6 +12,8 @@ AccessorFunc(PNL,"_fn","DoClick");
 function PNL:Init()
 	self:SetColor(ES.Color["#1E1E1E"])
 	self:SetText("Undefined")
+
+	ES.UIInitRippleEffect(self)
 end
 function PNL:OnCursorEntered()
 	self:SetColor(ES.Color["#282828"])
@@ -64,12 +66,12 @@ vgui.Register("ERP.TabMenu",{
 		table.insert(self.bubbles,btn)
 	end,
 	Think=function(self)
-	 	self.scale = Lerp(FrameTime()*4,self.scale,1);
+	 	self.scale = Lerp(FrameTime()*7,self.scale,1);
 		self.color.a = self.scale*200;
 
 		local c=#self.bubbles;
 		for k,v in ipairs(self.bubbles)do
-			v._rad=Lerp(FrameTime()*5,v._rad or 0,2*math.pi*k*(1/c));
+			v._rad=Lerp(FrameTime()*8,v._rad or 0,2*math.pi*k*(1/c));
 
 			v.x = self:GetWide()/2 - math.sin(v._rad) * 200 - v:GetWide()/2;
 			v.y = self:GetTall()/2 - math.cos(v._rad) * 200 - v:GetTall()/2;
@@ -83,6 +85,15 @@ vgui.Register("ERP.TabMenu",{
 		if (self.color.a < 1) then return end
 
 		draw.RoundedBox(0,0,0,w,h,self.color)
+
+		local clr = Color(255,255,255,self.color.a)
+
+		draw.SimpleText("ExclRP","ESDefault+.Shadow",w/2,h/2 - 16,self.color,1,1)
+		draw.SimpleText("ExclRP","ESDefault+",w/2,h/2 - 16,clr,1,1)
+		draw.SimpleText(#player.GetAll().. " Players","ESDefault-.Shadow",w/2,h/2+4,self.color,1,1)
+		draw.SimpleText(#player.GetAll().. " Players","ESDefault-",w/2,h/2+4,clr,1,1)
+		draw.SimpleText(game.GetMap(),"ESDefault-.Shadow",w/2,h/2 + 19,self.color,1,1)
+		draw.SimpleText(game.GetMap(),"ESDefault-",w/2,h/2 + 19,clr,1,1)
 
 		local x,y = ScrW()/2 - self.scale * ScrW()/2,ScrH()/2 - self.scale * ScrH()/2
 		render.PushFilterMag( TEXFILTER.ANISOTROPIC )

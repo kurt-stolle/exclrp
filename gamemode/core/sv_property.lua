@@ -7,16 +7,16 @@ local PROPERTY=FindMetaTable("Property");
 
 hook.Add("ESDatabaseReady","ERP.ES.SetupPropertySQL",function()
 	ES.DebugPrint("Loading property information...")
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` int unsigned NOT NULL AUTO_INCREMENT, map varchar(255), name varchar(20), description varchar(255), factions int(8) unsigned, doors varchar(255), owner INT unsigned, members varchar(255), expire_unix varchar(255), jobs varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",function()
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_property` (`id` int unsigned NOT NULL AUTO_INCREMENT, map varchar(255), name varchar(20), description varchar(255), factions int(8) unsigned, doors TEXT, owner INT unsigned, members varchar(255), expire_unix varchar(255), jobs TEXT, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",function()
 		ES.DBQuery("SELECT name,description,doors,factions,owner,members,expire_unix FROM erp_property WHERE map='"..ES.DBEscape(game.GetMap()).."';",function(c)
 			if c and c[1] then
 				for k,v in ipairs(c)do
-					v.doors = util.JSONToTable(v.doors or "[]");
+					v.doors = ES.Deserialize(v.doors or "");
 					for index,door in ipairs(v.doors)do
 						v.doors[index] = ( door + game.MaxPlayers() );
 					end
-					v.members = util.JSONToTable(v.members or "[]");
-					v.jobs = util.JSONToTable(v.jobs or "[]");
+					v.members = ES.Deserialize(v.members or "");
+					v.jobs = ES.Deserialize(v.jobs or "");
 
 					setmetatable(v,PROPERTY)
 					PROPERTY.__index = PROPERTY;
@@ -65,7 +65,7 @@ function PROPERTY:AddDoor(e)
 	for k,v in ipairs(self.doors)do
 		table.insert(doorsSave,v-game.MaxPlayers())
 	end
-	ES.DBQuery(Format("UPDATE erp_property SET doors = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."';", util.TableToJSON(doorsSave),tostring(self:GetName())));
+	ES.DBQuery(Format("UPDATE erp_property SET doors = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."';", ES.Serialize(doorsSave),tostring(self:GetName())));
 
 	net.Start("ERP.property.adddoor")
 	net.WriteString(self:GetName())
@@ -79,7 +79,7 @@ function PROPERTY:AddJob(job)
 
 	table.insert(self.jobs,job);
 
-	ES.DBQuery(Format("UPDATE erp_property SET jobs = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."';", util.TableToJSON(self.jobs),tostring(self:GetName())));
+	ES.DBQuery(Format("UPDATE erp_property SET jobs = '%s' WHERE name = '%s' AND map='"..ES.DBEscape(game.GetMap()).."';", ES.Serialize(self.jobs),tostring(self:GetName())));
 
 	net.Start("ERP.property.addjob")
 	net.WriteString(self:GetName())

@@ -2,12 +2,10 @@ local ITEM = ERP.Item();
 ITEM:SetName("Money Printer");
 ITEM:SetDescription("A printer used to illegally print cash.");
 ITEM:SetModel("models/props_c17/consolebox01a.mdl");
-
+ITEM:SetInventorySize(5,2)
 ITEM:AddHook("SetupDataTables",function(self)
 	self:NetworkVar( "Int", 0, "Money" )
 end)
-
-ITEM:SetInventorySize(2,1)
 
 if CLIENT then
 

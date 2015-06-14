@@ -6,6 +6,8 @@ net.Receive("ERP.Character.Load",function()
 	if not IsValid(ply) then return end
 
 	ply.character = net.ReadTable();
+	ply.character.inventory = ERP.DecodeInventory(ply.character.inventory)
+
 	setmetatable(ply.character,CHARACTER);
 	CHARACTER.__index = CHARACTER;
 
@@ -36,6 +38,9 @@ net.Receive("ERP.Character.Update",function()
 	if not updates then return end
 
 	for k,v in pairs(updates)do
+		if k == "inventory" then
+			v = ERP.DecodeInventory(v);
+		end
 		ply.character[k]=v;
 	end
 

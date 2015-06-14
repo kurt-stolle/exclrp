@@ -2,7 +2,7 @@ local ITEM = ERP.Item();
 ITEM:SetName("First Aid Kit");
 ITEM:SetDescription("Regenterates the user's health fully.");
 ITEM:SetModel("models/Items/HealthKit.mdl");
-
+ITEM:SetInventorySize(2,2)
 if CLIENT then
 
 	ITEM:AddHook("Draw",function(self)

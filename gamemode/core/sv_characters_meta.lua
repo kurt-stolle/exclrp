@@ -1,6 +1,7 @@
 -- sv_characters_meta.lua
 local CHARACTER = FindMetaTable("Character");
 
+-- MONEY
 function CHARACTER:SetCash(i)
 	self.cash = i;
 
@@ -9,6 +10,7 @@ end
 function CHARACTER:AddCash(i)
 	self:SetCash(self:GetCash()+i);
 end
+CHARACTER.GiveCash = CHARACTER.AddCash
 function CHARACTER:TakeCash(i)
 	self:AddCash(-i);
 end
@@ -21,9 +23,12 @@ end
 function CHARACTER:AddBank(i)
 	self:SetBank(self:GetBank()+i);
 end
+CHARACTER.GiveBank = CHARACTER.AddBank
 function CHARACTER:TakeBank(i)
 	self:AddBank(-i);
 end
+
+-- JOBS
 function CHARACTER:SetJob(job)
 	if not job then
 		return;
@@ -48,4 +53,23 @@ function CHARACTER:SetJob(job)
 
 	ERP.SaveCharacter(self.Player,"job");
 	ERP.SaveCharacter(self.Player,"joblevel");
+end
+
+-- INVENTORY
+function CHARACTER:GiveItem(item,x,y)
+	if not ERP.ValidItem(item) then return ES.DebugPrint("Invalid item given to character!"); end
+
+	local inv = self:GetInventory();
+
+	if not inv then return ES.DebugPrint("Character has an invalid inventory.") end
+
+	if not x and not y then
+		x,y = inv:FitItem(item)
+	end
+
+	if not x or x < 0 or not y or y < 0 then return ES.DebugPrint("No space in inventory for item given to character!"); end
+
+	inv:AddItem(item,x,y)
+
+	ERP.SaveCharacter(self.Player,"inventory");
 end

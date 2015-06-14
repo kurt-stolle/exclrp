@@ -1,6 +1,6 @@
 -- sv_characters.lua
 hook.Add("ESDatabaseReady","ERP.ES.CreateERPCharactersDB",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory varchar(255), dead tinyint(1) default 0, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory MEDIUMTEXT, dead tinyint(1) default 0, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
 end)
 
 -- the following fields of characters will be sent to ALL PLAYERS
@@ -10,9 +10,9 @@ hook.Add("ESPlayerReady","ERP.PlayerReady.SendCurrentCharacterState",function(pl
 	for k,v in ipairs(player.GetAll())do
 		if v:IsLoaded() then
 			local public={};
-			for k,v in pairs(v.character)do
-				if table.HasValue(PublicFields,v) then
-					public[k]=v;
+			for _k,_v in pairs(v.character)do
+				if table.HasValue(PublicFields,_v) then
+					public[_k]=_v;
 				end
 			end
 			net.Start("ERP.Character.Load")
@@ -31,7 +31,11 @@ function ERP.CreateCharacter(ply,fname,lname,model)
 		if c and #c >= 4 then
 			return;
 		end
-		ES.DBQuery(Format("INSERT INTO erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 100, bank = 500, inventory = '%s';", ES.DBEscape(fname), ES.DBEscape(lname), ply:SteamID(),ES.DBEscape(model),ERP.EncodeInventory(ERP.Inventory())),function()
+		local inv=ERP.Inventory();
+		inv:SetWidth(12)
+		inv:SetHeight(8)
+
+		ES.DBQuery(Format("INSERT INTO erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 100, bank = 500, inventory = '%s';", ES.DBEscape(fname), ES.DBEscape(lname), ply:SteamID(),ES.DBEscape(model),ES.DBEscape(ERP.EncodeInventory(inv))),function()
 			ERP.OpenMainMenu(ply);
 		end)
 	end)
@@ -59,14 +63,17 @@ util.AddNetworkString("ERP.Character.Update");
 function ERP.SyncCharacter(ply,...)
 	if not ply.character then return end
 
+	local char=table.Copy(ply.character);
+	char.inventory = ERP.EncodeInventory(char.inventory)
+
 	if not (...) then
 		net.Start("ERP.Character.Load")
 		net.WriteEntity(ply)
-		net.WriteTable(ply.character);
+		net.WriteTable(char);
 		net.Send(ply);
 
 		local public={};
-		for k,v in pairs(ply.character)do
+		for k,v in pairs(char) do
 			if table.HasValue(PublicFields,v) then
 				public[k]=v;
 			end
@@ -79,9 +86,9 @@ function ERP.SyncCharacter(ply,...)
 		local syncThis={};
 		local syncOthers={};
 		for k,v in ipairs{...}do
-			syncThis[v]=ply.character[v];
+			syncThis[v]=char[v];
 			if table.HasValue(PublicFields,v) then
-				syncOthers[k]=ply.character[v];
+				syncOthers[k]=char[v];
 			end
 		end
 
@@ -144,7 +151,11 @@ function ERP.SaveCharacter(ply,...)
 	local v;
 	for _,k in ipairs{...}do
 		v=ply.character[k];
-		if not v then continue end
+		if not v then
+			continue
+		elseif k == "inventory" and type(v) == "table" then
+			v=ERP.EncodeInventory(v);
+		end
 		if type(v) == "string" then
 			v="'"..ES.DBEscape(v).."'";
 		else

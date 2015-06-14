@@ -11,3 +11,7 @@ end
 function CHARACTER:CanAfford(amt)
 	return amt and self:GetCash() >= tonumber(amt) or false;
 end
+
+function CHARACTER:GetInventory()
+	return self.inventory
+end

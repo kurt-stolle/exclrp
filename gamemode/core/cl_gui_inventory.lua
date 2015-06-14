@@ -14,8 +14,14 @@ function ES.OpenUI_Inventory()
 		return;
 	end
 
+	if not LocalPlayer():IsLoaded() then return end
+
+	local inv = LocalPlayer():GetCharacter():GetInventory()
+
 	menu = vgui.Create("esFrame");
   menu:SetTitle("Inventory");
+
+	if not inv then return end
 
 	--INFO
 	local info = vgui.Create("esPanel",menu);
@@ -39,10 +45,11 @@ function ES.OpenUI_Inventory()
 	pnl:DockMargin(10,10,10,10)
 
 		local grid = vgui.Create("ERP.Inventory",pnl);
-		grid:SetGridSize(12,8);
+		grid:SetGridSize(inv:GetWidth(),inv:GetHeight());
 		grid:SetPos(0,0);
+		grid:Setup(inv);
 
-	menu:SetSize(10+grid:GetWide()+10,30+10+info:GetTall()+10+grid:GetTall()+10);
+	menu:SetSize(20+grid:GetWide()+20,30+20+info:GetTall()+20+grid:GetTall()+20);
 	menu:Center();
 	menu:MakePopup();
 end
