@@ -2,7 +2,7 @@ local ITEM=FindMetaTable("Item");
 
 function ITEM:SpawnInWorld(pos,ang)
 
-	local e = ents.Create("excl_object_"..util.CRC(self._name));
+	local e = ents.Create("erp_object_"..util.CRC(self._name));
 	e:SetPos(pos);
 	e:SetAngles(ang);
 	e:Spawn();
@@ -11,7 +11,7 @@ function ITEM:SpawnInWorld(pos,ang)
 	return e;
 end
 
-concommand.Add("excl_admin_spawnitem",function(p,c,a)
+concommand.Add("erp_admin_spawnitem",function(p,c,a)
 	if not IsValid(p) or not p:IsSuperAdmin() then
 		p:ChatPrint("This command is for Super Administrators only.");
 		return
@@ -38,4 +38,34 @@ net.Receive("ERP.InteractItem",function(len,ply)
 		end
 
 		ent:GetItem()._interactions[interaction](ent,ply);
+end)
+
+util.AddNetworkString("ERP.PickupItem")
+net.Receive("ERP.PickupItem",function(len,ply)
+	if not IsValid(ply) then return end
+
+	local ent = net.ReadEntity()
+
+	if not IsValid(ent) or ent:GetPos():Distance(ply:EyePos()) > 200 or ent:IsPlayerHolding() then return end
+
+	 ply:PickupObject( ent )
+end)
+
+util.AddNetworkString("ERP.ItemToInventory")
+net.Receive("ERP.ItemToInventory",function(len,ply)
+	if not IsValid(ply) then return end
+
+	local ent = net.ReadEntity()
+
+	if not IsValid(ent) or ent:GetPos():Distance(ply:EyePos()) > 200 then return end
+
+	local char = ply:GetCharacter();
+	local item = ent:GetItem()
+
+	if not char or not ERP.ValidItem(item) then return end
+
+	if tobool(char:GetInventory():FitItem(item)) then
+		char:GiveItem(item)
+		ent:Remove();
+	end
 end)

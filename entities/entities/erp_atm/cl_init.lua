@@ -50,7 +50,7 @@ usermessage.Hook("exclOpenATMMenu",function()
 		button:SetText("Confirm");
 		button.DoClick = function()
 			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetCash() then ES.Notify("generic","You do not have enough cash on you to do this."); return; end
-			RunConsoleCommand("excl_bank_deposit",textEntry:GetValue());
+			RunConsoleCommand("erp_bank_deposit",textEntry:GetValue());
 			fr:Remove();
 		end
 
@@ -83,7 +83,7 @@ usermessage.Hook("exclOpenATMMenu",function()
 		button:SetText("Confirm");
 		button.DoClick = function()
 			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetBank() then ES.Notify("generic","You do not have enough cash in your account to do this."); return; end
-			RunConsoleCommand("excl_bank_withdraw",textEntry:GetValue());
+			RunConsoleCommand("erp_bank_withdraw",textEntry:GetValue());
 			fr:Remove();
 		end
 

@@ -92,7 +92,7 @@ function PNL:Update()
 
 			timer.Simple(0,function()
 				if IsValid(pnl) then
-					pnl:Setup(item)
+					pnl:Setup(item,x,y)
 					pnl:SetPos((x-1) * self.tileSize, (y-1) * self.tileSize)
 				end
 			end)

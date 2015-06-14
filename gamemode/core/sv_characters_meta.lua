@@ -84,3 +84,24 @@ function CHARACTER:MoveItem(item,xOld,yOld,xNew,yNew)
 
 	ERP.SaveCharacter(self.Player,"inventory");
 end
+function CHARACTER:DropItem(item,x,y)
+	if not ERP.ValidItem(item) then return ES.DebugPrint("Invalid item given to character!"); end
+
+	local inv = self:GetInventory();
+
+	if not inv then return ES.DebugPrint("Character has an invalid inventory.")
+	elseif not inv:HasItemAt(item,x,y) then return ES.DebugPrint("Player does not have specified item") end
+
+	inv:RemoveItem(item,x,y)
+
+	local trace={}
+	trace.start = self.Player:EyePos()
+	trace.endpos = trace.start + (self.Player:GetAngles():Forward() * 50)
+	trace.filter = self.Player
+
+	trace=util.TraceLine(trace)
+
+	item:SpawnInWorld(trace.HitPos,self.Player:GetAngles())
+
+	ERP.SaveCharacter(self.Player,"inventory");
+end

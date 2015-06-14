@@ -197,11 +197,26 @@ util.AddNetworkString("ERP.Character.ReorganizeInventory")
 net.Receive("ERP.Character.ReorganizeInventory",function(len,ply)
 	if not ply:IsLoaded() then return end
 
-	local item = net.ReadString()
+	local item = ERP.Items[net.ReadString()]
 	local xOld = net.ReadUInt(8)
 	local yOld = net.ReadUInt(8)
 	local xNew = net.ReadUInt(8)
 	local yNew = net.ReadUInt(8)
 
-	ply:GetCharacter():MoveItem(item,xOld,yOld,xNew,yNew)	
-end
+	if not item or not xOld or not yOld or not xNew or not yNew then return end
+
+	ply:GetCharacter():MoveItem(item,xOld,yOld,xNew,yNew)
+end)
+
+util.AddNetworkString("ERP.Character.DropFromInventory")
+net.Receive("ERP.Character.DropFromInventory",function(len,ply)
+	if not ply:IsLoaded() then return end
+
+	local item = ERP.Items[net.ReadString()]
+	local x = net.ReadUInt(8)
+	local y = net.ReadUInt(8)
+
+	if not item or not x or not y then return end
+
+	ply:GetCharacter():DropItem(item,x,y)
+end)

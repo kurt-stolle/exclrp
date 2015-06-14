@@ -15,16 +15,16 @@ hook.Add("OnContextMenuOpen","ERP.ContextMenu.Properties",function()
 			if not ERP.OwnedProperty[availableProperty[e:EntIndex()]] then
 				ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
 					{text="Buy property",func=function()
-						RunConsoleCommand("excl_buyproperty");
+						RunConsoleCommand("erp_buyproperty");
 					end}
 				})
 			elseif ERP.OwnedProperty[availableProperty[e:EntIndex()]].id == LocalPlayer():UniqueID() then
 				ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
 					{text="Lock",func=function()
-						RunConsoleCommand("excl_lockdoor");
+						RunConsoleCommand("erp_lockdoor");
 					end},
 					{text="Unlock",func=function()
-						RunConsoleCommand("excl_unlockdoor");
+						RunConsoleCommand("erp_unlockdoor");
 					end}
 				})
 			else
@@ -36,7 +36,7 @@ hook.Add("OnContextMenuOpen","ERP.ContextMenu.Properties",function()
 end)
 
 -- Console commands
-concommand.Add("excl_admin_property_create",function(_,_,a)
+concommand.Add("erp_admin_property_create",function(_,_,a)
 	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
 
 	local name = a[1];
@@ -75,7 +75,7 @@ end,function(_,str)
 	return {"undefined"}
 end,"Create a new property. Format: <Property Name> <Description> <Factions: none OR all OR crime OR government OR civillian>")
 
-concommand.Add("excl_admin_property_add_door",function(_,_,a)
+concommand.Add("erp_admin_property_add_door",function(_,_,a)
 	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
 
 	local property = a[1];
@@ -100,7 +100,7 @@ end,function(_,str)
 	return {"undefined"}
 end,"Add the door you're facing to a property. Format: <Property name>")
 
-concommand.Add("excl_admin_property_add_job",function(_,_,a)
+concommand.Add("erp_admin_property_add_job",function(_,_,a)
 	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
 
 	local property = a[1];
@@ -121,7 +121,7 @@ end,function(_,str)
 	return {"undefined"}
 end,"Add a job to a property. The job will ALWAYS have permissions on the door, regardless of the owner. Format: <Property name> <Job name>")
 
-concommand.Add("excl_admin_property_list",function(_,_,a)
+concommand.Add("erp_admin_property_list",function(_,_,a)
 	print("-- START PROPERTY LIST --")
 	for k,v in pairs(ERP.Properties)do
 		print(v.name.." ["..v.description.."][Flag: "..v.factions.." | Binary: "..math.IntToBin(v.factions).."]")

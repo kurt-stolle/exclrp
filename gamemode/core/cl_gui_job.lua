@@ -51,7 +51,7 @@ function ERP.OpenUI_Job()
       pick:Dock(BOTTOM)
       pick:SetText("Accept")
       pick.DoClick=function()
-        RunConsoleCommand("excl_job",v.name)
+        RunConsoleCommand("erp_job",v.name)
         frame:Remove()
       end
       pick:DockMargin(10,10,10,10)

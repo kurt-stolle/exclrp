@@ -34,6 +34,7 @@ elseif SERVER then
 		timer.Create(timerTitle,60,0,function()
 			if not IsValid(self) then
 				timer.Remove(timerTitle);
+				return
 			end
 			self:SetMoney(self:GetMoney()+math.random(8,12))
 		end);

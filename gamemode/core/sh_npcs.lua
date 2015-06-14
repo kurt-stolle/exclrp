@@ -57,7 +57,7 @@ function NPC:__call() -- register
 	ERP.NPCs[self._key]=self;
 
 	local ENT={
-		Base="excl_npc_base",
+		Base="erp_npc_base",
 		PrintName=self._name,
 		Spawnable = true,
     AdminOnly = true,
@@ -66,7 +66,7 @@ function NPC:__call() -- register
 		Model = self._model;
 	};
 
-  local classname="excl_npc_"..util.CRC(self._name);
+  local classname="erp_npc_"..util.CRC(self._name);
 
 	scripted_ents.Register( ENT, classname )
 

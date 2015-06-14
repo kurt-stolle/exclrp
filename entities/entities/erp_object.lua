@@ -25,6 +25,16 @@ if CLIENT then
 		end
 
 		local opts={}
+		opts[1] = {text="Pick up",func=function()
+			net.Start("ERP.PickupItem")
+			net.WriteEntity(ent)
+			net.SendToServer()
+		end}
+		opts[2] = {text="To inventory",func=function()
+			net.Start("ERP.ItemToInventory")
+			net.WriteEntity(ent)
+			net.SendToServer()
+		end}
 		for k,v in pairs(ent:GetItem()._interactions)do
 			opts[#opts+1]={text=k,func=function()
 				v(ent,LocalPlayer())
@@ -52,10 +62,10 @@ elseif SERVER then
 	util.AddNetworkString("ERP.Item.UseTransmit")
 
 	function ENT:Use(p)
-		if not IsValid(p) or not p.IsPlayer or not p:IsPlayer() then return end
-
-		net.Start("ERP.Item.UseTransmit")
-		net.WriteEntity(self)
-		net.Send(p)
+		if not (not IsValid(p) or not p.IsPlayer or not p:IsPlayer() or self:IsPlayerHolding()) then
+			net.Start("ERP.Item.UseTransmit")
+			net.WriteEntity(self)
+			net.Send(p)
+		end
 	end
 end

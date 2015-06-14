@@ -68,7 +68,7 @@ function ITEM:__call() -- register
 	ERP.Items[self._key]=self;
 
 	local ENT={
-		Base="excl_object",
+		Base="erp_object",
 		PrintName=self._name,
 		Item=self._key,
 		Spawnable = true,
@@ -88,7 +88,7 @@ function ITEM:__call() -- register
 		end
 	end
 
-	local classname="excl_object_"..util.CRC(self._name);
+	local classname="erp_object_"..util.CRC(self._name);
 
 	scripted_ents.Register( ENT, classname )
 

@@ -205,7 +205,9 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 		newpos = ply:EyePos();
 	end
 
-	fov=fov-2+(math.sin(CurTime()*2))*.3;
+	if LocalPlayer():ESGetNetworkedVariable("energy",100) < 80 then
+		fov=fov-2+(math.sin(CurTime()*2))*.6;
+	end
 
 	local view = {origin = pos, angles = angles, fov = fov};
 	if IsValid(ERP.MainMenu) then

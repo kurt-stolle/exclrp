@@ -29,6 +29,13 @@ function ES.OpenUI_Inventory()
 	info:SetTall(128)
 	info:DockMargin(10,10,10,0)
 
+		local dummy = vgui.Create("Panel",info)
+		dummy:Dock(FILL)
+		function dummy:Paint(w,h)
+			draw.SimpleText("The item you select will appear here","ESDefault++",w/2,h/2,ES.Color["#FFFFFFAA"],1,1)
+		end
+		dummy.IsDummy = true;
+
 		local icon = vgui.Create("Spawnicon",info)
 		icon:SetSize(120,120)
 		icon:SetPos(4,4)
@@ -55,9 +62,11 @@ function ES.OpenUI_Inventory()
 			bDrop:SetTall(30)
 			bDrop:SetText("Drop")
 			bDrop:Dock(BOTTOM)
-			bDrop.DoClick = function()
 
-			end
+		for k,v in ipairs(info:GetChildren())do
+			v:SetVisible(v.IsDummy and true or false)
+		end
+
 	--GRID
 	local pnl =  vgui.Create("Panel",menu)
 	pnl:Dock(FILL)
@@ -78,11 +87,23 @@ function ES.OpenUI_Inventory()
 			lName:SizeToContents();
 			lDescr:SetText(item:GetDescription())
 			lDescr:SizeToContents()
+
+			bDrop.DoClick = function()
+				net.Start("ERP.Character.DropFromInventory")
+				net.WriteString(item:GetName())
+				net.WriteUInt(x,8)
+				net.WriteUInt(y,8)
+				net.SendToServer()
+			end
+
+			for k,v in ipairs(info:GetChildren())do
+				v:SetVisible(not v.IsDummy and true or false)
+			end
 		end
 
 		menu.inventory = grid;
 
-	menu:SetSize(20+grid:GetWide()+20,30+20+info:GetTall()+20+grid:GetTall()+20);
+	menu:SetSize(15+grid:GetWide()+15,30+10+info:GetTall()+10+grid:GetTall()+10);
 	menu:Center();
 	menu:MakePopup();
 end

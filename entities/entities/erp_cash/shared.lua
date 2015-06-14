@@ -14,5 +14,5 @@ function ENT:SetupDataTables()
 end
 local emeta = FindMetaTable("Entity");
 function emeta:IsCash()
-	return e:GetClass()=="excl_cash";
+	return e:GetClass()=="erp_cash";
 end

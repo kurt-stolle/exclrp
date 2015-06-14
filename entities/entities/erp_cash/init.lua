@@ -30,7 +30,7 @@ function ENT:Use(activator,caller)
 end
 
 function ENT:Touch(ent)
-	if not IsValid(self) or not IsValid(ent) or ent:GetClass() != "excl_cash" or ent.hasMerged or self.hasMerged then return end
+	if not IsValid(self) or not IsValid(ent) or ent:GetClass() != "erp_cash" or ent.hasMerged or self.hasMerged then return end
 
 	if self:GetAmount() >= ent:GetAmount() then
 		ent.hasMerged = true;
@@ -42,7 +42,7 @@ function ENT:Touch(ent)
 end
 
 function ERP:SpawnCash(amt,pos,ang)
-	local e = ents.Create("excl_cash");
+	local e = ents.Create("erp_cash");
 	e:SetPos(pos);
 	e:SetAngles(ang);
 	e:Spawn();

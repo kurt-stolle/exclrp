@@ -19,16 +19,16 @@ function ENT:Use(activator,caller)
 		umsg.Start("exclOpenATMMenu",activator); umsg.End();
 	end
 end
-concommand.Add("excl_bank_deposit",function(p,c,a)
-	if not a[1] or tonumber(a[1]) < 1 or not p:GetEyeTrace().Entity or p:GetEyeTrace().Entity:GetClass() != "excl_atm" or p:GetEyeTrace().Entity:GetPos():Distance(p:GetPos()+Vector(0,0,50)) > 120 or tonumber(a[1]) > p.character:GetCash() then return end
+concommand.Add("erp_bank_deposit",function(p,c,a)
+	if not a[1] or tonumber(a[1]) < 1 or not p:GetEyeTrace().Entity or p:GetEyeTrace().Entity:GetClass() != "erp_atm" or p:GetEyeTrace().Entity:GetPos():Distance(p:GetPos()+Vector(0,0,50)) > 120 or tonumber(a[1]) > p.character:GetCash() then return end
 
 	p.character:AddBank(tonumber(a[1]));
 	p.character:TakeCash(tonumber(a[1]));
 
 	umsg.Start("eDeposDone",p); umsg.Long(tonumber(a[1])); umsg.End();
 end)
-concommand.Add("excl_bank_withdraw",function(p,c,a)
-	if not a[1] or tonumber(a[1]) < 1 or not p:GetEyeTrace().Entity or p:GetEyeTrace().Entity:GetClass() != "excl_atm" or p:GetEyeTrace().Entity:GetPos():Distance(p:GetPos()+Vector(0,0,50)) > 120 or tonumber(a[1]) > p.character:GetBank() then return end
+concommand.Add("erp_bank_withdraw",function(p,c,a)
+	if not a[1] or tonumber(a[1]) < 1 or not p:GetEyeTrace().Entity or p:GetEyeTrace().Entity:GetClass() != "erp_atm" or p:GetEyeTrace().Entity:GetPos():Distance(p:GetPos()+Vector(0,0,50)) > 120 or tonumber(a[1]) > p.character:GetBank() then return end
 
 	p.character:TakeBank(tonumber(a[1]));
 	p.character:AddCash(tonumber(a[1]));

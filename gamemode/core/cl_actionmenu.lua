@@ -1,5 +1,5 @@
--- cl_actionmenu
--- the action menu
+
+--TODO: Remake this whole thing. The code is from ProjectRP/IRP2010, created by NewBee_ and Yuriman.
 
 local actionmenu = false;
 local actionmenuOptions = {};
@@ -7,31 +7,46 @@ local actionmenuPos = Vector(0,0,0); -- 3d vector!
 function ERP:CreateActionMenu(pos,options)
 	actionmenu = true;
 	actionmenuOptions = options;
+
+	pos.x = math.floor(pos.x)
+	pos.y = math.floor(pos.y)
+	pos.z = math.floor(pos.z)
+
 	actionmenuPos = pos;
 end
 
+local matGradient = Material("exclserver/gradient.png")
 hook.Add("PrePaintMainHUD","exclDrawActionMenus",function()
 	if actionmenu then
 
-		local scrPos = actionmenuPos:ToScreen();
+		if actionmenuPos:Distance(LocalPlayer():EyePos()) > 200 then
+			actionmenu = false
+			return
+		end
 
-		draw.SimpleText("ACTION MENU","ESDefaultBold",scrPos.x-51+1,scrPos.y-20+1,ES.Color["#FFFFFFA0"],0,0)
-		draw.SimpleText("ACTION MENU","ESDefaultBold",scrPos.x-51,scrPos.y-20,ES.Color.Black,0,0)
+		local scrPos = actionmenuPos:ToScreen();
+		scrPos.x = math.floor(scrPos.x)
+		scrPos.y = math.floor(scrPos.y)
+
+		surface.SetDrawColor(ES.Color.Black)
+		surface.SetMaterial(matGradient)
+		surface.DrawTexturedRectRotated(scrPos.x,scrPos.y - 14,102,30,180)
+
+		draw.SimpleText("Actions","ESDefault+.Shadow",scrPos.x-50,scrPos.y-20,ES.Color.Black,0,0)
+		draw.SimpleText("Actions","ESDefault+.Shadow",scrPos.x-50,scrPos.y-20,ES.Color.Black,0,0)
+		draw.SimpleText("Actions","ESDefault+.Shadow",scrPos.x-50,scrPos.y-19,ES.Color.Black,0,0)
+		draw.SimpleText("Actions","ESDefault+",scrPos.x-50,scrPos.y-20,ES.Color.White,0,0)
 
 		draw.RoundedBox(2,scrPos.x-51,scrPos.y-1,102,#actionmenuOptions*20 + 2,Color(0,0,0))
 		for k,v in ipairs(actionmenuOptions)do
 			if ScrW()/2 < scrPos.x-50+100 and ScrW()/2 > scrPos.x-50 and ScrH()/2 < scrPos.y+ 20*(k-1)+20 and ScrH()/2 >  scrPos.y+ 20*(k-1) then
 				v.hover =true;
-				draw.RoundedBox(2,scrPos.x-50,scrPos.y+ 20*(k-1),100,20,ES.GetColorScheme(1));
-				draw.SimpleTextOutlined(v.text or "Undefined","DermaDefaultBold",scrPos.x,scrPos.y+ 20*(k-1) +9,Color(255,255,255),1,1,1,Color(0,0,0))
 			else
 				v.hover = false;
-				draw.RoundedBox(2,scrPos.x-50,scrPos.y+ 20*(k-1),100,20,ES.Color.White);
-				draw.SimpleText(v.text or "Undefined","DermaDefaultBold",scrPos.x,scrPos.y+ 20*(k-1) +9,ES.Color["#444"],1,1,1);
 			end
 
-			draw.RoundedBox(2,scrPos.x-49,scrPos.y+ 20*(k-1) + 1,98,9,Color(255,255,255,10));
-
+			draw.RoundedBox(2,scrPos.x-50,scrPos.y+ 20*(k-1),100,20,k % 2 == 1 and ES.Color["#1E1E1E"] or ES.Color["#222"]);
+			draw.SimpleText(v.text or "Undefined","ESDefaultBold",scrPos.x,scrPos.y+ 20*(k-1) +10,v.hover and ES.Color.White or ES.Color["#AAA"],1,1);
 		end
 	end
 end)
