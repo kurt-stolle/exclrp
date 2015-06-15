@@ -48,7 +48,7 @@ function ES.OpenUI_Inventory()
 		lName:SizeToContents();
 
 		local lDescr = Label("Placeholder",info);
-		lDescr:SetPos(icon.x + icon:GetWide()+8,lName:GetTall() + lName.y + 8);
+		lDescr:SetPos(icon.x + icon:GetWide()+8,lName:GetTall() + lName.y + 2);
 		lDescr:SetFont("ESDefault");
 		lDescr:SetColor(ES.Color.White);
 		lDescr:SizeToContents();

@@ -4,6 +4,9 @@ ES.UIAddHoverListener(PNL)
 function PNL:Init()
 	ES.UIInitRippleEffect(self)
 	self.itempos = Vector(-1,-1,0)
+
+	self.color_highlight = table.Copy(ES.GetColorScheme(3))
+	self.color_highlight.a = 0
 end
 function PNL:Setup(item,x,y)
 	if item then
@@ -22,7 +25,7 @@ function PNL:Setup(item,x,y)
 	self:SetSize(item:GetInventoryWidth() * tileSize, item:GetInventoryHeight() * tileSize)
 
 	local mdl = vgui.Create("Spawnicon",self)
-	mdl:SetWide(math.max(self:GetWide(),self:GetTall()))
+	mdl:SetWide(math.max(self:GetWide()-2,self:GetTall()-2))
 	mdl:SetTall(mdl:GetWide())
 	mdl:SetModel(item:GetModel())
 	mdl:Center();
@@ -43,23 +46,24 @@ function PNL:OnMouseReleased()
 end
 local matGradient = Material("exclserver/gradient.png")
 function PNL:Paint(w,h)
-
-
-	if self:GetHover() then
-		local clr = table.Copy(ES.GetColorScheme(3))
-		clr.a = 100;
-		draw.RoundedBox(2,0,0,w,h,clr)
-	end
-
+	surface.SetDrawColor(self.color_highlight)
+	surface.DrawRect(0,0,w,h)
+end
+function PNL:Think()
+	self.color_highlight.a = Lerp(FrameTime()*8,self.color_highlight.a,self:GetHover() and 170 or 0)
 end
 function PNL:PaintOver(w,h)
 	if self:GetHover() then
-		local clr = table.Copy(ES.GetColorScheme(3))
-		clr.a = 100;
+		surface.SetDrawColor(self.color_highlight)
+		surface.DrawRect(0,0,w,h)
 
-		surface.SetDrawColor(clr)
-		surface.SetMaterial(matGradient)
-		surface.DrawTexturedRect(0,0,w,h)
+		local txt = string.upper(string.gsub(ERP.Items[self:GetItem()]:GetName()," ","\n"))
+		for i=1,2 do
+			draw.DrawText(txt,"ESDefaultBold.Shadow",3,3,ES.Color.Black)
+			draw.DrawText(txt,"ESDefaultBold.Shadow",3,4,ES.Color.Black)
+		end
+
+		draw.DrawText(txt,"ESDefaultBold",3,3,ES.Color.White)
 	end
 
 	ES.UIDrawRippleEffect(self,w,h)

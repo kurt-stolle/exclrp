@@ -93,6 +93,14 @@ function ITEM:__call() -- register
 	scripted_ents.Register( ENT, classname )
 
 	ES.DebugPrint( "Registered item entity "..classname );
+
+	self.SetName = nil;
+	self.SetDescription = nil;
+	self.AddHook = nil;
+	self.AddInteraction = nil;
+	self.SetInventorySize= nil;
+	self.SetValue = nil;
+	self.SetModel = nil;
 end
 
 -- Utility

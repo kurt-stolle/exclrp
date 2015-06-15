@@ -52,6 +52,13 @@ function JOB.__call(self)
 
 	ERP.Jobs[self:GetTeam()]=self;
 
+	self.SetTeam = nil;
+	self.SetName = nil;
+	self.SetDescription = nil;
+	self.SetClass = nil;
+	self.SetPay = nil;
+	self.SetColor = nil;
+
 	return true;
 end
 

@@ -29,14 +29,14 @@ function ERP.EncodeInventory(tbl)
 end
 
 -- Inventory object
-function ERP.Inventory()
+function ERP.Inventory(w,h)
 	local i={}
 	setmetatable(i,INV)
 	INV.__index=INV;
 
 	i.grid={}
-	i.w=1;
-	i.h=1;
+	i.w=w or 1;
+	i.h=h or 1;
 
 	return i;
 end

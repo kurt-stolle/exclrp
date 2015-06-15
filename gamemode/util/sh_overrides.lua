@@ -3,6 +3,7 @@ local ITEM={IsItem = function() return true end};
 local NPC={IsNPC = function() return true end};
 local PROPERTY={IsProperty = function() return true end};
 local INV={IsInventory = function() return true end};
+local STOR={IsStorage = function() return true end};
 
 local _findMeta = FindMetaTable;
 function FindMetaTable(name)
@@ -16,6 +17,8 @@ function FindMetaTable(name)
 		return PROPERTY;
 	elseif name == "Inventory" then
 		return INV;
+	elseif name == "Storage" then
+		return STOR;
 	end
 	return _findMeta(name);
 end

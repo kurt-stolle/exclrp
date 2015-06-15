@@ -25,37 +25,6 @@ function ERP.OpenUI_Job()
     lblJob:SizeToContents()
     lblJob:Dock(TOP)
     lblJob:DockMargin(10,10,10,0)
-
-    --[[for k,v in ipairs(ERP.Jobs)do
-    	local jobpnl=vgui.Create("esPanel",frame)
-      jobpnl:SetTall(122);
-      jobpnl:Dock(TOP)
-      jobpnl:SetColor(ES.Color["#1E1E1E"])
-      jobpnl:DockMargin(10,10,10,0)
-      local name=jobpnl:Add("esLabel")
-      name:SetColor(ES.Color.White)
-      name:SetText(v.name)
-      name:SetFont("ESDefault++")
-      name:SizeToContents()
-      name:Dock(TOP)
-      name:DockMargin(10,10,10,0)
-      local desc=jobpnl:Add("esLabel")
-      desc:SetColor(ES.Color["#EEE"])
-      desc:SetText(ES.FormatLine(v.description,"ESDefaultBold",440))
-      desc:SetFont("ESDefaultBold")
-      desc:SizeToContents()
-      desc:Dock(TOP)
-      desc:DockMargin(10,10,10,0)
-      local pick=jobpnl:Add("esButton")
-      pick:SetTall(30)
-      pick:Dock(BOTTOM)
-      pick:SetText("Accept")
-      pick.DoClick=function()
-        RunConsoleCommand("erp_job",v.name)
-        frame:Remove()
-      end
-      pick:DockMargin(10,10,10,10)
-    end]]
   else
     frame:SetSize(500,500);
 

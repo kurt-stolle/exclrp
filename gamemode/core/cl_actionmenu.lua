@@ -1,5 +1,5 @@
 
---TODO: Remake this whole thing. The code is from ProjectRP/IRP2010, created by NewBee_ and Yuriman.
+--TODO: Remake this whole thing. The code is from ProjectRP/IRP2k10, created by NewBee_ with some help from Yuriman.
 
 local actionmenu = false;
 local actionmenuOptions = {};
@@ -15,7 +15,6 @@ function ERP:CreateActionMenu(pos,options)
 	actionmenuPos = pos;
 end
 
-local matGradient = Material("exclserver/gradient.png")
 hook.Add("PrePaintMainHUD","exclDrawActionMenus",function()
 	if actionmenu then
 
@@ -27,10 +26,6 @@ hook.Add("PrePaintMainHUD","exclDrawActionMenus",function()
 		local scrPos = actionmenuPos:ToScreen();
 		scrPos.x = math.floor(scrPos.x)
 		scrPos.y = math.floor(scrPos.y)
-
-		surface.SetDrawColor(ES.Color.Black)
-		surface.SetMaterial(matGradient)
-		surface.DrawTexturedRectRotated(scrPos.x,scrPos.y - 14,102,30,180)
 
 		draw.SimpleText("Actions","ESDefault+.Shadow",scrPos.x-50,scrPos.y-20,ES.Color.Black,0,0)
 		draw.SimpleText("Actions","ESDefault+.Shadow",scrPos.x-50,scrPos.y-20,ES.Color.Black,0,0)
