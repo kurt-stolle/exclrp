@@ -9,7 +9,6 @@ end
 if CLIENT then
 	SWEP.DrawAmmo			= true
 	SWEP.DrawCrosshair		= true
-	SWEP.AccurateCrosshair = true
 	SWEP.ViewModelFOV		= 82
 	SWEP.ViewModelFlip		= false
 end

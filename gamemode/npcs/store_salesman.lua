@@ -98,7 +98,7 @@ if CLIENT then
   end);
 elseif SERVER then
   timer.Create("ERP.NPC.SalesmanShop.AddItem",30,0,function()
-    local rndItem=ERP.Items[table.Random{"Money Printer","First Aid Kit","Bleach"}]
+    local rndItem=ERP.Items[table.Random{"Money Printer","First Aid Kit","Bleach","Crate"}]
 
     if not rndItem then return ES.DebugPrint("Invalid item added to SalesMan Shop") end
 

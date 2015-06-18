@@ -107,8 +107,8 @@ function INV:FitItem(item)
 				local nope=false;
 				for _x=x,x+item:GetInventoryWidth()-1 do
 					for _y=y,y+item:GetInventoryHeight()-1 do
-						if _x > w or y > h or grid[x] and grid[x][y] then
-							local nope=true;
+						if _x > w or _y > h or (grid[_x] and grid[_x][_y]) then
+							nope=true;
 							break;
 						end
 					end

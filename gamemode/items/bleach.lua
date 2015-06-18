@@ -3,6 +3,10 @@ ITEM:SetName("Bleach");
 ITEM:SetDescription("Used to clean filth.");
 ITEM:SetModel("models/props_junk/garbage_plasticbottle001a.mdl");
 
+ITEM:SetInventorySize(1,1)
+ITEM:SetInventoryCamPos(Vector(0,0,16))
+ITEM:SetInventoryLookAt(Vector(0,0,0))
+
 if CLIENT then
 
 	ITEM:AddHook("Draw",function(self)

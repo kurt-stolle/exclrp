@@ -13,15 +13,15 @@ setmetatable(ERP.Storages,{
 })
 
 local STOR= FindMetaTable("Storage");
-AccessorFunc(STOR,"_name","Name",FORCE_STRING)
-AccessorFunc(STOR,"_key","Key",FORCE_NUMBER)
+AccessorFunc(STOR,"name","Name",FORCE_STRING)
+AccessorFunc(STOR,"key","Key",FORCE_NUMBER)
 function ERP.Storage(name,w,h)
   local obj={};
 	setmetatable(obj,STOR);
   STOR.__index=STOR;
 
-  obj._name = name or "";
-  obj._inventory = ERP.Inventory(w or nil,h or nil)
+  obj.name = name or "";
+  obj.inventory = ERP.Inventory(w or nil,h or nil)
 
 	return obj;
 end
@@ -35,7 +35,9 @@ function STOR:__call()
   self.SetKey = nil;
 
   ES.DebugPrint("Storage registered: "..self:GetName());
+
+	return self
 end
 function STOR:GetInventory()
-  return self._inventory;
+  return self.inventory;
 end

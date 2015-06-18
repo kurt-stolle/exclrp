@@ -6,7 +6,7 @@ function PLAYER:IsAiming()
 end
 
 function PLAYER:IsLoaded()
-	return (not not self.character);
+	return tobool(self.character);
 end
 
 function PLAYER:GetCharacter()

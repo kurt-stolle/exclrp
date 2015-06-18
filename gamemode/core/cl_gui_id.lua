@@ -6,14 +6,20 @@ function ERP.OpenUI_ID(ply)
     return;
   end
 
-  local frame=vgui.Create("esFrame")
-  frame:SetSize(20+180+180*(2/3),230)
-  frame:Center()
-  frame:SetTitle("Identification")
+  local frame=vgui.Create("Panel")
 
   local id=vgui.Create("ERP.CharacterID",frame)
   id:Setup(ply:GetCharacter())
-  id:Dock(FILL)
+  id:Dock(TOP)
+  id:SetTall(id.container:GetTall())
 
+  local close=vgui.Create("esButton",frame)
+  close:SetText("Close")
+  close:SetTall(30)
+  close:Dock(BOTTOM)
+  close.DoClick = function() frame:Remove() end;
+
+  frame:SetSize(id.container:GetWide(),id.container:GetTall()+10+close:GetTall())
+  frame:Center()
   frame:MakePopup()
 end
