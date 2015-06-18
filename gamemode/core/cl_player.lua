@@ -123,7 +123,7 @@ function ERP:HUDPaint()
 	drawHUDBox(box_margin,box_margin,mat_health,math.Round(smoothHealth).."% Health",color_health,smoothHealth/100);
 
 	-- ENERGY
-	smoothEnergy = Lerp(FrameTime() * animationSpeed,smoothEnergy,math.ceil( localplayer:ESGetNetworkedVariable("energy",100) ));
+	smoothEnergy = Lerp(FrameTime() * animationSpeed,smoothEnergy,math.ceil( localplayer:GetEnergy() ));
 	drawHUDBox(box_margin,box_margin*2+box_tall,mat_energy,math.Round(smoothEnergy).."% Energy",color_energy,smoothEnergy/100);
 
 	-- RESET RENDER POSITION;
@@ -164,6 +164,16 @@ end)
 local newpos;
 local newangles;
 function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view, menu-view, and death from the ragdoll's eyes.
+	if not ply:IsLoaded() then
+		local view = {origin = pos, angles = angles, fov = fov};
+		if IsValid(ERP.MainMenu) then
+			view.origin = ERP.Config.MainMenu.ViewOrigin;
+			view.angles = ERP.Config.MainMenu.ViewAngles;
+			view.fov = 90;
+		end
+		return view
+	end
+	
 	if not newpos then
 		newpos = pos;
 		newangles = angles;
@@ -205,26 +215,9 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 		newpos = ply:EyePos();
 	end
 
-	if LocalPlayer():ESGetNetworkedVariable("energy",100) < 80 then
+	if LocalPlayer():GetEnergy() < 80 then
 		fov=fov-2+(math.sin(CurTime()*2))*.6;
 	end
 
-	local view = {origin = pos, angles = angles, fov = fov};
-	if IsValid(ERP.MainMenu) then
-		view.origin = ERP.Config.MainMenu.ViewOrigin;
-		view.angles = ERP.Config.MainMenu.ViewAngles;
-		view.fov = 90;
-	end
-	return view
+	return {origin = pos, angles = angles, fov = fov}
 end
-
-usermessage.Hook("ESM",function(u)
-	if not LocalPlayer():IsLoaded() then return end
-
-	LocalPlayer().character.cash = u:ReadLong() or 0;
-end)
-usermessage.Hook("ESBM",function(u)
-	if not LocalPlayer():IsLoaded() then return end
-
-	LocalPlayer().character.bank = u:ReadLong() or 0;
-end)

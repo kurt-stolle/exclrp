@@ -25,3 +25,6 @@ function ERP:CreateErrorDialog(text,onDone)
 
 	return f;
 end
+net.Receive("ERP.ErrorDialog",function()
+	ERP:CreateErrorDialog(net.ReadString() or "")
+end)

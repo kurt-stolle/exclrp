@@ -22,3 +22,10 @@ function PLAYER:SprintDisable()
 		self:SetRunSpeed(self:GetWalkSpeed());
 	end
 end
+
+util.AddNetworkString("ERP.ErrorDialog")
+function PLAYER:CreateErrorDialog(txt)
+	net.Start("ERP.ErrorDialog")
+	net.WriteString(txt)
+	net.Send(self)
+end

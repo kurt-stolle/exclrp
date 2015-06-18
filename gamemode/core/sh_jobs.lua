@@ -1,7 +1,5 @@
 -- sh_ERP.Jobs
-ES.DefineNetworkedVariable("job","UInt");
-
-ERP.Jobs = {}
+ERP.Jobs = FindMetaTable("Job")
 setmetatable(ERP.Jobs,{
 	__index=function(self,key)
 		for k,v in ipairs(self) do
@@ -41,8 +39,16 @@ function ERP.Job()
 	obj.class=FACTION_CIVILLIAN;
 	obj.pay=10;
 	obj.color=ES.Color.White;
+	obj.loadout={};
 
 	return obj;
+end
+JOB.GetFaction = JOB.GetClass
+function JOB:GetLoadout()
+	return self.loadout or {};
+end
+function JOB:SetLoadout(tab)
+	self.loadout = tab
 end
 JOB.Team = JOB.GetTeam
 function JOB.__call(self)
@@ -59,8 +65,8 @@ function JOB.__call(self)
 	self.SetPay = nil;
 	self.SetColor = nil;
 
-	return true;
+	return self;
 end
 
 -- setup the defaul tteam
-team.SetUp(TEAM_UNASSIGNED,"Unemployed",ES.Color["#AAA"]);
+team.SetUp(TEAM_UNASSIGNED,"Unemployed",ES.Color["#0A0"]);

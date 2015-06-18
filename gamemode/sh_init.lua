@@ -79,5 +79,6 @@ ERP.IncludeFolder("exclrp/gamemode/classes","sh");
 ERP.IncludeFolder("exclrp/gamemode/items","sh");
 ERP.IncludeFolder("exclrp/gamemode/npcs","sh");
 ERP.IncludeFolder("exclrp/gamemode/jobs","sh");
+ERP.IncludeFolder("exclrp/gamemode/systems");
 
 ES.DebugPrint("ExclRP successfully loaded!")

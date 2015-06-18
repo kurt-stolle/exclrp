@@ -4,6 +4,14 @@ PLAYER.DisplayName    = "Default Class";
 PLAYER.WalkSpeed			= 100;
 PLAYER.RunSpeed				= 270;
 
+STATUS_ARRESTED = 1
+STATUS_TYPING = 2
+
+function PLAYER:SetupDataTables()
+  self.Player:NetworkVar( "Float", 0, "Energy" )
+  self.Player:NetworkVar( "Int", 0, "Status" )
+end
+
 function PLAYER:SetModel()
   local pl=self.Player
 
@@ -17,11 +25,12 @@ function PLAYER:Loadout()
   pl:Give("erp_weapon_nothing")
 
   if pl:IsSuperAdmin() then
-    pl:Give("erp_weapon_config")
+    pl:Give("weapon_physgun")
   end
 
   pl:SelectWeapon("erp_weapon_nothing")
 
+  pl:SetEnergy(100);
 end
 
 function PLAYER:Spawn()

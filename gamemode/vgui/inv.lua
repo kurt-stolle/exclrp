@@ -24,10 +24,15 @@ function PNL:Setup(item,x,y)
 
 	self:SetSize(item:GetInventoryWidth() * tileSize, item:GetInventoryHeight() * tileSize)
 
-	local mdl = vgui.Create("Spawnicon",self)
+	local mdl = vgui.Create("DModelPanel",self)
 	mdl:SetWide(math.max(self:GetWide()-2,self:GetTall()-2))
 	mdl:SetTall(mdl:GetWide())
 	mdl:SetModel(item:GetModel())
+	mdl:SetLookAt(item:GetInventoryLookAt())
+	mdl:SetCamPos(item:GetInventoryCamPos())
+	mdl:SetAnimated(false)
+	mdl.LayoutEntity=function()end
+	mdl:SetFOV(90)
 	mdl:Center();
 	mdl:SetMouseInputEnabled(false)
 
@@ -50,18 +55,11 @@ function PNL:Paint(w,h)
 	surface.DrawRect(0,0,w,h)
 end
 function PNL:Think()
-	self.color_highlight.a = Lerp(FrameTime()*8,self.color_highlight.a,self:GetHover() and 170 or 0)
+	self.color_highlight.a = Lerp(FrameTime()*4,self.color_highlight.a,self:GetHover() and 50 or 0)
 end
 function PNL:PaintOver(w,h)
 	if self:GetHover() then
-		surface.SetDrawColor(self.color_highlight)
-		surface.DrawRect(0,0,w,h)
-
 		local txt = string.upper(string.gsub(ERP.Items[self:GetItem()]:GetName()," ","\n"))
-		for i=1,2 do
-			draw.DrawText(txt,"ESDefaultBold.Shadow",3,3,ES.Color.Black)
-			draw.DrawText(txt,"ESDefaultBold.Shadow",3,4,ES.Color.Black)
-		end
 
 		draw.DrawText(txt,"ESDefaultBold",3,3,ES.Color.White)
 	end
@@ -77,6 +75,8 @@ function PNL:Init()
 	self._itemPanels = {};
 end
 function PNL:Setup(inv)
+	ES.DebugPrint("Inventory panel setup")
+
 	self.inventory = inv;
 
 	self:Update();
@@ -91,7 +91,6 @@ function PNL:Update()
 
 	for x,_t in pairs(self.inventory:GetGrid())do
 		for y,item in pairs(_t) do
-
 			local pnl = vgui.Create("ERP.Inventory.Item",self)
 
 			timer.Simple(0,function()
