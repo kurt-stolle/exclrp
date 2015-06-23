@@ -12,9 +12,14 @@ setmetatable(ERP.Storages,{
 	end
 })
 
+STORAGE_LOCKED = 0
+STORAGE_OPEN = 1
+
 local STOR= FindMetaTable("Storage");
 AccessorFunc(STOR,"name","Name",FORCE_STRING)
 AccessorFunc(STOR,"key","Key",FORCE_NUMBER)
+AccessorFunc(STOR,"type","Type",FORCE_NUMBER)
+AccessorFunc(STOR,"isShop","IsShop",FORCE_BOOL)
 function ERP.Storage(name,w,h)
   local obj={};
 	setmetatable(obj,STOR);
@@ -22,6 +27,8 @@ function ERP.Storage(name,w,h)
 
   obj.name = name or "";
   obj.inventory = ERP.Inventory(w or nil,h or nil)
+	obj.type = STORAGE_LOCKED
+	obj.isShop = false
 
 	return obj;
 end

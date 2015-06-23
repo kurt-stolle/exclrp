@@ -23,9 +23,8 @@ function PLAYER:SprintDisable()
 	end
 end
 
-util.AddNetworkString("ERP.ErrorDialog")
 function PLAYER:CreateErrorDialog(txt)
-	net.Start("ERP.ErrorDialog")
-	net.WriteString(txt)
-	net.Send(self)
+	self:ESSendNotificationPopup("Error",txt)
+
+	return -1
 end

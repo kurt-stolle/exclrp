@@ -1,6 +1,6 @@
 local npc=ERP.NPC();
 npc:SetName("Wholesale owner")
-npc:SetDescription("Hello!\n\nThe path to real money is smart business.")
+npc:SetDescription("...")
 npc:SetModel("models/gman_high.mdl")
 
 if CLIENT then
@@ -8,7 +8,7 @@ if CLIENT then
     ES.DebugPrint("Opening salesman menu")
 
     local lbl=context:Add("DLabel")
-    lbl:SetText("TODO: Add text here.")
+    lbl:SetText("...")
     lbl:SetColor(ES.Color.White)
     lbl:SetFont("ESDefault")
     lbl:SizeToContents()

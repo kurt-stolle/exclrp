@@ -58,8 +58,9 @@ elseif CLIENT then
   net.Receive("ERP.NPC.Interact",function()
     local ent=net.ReadEntity();
     local name=net.ReadString();
+    local ply=LocalPlayer()
 
-    if not IsValid(ent) or not ERP.NPCs[name] or not LocalPlayer():IsLoaded() then
+    if not IsValid(ent) or not ERP.NPCs[name] or not ply:IsLoaded() then
       ES.DebugPrint("Invalid interaction with "..(IsValid(ent) and ent:GetClass() or "nil"))
       return;
     end

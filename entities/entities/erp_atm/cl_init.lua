@@ -7,7 +7,7 @@ function ENT:Draw()
 	self.Entity:DrawModel()
 
 	if not LocalPlayer():IsLoaded() then return end
-	
+
 	local pos = self:GetPos()
 	local ang = self:GetAngles()
 	ang:RotateAroundAxis(ang:Up(),90);
@@ -21,7 +21,9 @@ end
 
 local fr;
 usermessage.Hook("exclOpenATMMenu",function()
-	ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,
+	local ply=LocalPlayer()
+
+	ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,
 	{
 	{text = "Deposit",func = function()
 		if fr and fr:IsValid() then
@@ -49,7 +51,7 @@ usermessage.Hook("exclOpenATMMenu",function()
 		button:DockMargin(20,20,20,20)
 		button:SetText("Confirm");
 		button.DoClick = function()
-			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetCash() then ES.Notify("generic","You do not have enough cash on you to do this."); return; end
+			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetCash() then ES.NotifyPopup("Error","You do not have enough cash on you to do this."); return; end
 			RunConsoleCommand("erp_bank_deposit",textEntry:GetValue());
 			fr:Remove();
 		end
@@ -82,7 +84,7 @@ usermessage.Hook("exclOpenATMMenu",function()
 		button:DockMargin(20,20,20,20)
 		button:SetText("Confirm");
 		button.DoClick = function()
-			if tonumber(textEntry:GetValue()) > LocalPlayer().character:GetBank() then ES.Notify("generic","You do not have enough cash in your account to do this."); return; end
+			if tonumber(textEntry:GetValue()) > ply.character:GetBank() then ES.NotifyPopup("Error","You do not have enough cash in your account to do this."); return; end
 			RunConsoleCommand("erp_bank_withdraw",textEntry:GetValue());
 			fr:Remove();
 		end
@@ -94,8 +96,8 @@ usermessage.Hook("exclOpenATMMenu",function()
 end)
 
 usermessage.Hook("eDeposDone",function(u)
-	ES.Notify("generic","You deposited $"..u:ReadLong()..",- to your bank account")
+	ES.NotifyPopup("Success","You deposited $"..u:ReadLong()..",- to your bank account")
 end)
 usermessage.Hook("eWithdrDone",function(u)
-	ES.Notify("generic","You withdrew $"..u:ReadLong()..",- from your bank account")
+	ES.NotifyPopup("Success","You withdrew $"..u:ReadLong()..",- from your bank account")
 end)

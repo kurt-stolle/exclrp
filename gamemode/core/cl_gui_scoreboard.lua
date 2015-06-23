@@ -2,7 +2,7 @@
 local matrix = Matrix();
 local matrixScale = Vector(0, 0, 0);
 local matrixTranslation = Vector(0, 0, 0);
-local menu;
+local menu,ply;
 
 -- VGUI
 local PNL={}
@@ -124,7 +124,9 @@ vgui.Register("ERP.TabMenu",{
 
 -- Scoreboard hooks
 function ERP:ScoreboardShow()
-	if not LocalPlayer():IsLoaded() then return end
+	ply=LocalPlayer()
+
+	if not ply:IsLoaded() then return end
 
 	local _menu=vgui.Create("ERP.TabMenu")
 	_menu:Dock(FILL)
@@ -143,7 +145,7 @@ function ERP:ScoreboardShow()
 	end)
 	_menu:AddBubble("Log out",Material("icon16/world.png"),function()
 		net.Start("ERP.Character.UnLoad"); net.SendToServer();
-		LocalPlayer().character=nil;
+		ply.character=nil;
 	end)
 
 	_menu:MakePopup()

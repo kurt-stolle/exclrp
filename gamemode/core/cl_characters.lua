@@ -11,7 +11,7 @@ net.Receive("ERP.Character.Load",function()
 	setmetatable(ply.character,CHARACTER);
 	CHARACTER.__index = CHARACTER;
 
-	ply.character.Player=LocalPlayer();
+	ply.character.Player=ply;
 
 	-- Is the menu open? Let's close it.
 	if ply == LocalPlayer() and IsValid(ERP.MainMenu) then

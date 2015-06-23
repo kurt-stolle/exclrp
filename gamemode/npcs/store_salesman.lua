@@ -1,16 +1,31 @@
 local npc=ERP.NPC();
 npc:SetName("Wholesale seller")
 npc:SetModel("models/Humans/Group02/male_08.mdl")
-npc:SetDescription("Hello!\n\nI sell items exclusively to Salesmen.\nHave you talked to my boss, the owner, yet?")
+npc:SetDescription("An odd looking gentleman.")
 
 
-local _stor=ERP.Storage("SalesmanGlobal",12,8)()
+local _stor=ERP.Storage("SalesmanGlobal",12,8)
+_stor:SetType(STORAGE_OPEN)
+_stor:SetIsShop(true)
+_stor()
+
 
 if CLIENT then
 
   local pnlInventory;
   npc:SetDialogConstructor(function(self,context,npc)
     ES.DebugPrint("Opening salesman _store menu")
+
+    local ply=LocalPlayer()
+
+    if ply:GetCharacter():GetJob():GetName() ~= "Salesman" then
+      local lbl = Label("I have been given strict orders to only sell my stock to Salesmen.\n\nYou should talk to me boss if you're interested in becoming a salesman.",context)
+      lbl:SetFont("ESDefault")
+      lbl:SetColor(ES.Color.White)
+      lbl:SizeToContents()
+      lbl:SetPos(15,15)
+      return
+    end
 
     _stor:Open()
 
@@ -53,7 +68,7 @@ if CLIENT then
 
   			local bDrop = btns:Add("esButton")
   			bDrop:SetTall(30)
-  			bDrop:SetText("Drop")
+  			bDrop:SetText("Buy for $X")
   			bDrop:Dock(BOTTOM)
 
   		for k,v in ipairs(info:GetChildren())do
@@ -68,6 +83,27 @@ if CLIENT then
 
       local inv=vgui.Create("ERP.Inventory",pnl)
       inv:SetGridSize(12,8)
+
+      function inv:OnItemSelected(item,x,y)
+  			item = ERP.Items[item]
+
+  			if not item then return end
+
+  			icon:SetModel(item:GetModel())
+  			lName:SetText(item:GetName())
+  			lName:SizeToContents();
+  			lDescr:SetText(item:GetDescription())
+  			lDescr:SizeToContents()
+
+  			bDrop.DoClick = function()
+  				_stor:TakeItem(item,x,y)
+  			end
+        bDrop:SetText("Buy for $"..item:GetValue())
+
+  			for k,v in ipairs(info:GetChildren())do
+  				v:SetVisible(not v.IsDummy and true or false)
+  			end
+  		end
 
       pnlInventory=inv;
 
@@ -97,7 +133,11 @@ if CLIENT then
     end
   end);
 elseif SERVER then
-  timer.Create("ERP.NPC.SalesmanShop.AddItem",30,0,function()
+  function _stor:PlayerCanOpen(ply)
+    return ply:GetCharacter():GetJob():GetName() == "Salesman";
+  end
+
+  timer.Create("ERP.NPC.SalesmanShop.AddItem",60,0,function()
     local rndItem=ERP.Items[table.Random{"Money Printer","First Aid Kit","Bleach","Crate"}]
 
     if not rndItem then return ES.DebugPrint("Invalid item added to SalesMan Shop") end

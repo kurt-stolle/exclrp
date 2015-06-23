@@ -20,20 +20,22 @@ surface.CreateFont ("ERP.HudNormal.Shadow", {
 	blursize=2
 })
 
+local ply;
 local function convertMoneyString()
-	local str=",-"
+	local str=""
 	local count=-1
-	local array= string.Explode("",tostring(LocalPlayer().character.cash));
-	for i=string.len(tostring(LocalPlayer().character.cash)),1,-1 do
+	local cash=tostring(ply:GetCharacter():GetCash())
+	local array= string.Explode("",cash);
+	for i=string.len(cash),1,-1 do
 		if count == 2 then
-			str = "."..str;
+			str = ","..str;
 		end
 		str=array[i]..str;
 
 		count = (count+1)%3;
 	end
 
-	return str;
+	return "$"..str;
 end
 
 local smoothHealth=0;
@@ -92,10 +94,11 @@ local context_wide = (box_margin*3 + box_wide*2);
 local shift_hidden=context_tall;
 
 function ERP:HUDPaint()
+	ply=LocalPlayer()
+
 	hook.Call("PrePaintMainHUD");
 
-	local localplayer = LocalPlayer();
-	if not localplayer.character or hook.Call("ShouldDrawLocalPlayer") or not localplayer:Alive() then
+	if not ply.character or hook.Call("ShouldDrawLocalPlayer") or not ply:Alive() then
 		shift_hidden=context_tall;
 		return;
 	end
@@ -116,14 +119,14 @@ function ERP:HUDPaint()
 	drawHUDBox(box_margin*2+box_wide,box_margin,mat_money,convertMoneyString());
 
 	-- CHARACTER NAME
-	drawHUDBox(box_margin*2+box_wide,box_margin*2+box_tall,mat_name,LocalPlayer().character:GetFullName());
+	drawHUDBox(box_margin*2+box_wide,box_margin*2+box_tall,mat_name,ply.character:GetFullName());
 
 	-- HEALTH
-	smoothHealth = Lerp(FrameTime() * animationSpeed, smoothHealth, localplayer:Health());
+	smoothHealth = Lerp(FrameTime() * animationSpeed, smoothHealth, ply:Health());
 	drawHUDBox(box_margin,box_margin,mat_health,math.Round(smoothHealth).."% Health",color_health,smoothHealth/100);
 
 	-- ENERGY
-	smoothEnergy = Lerp(FrameTime() * animationSpeed,smoothEnergy,math.ceil( localplayer:GetEnergy() ));
+	smoothEnergy = Lerp(FrameTime() * animationSpeed,smoothEnergy,math.ceil( ply:GetEnergy() ));
 	drawHUDBox(box_margin,box_margin*2+box_tall,mat_energy,math.Round(smoothEnergy).."% Energy",color_energy,smoothEnergy/100);
 
 	-- RESET RENDER POSITION;
@@ -173,7 +176,7 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 		end
 		return view
 	end
-	
+
 	if not newpos then
 		newpos = pos;
 		newangles = angles;
@@ -215,7 +218,7 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 		newpos = ply:EyePos();
 	end
 
-	if LocalPlayer():GetEnergy() < 80 then
+	if ply:GetEnergy() < 80 then
 		fov=fov-2+(math.sin(CurTime()*2))*.6;
 	end
 

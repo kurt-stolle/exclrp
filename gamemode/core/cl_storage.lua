@@ -25,6 +25,15 @@ function STOR:Close()
   net.SendToServer()
 end
 
+function STOR:TakeItem(item,x,y)
+  net.Start("ERP.Storage.Take")
+  net.WriteString(self:GetName())
+  net.WriteString(item:GetName())
+  net.WriteUInt(x,8)
+  net.WriteUInt(y,8)
+  net.SendToServer()
+end
+
 net.Receive("ERP.Storage.Sync",function()
   -- Receive inventory synchronization msg.
   local stor=ERP.Storages[net.ReadString()];
@@ -37,6 +46,7 @@ net.Receive("ERP.Storage.Sync",function()
 
   -- Decode inventory
   stor.inventory = ERP.DecodeInventory(inv);
+  stor:SetType(net.ReadUInt(8) or stor:GetType())
 
   -- Call hook *see readme
   hook.Call("ERPStorageUpdated",ERP,stor)

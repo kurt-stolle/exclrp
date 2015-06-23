@@ -42,6 +42,7 @@ function ERP.Item()
 	obj._invHeight = 1;
 	obj._invCamPos = Vector(0,0,30)
 	obj._invLookAt = Vector(0,0,0)
+	obj._value = 100
 
 	return obj;
 end

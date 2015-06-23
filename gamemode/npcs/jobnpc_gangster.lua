@@ -1,6 +1,6 @@
 local npc=ERP.NPC();
 npc:SetName("Shady Sheen")
-npc:SetDescription("Ayy!\n\nTODO: Add text here.")
+npc:SetDescription("A filthy looking nigger with a metal leg and a frowny face.")
 npc:SetModel("models/Eli.mdl")
 
 if CLIENT then
@@ -8,7 +8,7 @@ if CLIENT then
     ES.DebugPrint("Opening gangster menu")
 
     local lbl=context:Add("DLabel")
-    lbl:SetText("TODO: Add text here.")
+    lbl:SetText("...")
     lbl:SetColor(ES.Color.White)
     lbl:SetFont("ESDefault")
     lbl:SizeToContents()

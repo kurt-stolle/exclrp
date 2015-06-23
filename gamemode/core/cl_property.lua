@@ -7,19 +7,20 @@ local Doors = {}
 local PROPERTY = FindMetaTable("Property")
 
 hook.Add("OnContextMenuOpen","ERP.ContextMenu.Properties",function()
-	local e = LocalPlayer():GetEyeTrace().Entity;
+	local ply=LocalPlayer()
+	local e = ply:GetEyeTrace().Entity;
 
-	if IsValid(e) and LocalPlayer():IsLoaded() and LocalPlayer():GetEyeTrace().HitPos:Distance(LocalPlayer():EyePos()) < 100 then
+	if IsValid(e) and ply:IsLoaded() and ply:GetEyeTrace().HitPos:Distance(ply:EyePos()) < 100 then
 
 		if table.HasValue(doors,e:GetClass()) and availableProperty[e:EntIndex()] then
 			if not ERP.OwnedProperty[availableProperty[e:EntIndex()]] then
-				ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
+				ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,{
 					{text="Buy property",func=function()
 						RunConsoleCommand("erp_buyproperty");
 					end}
 				})
-			elseif ERP.OwnedProperty[availableProperty[e:EntIndex()]].id == LocalPlayer():UniqueID() then
-				ERP:CreateActionMenu(LocalPlayer():GetEyeTrace().HitPos,{
+			elseif ERP.OwnedProperty[availableProperty[e:EntIndex()]].id == ply:UniqueID() then
+				ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,{
 					{text="Lock",func=function()
 						RunConsoleCommand("erp_lockdoor");
 					end},
@@ -36,8 +37,8 @@ hook.Add("OnContextMenuOpen","ERP.ContextMenu.Properties",function()
 end)
 
 -- Console commands
-concommand.Add("erp_admin_property_create",function(_,_,a)
-	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
+concommand.Add("erp_admin_property_create",function(ply,_,a)
+	if not ply:IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
 
 	local name = a[1];
 	local description = a[2];
@@ -75,14 +76,14 @@ end,function(_,str)
 	return {"undefined"}
 end,"Create a new property. Format: <Property Name> <Description> <Factions: none OR all OR crime OR government OR civillian>")
 
-concommand.Add("erp_admin_property_add_door",function(_,_,a)
-	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
+concommand.Add("erp_admin_property_add_door",function(ply,_,a)
+	if not ply:IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
 
 	local property = a[1];
 
 	if not property or not ERP.Properties[property] then print("Invalid arguments: "..tostring(property)) return end
 
-	local ent=LocalPlayer():GetEyeTrace().Entity
+	local ent=ply:GetEyeTrace().Entity
 
 	if not IsValid(ent) then print("No door found.") return end
 
@@ -100,8 +101,8 @@ end,function(_,str)
 	return {"undefined"}
 end,"Add the door you're facing to a property. Format: <Property name>")
 
-concommand.Add("erp_admin_property_add_job",function(_,_,a)
-	if not LocalPlayer():IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
+concommand.Add("erp_admin_property_add_job",function(ply,_,a)
+	if not ply:IsSuperAdmin() then print("You need at least Super Admin to run this command.") return end
 
 	local property = a[1];
 
@@ -121,7 +122,7 @@ end,function(_,str)
 	return {"undefined"}
 end,"Add a job to a property. The job will ALWAYS have permissions on the door, regardless of the owner. Format: <Property name> <Job name>")
 
-concommand.Add("erp_admin_property_list",function(_,_,a)
+concommand.Add("erp_admin_property_list",function(ply,_,a)
 	print("-- START PROPERTY LIST --")
 	for k,v in pairs(ERP.Properties)do
 		print(v.name.." ["..v.description.."][Flag: "..v.factions.." | Binary: "..math.IntToBin(v.factions).."]")

@@ -9,14 +9,16 @@ surface.CreateFont("ERP.InventoryInfoBig",{
 
 local menu;
 function ES.OpenUI_Inventory()
+	local ply=LocalPlayer()
+
 	if menu and menu:IsValid() then
 		menu:Remove();
 		return;
 	end
 
-	if not LocalPlayer():IsLoaded() then return end
+	if not ply:IsLoaded() then return end
 
-	local inv = LocalPlayer():GetCharacter():GetInventory()
+	local inv = ply:GetCharacter():GetInventory()
 
 	menu = vgui.Create("esFrame");
   menu:SetTitle("Inventory");

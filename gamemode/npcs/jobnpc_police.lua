@@ -1,6 +1,6 @@
 local npc=ERP.NPC();
 npc:SetName("Police Chief")
-npc:SetDescription("Hello!\n\nTODO: Add text here.")
+npc:SetDescription("...")
 npc:SetModel("models/Barney.mdl")
 
 if CLIENT then
@@ -8,7 +8,7 @@ if CLIENT then
     ES.DebugPrint("Opening police menu")
 
     local lbl=context:Add("DLabel")
-    lbl:SetText("TODO: Add text here.")
+    lbl:SetText("...")
     lbl:SetColor(ES.Color.White)
     lbl:SetFont("ESDefault")
     lbl:SizeToContents()

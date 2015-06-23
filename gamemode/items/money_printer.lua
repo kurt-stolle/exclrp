@@ -2,6 +2,7 @@ local ITEM = ERP.Item();
 ITEM:SetName("Money Printer");
 ITEM:SetDescription("A printer used to illegally print cash.");
 ITEM:SetModel("models/props_c17/consolebox01a.mdl");
+ITEM:SetValue(2000)
 
 ITEM:SetInventorySize(5,2)
 ITEM:SetInventoryCamPos(Vector(34,0,5))

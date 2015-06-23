@@ -22,7 +22,7 @@ if CLIENT then
 	-- The defaultDialog
 	local defaultDialog = function(self,context,npc)
 	  local lbl=vgui.Create("esLabel",context)
-	  lbl:SetText("Hello, "..(LocalPlayer():GetCharacter():GetFirstPrintName()).."!");
+	  lbl:SetText("Hello, "..(ply:GetCharacter():GetFirstPrintName()).."!");
 	  lbl:SizeToContents()
 	  lbl:SetPos(10,10)
 	  lbl:SetFont("ESDefault")

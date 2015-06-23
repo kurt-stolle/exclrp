@@ -1,6 +1,6 @@
 local npc=ERP.NPC();
 npc:SetName("Property salesman")
-npc:SetDescription("Hello!\n\nI can sell you a number of properties around "..game.GetMap()..".\nJust click on one of the panels below to buy the property.")
+npc:SetDescription("...")
 
 if CLIENT then
   npc:SetDialogConstructor(function(self,context,npc)
