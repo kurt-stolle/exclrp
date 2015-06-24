@@ -38,22 +38,23 @@ hook.Add("HUDPaint","ERP.HUDPaint.TargetID",function()
   if IsValid(ply) and ply:IsLoaded() then
     posLocal=ply:EyePos();
     for k,v in ipairs(player.GetAll())do
-      if not IsValid(v) or not v:IsLoaded() then return end
+      if not IsValid(v) or not v:IsLoaded() or v == ply then continue end
 
-      posTarget=ply:LookupBone("ValveBiped.Bip01_Neck1")
-
-      if not posTarget then continue end
-
-      posTarget=ply:GetBonePosition(posTarget)
+      posTarget=v:LookupBone("ValveBiped.Bip01_Neck1")
 
       if not posTarget then continue end
 
-      if posTarget:Distance(posLocal) > 200 and not v:IsLoaded() then
-        v._hud_nameFade = 0;
-        continue
+      posTarget=v:GetBonePosition(posTarget)
+
+      if not posTarget then continue end
+
+      if posTarget:Distance(posLocal) > 200 or not v:IsLoaded() then
+        v._hud_nameFade = Lerp(FrameTime()*12,v._hud_nameFade or 0,0);
+      else
+        v._hud_nameFade = Lerp(FrameTime()*8,v._hud_nameFade or 0,255)
       end
 
-      v._hud_nameFade = Lerp(FrameTime()*4,v._hud_nameFade or 0,255)
+      if v._hud_nameFade < 1 then continue end
 
       color_white.a = v._hud_nameFade;
 
@@ -85,7 +86,7 @@ hook.Add("HUDPaint","ERP.HUDPaint.TargetID",function()
 
       y = y + 22
 
-      if ply:GetStatus() == 0 then
+      if v:GetStatus() == 0 then
         jobstring = team.GetName(v:Team())
         color_job = table.Copy(team.GetColor(v:Team()))
         color_job.a = v._hud_nameFade;
@@ -93,7 +94,7 @@ hook.Add("HUDPaint","ERP.HUDPaint.TargetID",function()
         jobstring = {}
         color_job = color_white
 
-        if bit.band(ply:GetStatus(),STATUS_ARRESTED) then
+        if bit.band(v:GetStatus(),STATUS_ARRESTED) then
           table.insert(jobstring,"Arrested")
         end
 

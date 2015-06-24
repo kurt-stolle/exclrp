@@ -12,6 +12,10 @@ SWEP.UseHands = true
 
 SWEP.StickColor = ES.Color.White
 
+
+SWEP.Primary.Automatic = true
+SWEP.Secondary.Automatic = true
+
 SWEP.ViewModel = Model("models/weapons/v_stunbaton.mdl")
 SWEP.WorldModel = Model("models/weapons/w_stunbaton.mdl")
 
@@ -181,7 +185,7 @@ function SWEP:Swing(callback)
 
 		if SERVER and IsValid( tr.Entity ) then
 			if tr.Entity:IsPlayer() then
-				ply:ScreenFade(SCREENFADE.IN, ES.Color.White, 0.8, 0)
+				tr.Entity:ScreenFade(SCREENFADE.IN, ES.Color.White, 0.8, 0)
 			end
 
 			local phys = tr.Entity:GetPhysicsObject()

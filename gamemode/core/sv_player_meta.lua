@@ -28,3 +28,7 @@ function PLAYER:CreateErrorDialog(txt)
 
 	return -1
 end
+
+function PLAYER:SetStatus(int)
+	self:ESSetNetworkedVariable("erp_status",int)
+end

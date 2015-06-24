@@ -5,13 +5,20 @@ net.Receive("ERP.Character.Load",function()
 
 	if not IsValid(ply) then return end
 
-	ply.character = net.ReadTable();
-	ply.character.inventory = ERP.DecodeInventory(ply.character.inventory)
+	-- Parse table
+	local tab=net.ReadTable();
 
-	setmetatable(ply.character,CHARACTER);
+	if tab.inventory then
+		tab.inventory = ERP.DecodeInventory(tab.inventory)
+	end
+
+	setmetatable(tab,CHARACTER);
 	CHARACTER.__index = CHARACTER;
 
-	ply.character.Player=ply;
+	tab.Player=ply;
+
+	-- Set the table
+	ply.character = tab;
 
 	-- Is the menu open? Let's close it.
 	if ply == LocalPlayer() and IsValid(ERP.MainMenu) then

@@ -24,7 +24,7 @@ local JOB={};
 AccessorFunc(JOB,"team","Team",FORCE_NUMBER);
 AccessorFunc(JOB,"name","Name",FORCE_STRING);
 AccessorFunc(JOB,"description","Description",FORCE_STRING);
-AccessorFunc(JOB,"class","Class",FORCE_NUMBER);
+AccessorFunc(JOB,"faction","Faction",FORCE_NUMBER);
 AccessorFunc(JOB,"pay","Pay",FORCE_NUMBER);
 AccessorFunc(JOB,"color","Color");
 
@@ -36,14 +36,13 @@ function ERP.Job()
 	obj.team=-1;
 	obj.name="Unknown";
 	obj.description="No description given.";
-	obj.class=FACTION_CIVILLIAN;
+	obj.faction=FACTION_CIVILLIAN;
 	obj.pay=10;
 	obj.color=ES.Color.White;
 	obj.loadout={};
 
 	return obj;
 end
-JOB.GetFaction = JOB.GetClass
 function JOB:GetLoadout()
 	return self.loadout or {};
 end
@@ -61,7 +60,7 @@ function JOB.__call(self)
 	self.SetTeam = nil;
 	self.SetName = nil;
 	self.SetDescription = nil;
-	self.SetClass = nil;
+	self.SetFaction = nil;
 	self.SetPay = nil;
 	self.SetColor = nil;
 

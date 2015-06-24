@@ -96,19 +96,21 @@ local shift_hidden=context_tall;
 function ERP:HUDPaint()
 	ply=LocalPlayer()
 
+	if not ply:IsLoaded() then return end
+
 	hook.Call("PrePaintMainHUD");
 
-	if not ply.character or hook.Call("ShouldDrawLocalPlayer") or not ply:Alive() then
-		shift_hidden=context_tall;
-		return;
+	if not ply:Alive() then
+		shift_hidden=Lerp(FrameTime()*animationSpeed,shift_hidden,context_tall);
+	else
+		shift_hidden=Lerp(FrameTime()*animationSpeed,shift_hidden,0);
 	end
+
+	if shift_hidden >= context_tall-1 then return end
 
 	-- SAVE THESE
 	screen_width	= ScrW();
 	screen_height	= ScrH();
-
-	-- SET THE POSITION OF THE HUD
-	shift_hidden=Lerp(FrameTime()*animationSpeed,shift_hidden,0);
 
 	mat = Matrix();
 	mat:Translate( Vector( 0, screen_height - context_tall + shift_hidden ) );
@@ -138,7 +140,7 @@ local thirdperson = true;
 local newpos
 local tracedata = {}
 local ignoreent
-local distance = 0;
+local distance = 50;
 local camPos = Vector(0, 0, 0)
 local camAng = Angle(0, 0, 0)
 hook.Add("ShouldDrawLocalPlayer","ThirdPersonDrawLocalPlayer", function()

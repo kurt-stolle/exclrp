@@ -12,3 +12,8 @@ end
 function PLAYER:GetCharacter()
 	return self.character;
 end
+
+ES.DefineNetworkedVariable("erp_status","UInt",4)
+function PLAYER:GetStatus()
+	return self:ESGetNetworkedVariable("erp_status",0)
+end

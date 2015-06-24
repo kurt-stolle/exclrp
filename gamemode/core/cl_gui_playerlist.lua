@@ -4,7 +4,7 @@ function ES.OpenUI_Playerlist()
   frame:SetTitle("Scoreboard")
 
   for k,v in ipairs(player.GetAll())do
-    if v:IsPlayer() then
+    if v:IsPlayer() and v:IsLoaded() then
       local pnl=frame:Add("esPanel")
       pnl:SetTall(40)
       pnl:SetColor(ES.Color["#1E1E1E"])

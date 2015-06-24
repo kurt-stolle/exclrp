@@ -16,13 +16,21 @@ function SWEP:SecondaryAttack()
 
     if not job then return end
 
-    if job:GetFaction() ~= FACTION_GOVERNMENT then return end
+    if job:GetFaction() ~= FACTION_GOVERNMENT then
+      if CLIENT then
+        ES.Notify("generic","Only Government may arrest other people.")
+      end
+      self:PrimaryAttack()
+      return
+    end
 
     self:Swing(function(ent)
+      if CLIENT then return end
+
       if IsValid(ent) and ent:IsPlayer() and ent:IsLoaded() then
         local job=ERP.Jobs[ent:Team()];
 
-        if job and job:GetFaction() == FACTION_GOVERNMENT then return end
+        if job and job:GetFaction() == FACTION_GOVERNMENT then return self.Owner:ESSendNotification("You can not arrest another Government employee!") end
 
         ent:GetCharacter():Arrest()
       end

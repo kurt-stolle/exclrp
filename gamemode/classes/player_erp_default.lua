@@ -9,7 +9,6 @@ STATUS_TYPING = 2
 
 function PLAYER:SetupDataTables()
   self.Player:NetworkVar( "Float", 0, "Energy" )
-  self.Player:NetworkVar( "Int", 0, "Status" )
 end
 
 function PLAYER:SetModel()
@@ -49,6 +48,7 @@ function PLAYER:Spawn()
     pl:SetTeam(TEAM_UNASSIGNED)
   end
 
+  pl:SetStatus(0)
   pl:SetPlayerColor(col);
   pl:SetWeaponColor(col);
 end

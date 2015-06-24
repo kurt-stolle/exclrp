@@ -9,10 +9,10 @@ timer.Create("exclTimePayday",120,0,function()
 		if v:IsLoaded() then
 			if v:GetCharacter():GetJob() then
 				v:GetCharacter():AddBank(v:GetCharacter():GetJob().pay)
-				v:ESSendNotification("generic","You have earned $ "..v:GetCharacter():GetJob().pay.." from your paycheque, it has been put on your bank account.");
+				v:ESSendNotification("generic","You have earned $ "..v:GetCharacter():GetJob().pay.." from your paycheck, it has been put on your bank account.");
 			else
 				v:GetCharacter():AddBank(10);
-				v:ESSendNotification("generic","You have earned $ 10 from your unemployment cheque, it has been put on your bank account.");
+				v:ESSendNotification("generic","You have earned $ 10 from your unemployment check, it has been put on your bank account.");
 			end
 		end
 	end

@@ -16,21 +16,12 @@ function ERP:PlayerSpawn(p)
 		p:SetTeam( TEAM_SPECTATOR )
 		p:StripWeapons()
 		p:Spectate( OBS_MODE_FIXED )
+		p:SpectateEntity(NULL)
 		p:SetPos( ERP.Config.MainMenu.ViewOrigin )
 
 		ERP.OpenMainMenu(p)
 	end
 end
-hook.Add( "PlayerDeath", "exclHandleClothingRagdolls", function(pVictim,i,pAttack)
-
-	if(IsValid(pVictim.ModelEntity)) then
-		pVictim.ModelEntity:SetParent( pVictim:GetRagdollEntity() )
-		if(IsValid(pVictim.ClothesEntity)) then
-		pVictim.ClothesEntity:SetParent( pVictim:GetRagdollEntity() )
-	end
-	end
-
-end )
 function ERP:CanPlayerSuicide()
 	return false
 end

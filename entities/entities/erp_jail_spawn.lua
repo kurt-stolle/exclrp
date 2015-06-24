@@ -14,7 +14,7 @@ if CLIENT then
   end
 
   function ENT:Initialize()
-    self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+    self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
   end
 elseif SERVER then
 	function ENT:Initialize()
@@ -24,6 +24,6 @@ elseif SERVER then
 		self:SetMoveType(MOVETYPE_NONE)
 		self:SetSolid(SOLID_VPHYSICS)
 
-    self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+    self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 	end
 end

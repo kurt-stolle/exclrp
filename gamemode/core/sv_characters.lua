@@ -1,34 +1,20 @@
 -- sv_characters.lua
 hook.Add("ESDatabaseReady","ERP.ES.CreateERPCharactersDB",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory MEDIUMTEXT, dead tinyint(1) default 0, arrested int unsigned default 0, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory MEDIUMTEXT, dead tinyint(1) default 0, arrested float(32,16) unsigned default 0, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
 end)
 
 -- the following fields of characters will be sent to ALL PLAYERS
 local PublicFields={"firstname","lastname","job","joblevel"}
 
-hook.Add("ESPlayerReady","ERP.PlayerReady.SendCurrentCharacterState",function(ply)
-	for k,v in ipairs(player.GetAll())do
-		if v:IsLoaded() then
-			local public={};
-			for _k,_v in pairs(v.character)do
-				if table.HasValue(PublicFields,_v) then
-					public[_k]=_v;
-				end
-			end
-			net.Start("ERP.Character.Load")
-			net.WriteEntity(v)
-			net.WriteTable(public);
-			net.Send(ply);
-		end
-	end
-end)
-
 -- create a new character
 function ERP.CreateCharacter(ply,fname,lname,model)
-	if not fname or not lname or not model then return end
+	if ply._erp_isCreatingCharacter or not fname or not lname or not model then return end
+
+	ply._erp_isCreatingCharacter=true;
 
 	ES.DBQuery("SELECT id FROM erp_characters WHERE steamid = '"..ply:SteamID().."' LIMIT 4;",function(c)
 		if c and #c >= 4 then
+			ply._erp_isCreatingCharacter=false;
 			return;
 		end
 		local inv=ERP.Inventory();
@@ -36,6 +22,7 @@ function ERP.CreateCharacter(ply,fname,lname,model)
 		inv:SetHeight(8)
 
 		ES.DBQuery(Format("INSERT INTO erp_characters SET firstname = '%s', lastname = '%s', steamid = '%s', model = '%s', cash = 100, bank = 500, inventory = '%s';", ES.DBEscape(fname), ES.DBEscape(lname), ply:SteamID(),ES.DBEscape(model),ES.DBEscape(ERP.EncodeInventory(inv))),function()
+			ply._erp_isCreatingCharacter=false;
 			ERP.OpenMainMenu(ply);
 		end)
 	end)
@@ -74,7 +61,7 @@ function ERP.SyncCharacter(ply,...)
 
 		local public={};
 		for k,v in pairs(char) do
-			if table.HasValue(PublicFields,v) then
+			if table.HasValue(PublicFields,k) then
 				public[k]=v;
 			end
 		end
@@ -106,10 +93,30 @@ end
 
 local CHARACTER=FindMetaTable("Character");
 function ERP.LoadCharacter(ply,id)
+	if ply._erp_isLoadingCharacter or ply:IsLoaded() then return end
+
+	ply._erp_isLoadingCharacter=true
+
 	ES.DebugPrint("Collecting character "..ply:Nick().."#"..tostring(id).." from database.");
+
+	for k,v in ipairs(player.GetAll())do
+		if v:IsLoaded() then
+			local public={};
+			for _k,_v in pairs(v.character)do
+				if table.HasValue(PublicFields,_v) then
+					public[_k]=_v;
+				end
+			end
+			net.Start("ERP.Character.Load")
+			net.WriteEntity(v)
+			net.WriteTable(public);
+			net.Send(ply);
+		end
+	end
 
 	ES.DBQuery("SELECT * FROM erp_characters WHERE steamid = '"..ply:SteamID().."' AND id = "..id.." LIMIT 1;",function(c)
 		if c and c[1] then
+			ply._erp_isLoadingCharacter=false;
 			if c.arrested and tonumber(c.arrested) > 0 then
 				local timeleft = (tonumber(c.arrested) + ERP.arrestTime) - os.time()
 
@@ -134,6 +141,7 @@ function ERP.LoadCharacter(ply,id)
 			ES.DebugPrint("Successfully loaded character "..ply:Nick().."#"..tostring(id));
 		else
 			ES.DebugPrint("No character, nigga.")
+			ply._erp_isLoadingCharacter=false
 		end
 	end)
 end
@@ -186,7 +194,11 @@ end
 
 util.AddNetworkString("ERP.Character.OpenMenu")
 function ERP.OpenMainMenu(ply)
+	if ply._erp_isOpeningMainMenu then return end
+
+	ply._erp_isOpeningMainMenu=true
 	ES.DBQuery("SELECT * FROM `erp_characters` WHERE steamid = '"..ply:SteamID().."' LIMIT 4;",function(c)
+		ply._erp_isOpeningMainMenu=false
 		net.Start("ERP.Character.OpenMenu");
 		net.WriteTable(c or {});
 		net.Send(ply);
