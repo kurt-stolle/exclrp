@@ -14,7 +14,16 @@ function ENT:GetItem()
 end
 
 if CLIENT then
+	hook.Add("OnContextMenuOpen","ERP.ContextMenu.Objects",function()
+		local ply=LocalPlayer()
+		local e = ply:GetEyeTrace().Entity;
 
+		if IsValid(e) and e.Item and ply:GetEyeTrace().HitPos:Distance(ply:EyePos()) < 100 then
+			LocalPlayer():ConCommand("+use")
+			timer.Simple(.1,function() LocalPlayer():ConCommand("-use") end)
+			return true
+		end
+	end)
 
 	net.Receive("ERP.Item.UseTransmit",function()
 		local ent=net.ReadEntity()

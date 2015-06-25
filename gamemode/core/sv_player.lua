@@ -1,6 +1,9 @@
 function ERP:PlayerInitialSpawn(p)
 	-- nothing to do here
 end
+function ERP:PlayerCanHearPlayersVoice( listener, talker )
+	return listener:GetPos():Distance( talker:GetPos() ) <= 500
+end
 function ERP:PlayerSpawn(p)
 	if p:IsLoaded() then
 		player_manager.SetPlayerClass( p, "player_erp_default" )
@@ -28,17 +31,12 @@ end
 function ERP:ScalePlayerDamage( p, hitgroup, dmginfo )
 	if ( hitgroup == HITGROUP_HEAD ) then
 		dmginfo:ScaleDamage( 3 )
-	elseif ( hitgroup == HITGROUP_LEFTARM ||
-		hitgroup == HITGROUP_RIGHTARM ||
-		hitgroup == HITGROUP_LEFTLEG ||
-		hitgroup == HITGROUP_RIGHTLEG ||
-		hitgroup == HITGROUP_GEAR ) then
-
+	elseif ( hitgroup == HITGROUP_LEFTARM or hitgroup == HITGROUP_RIGHTARM or	hitgroup == HITGROUP_LEFTLEG or	hitgroup == HITGROUP_RIGHTLEG or hitgroup == HITGROUP_GEAR ) then
 		dmginfo:ScaleDamage( 0.5 )
 	end
 end
 function ERP:PlayerSpray()
-	return true;
+	return false;
 end
 function ERP:GetFallDamage( ply, speed )
 	return (speed/10);
@@ -59,4 +57,48 @@ function ERP:ShowSpare2(p)
 end
 function ERP:PlayerSwitchFlashlight()
     return false;
+end
+
+util.AddNetworkString("ERP.Chat.ooc")
+util.AddNetworkString("ERP.Chat.say")
+function ERP:PlayerSay(ply, text, team)
+	if not ply:IsLoaded() then return "" end
+
+	if string.sub(text,1,1) == ">" or team then
+		net.Start("ERP.Chat.ooc")
+		net.WriteEntity(ply)
+		net.WriteString(string.sub(text,2,#text))
+		net.WriteBool(false)
+		net.Broadcast()
+
+		return ""
+	elseif string.sub(text,1,1) == "<" then
+		net.Start("ERP.Chat.ooc")
+		net.WriteEntity(ply)
+		net.WriteString(string.sub(text,2,#text))
+		net.WriteBool(true)
+
+		local in_range = {ply}
+		for k,v in ipairs(player.GetAll())do
+			if v == ply or v:GetPos():Distance(ply:GetPos()) > 800 then continue end
+
+			table.insert(in_range,v)
+		end
+		net.Send(in_range)
+
+		return ""
+	end
+
+	local in_range = {ply}
+	for k,v in ipairs(player.GetAll())do
+		if v == ply or v:GetPos():Distance(ply:GetPos()) > 800 then continue end
+
+		table.insert(in_range,v)
+	end
+	net.Start("ERP.Chat.say")
+	net.WriteEntity(ply)
+	net.WriteString(text)
+	net.Send(in_range)
+
+	return ""
 end

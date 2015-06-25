@@ -28,6 +28,20 @@ function ERP.CreateCharacter(ply,fname,lname,model)
 	end)
 end
 
+-- player by ID
+function ERP.FindPlayerByCharacterID(id)
+	if not id then return end
+
+	for k,v in ipairs(player.GetAll())do
+		if v:IsLoaded() and v:GetCharacter():GetID() == id then
+			return v;
+		end
+	end
+
+	return NULL
+end
+
+--Networking
 util.AddNetworkString("ERP.Character.New")
 net.Receive("ERP.Character.New",function(len,ply)
 	if not IsValid(ply) or ply:IsLoaded() then return end

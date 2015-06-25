@@ -18,7 +18,9 @@ if CLIENT then
 
     local ply=LocalPlayer()
 
-    if ply:GetCharacter():GetJob():GetName() ~= "Salesman" then
+    if not ply:IsLoaded() then return end
+
+    if not ply:GetCharacter():GetJob() or ply:GetCharacter():GetJob():GetName() ~= "Salesman" then
       local lbl = Label("I have been given strict orders to only sell my stock to Salesmen.\n\nYou should talk to me boss if you're interested in becoming a salesman.",context)
       lbl:SetFont("ESDefault")
       lbl:SetColor(ES.Color.White)
@@ -134,7 +136,7 @@ if CLIENT then
   end);
 elseif SERVER then
   function _stor:PlayerCanOpen(ply)
-    return ply:GetCharacter():GetJob():GetName() == "Salesman";
+    return ply:IsLoaded() and ply:GetCharacter():GetJob() and ply:GetCharacter():GetJob():GetName() == "Salesman";
   end
 
   timer.Create("ERP.NPC.SalesmanShop.AddItem",60,0,function()

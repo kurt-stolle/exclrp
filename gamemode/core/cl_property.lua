@@ -12,27 +12,33 @@ hook.Add("OnContextMenuOpen","ERP.ContextMenu.Properties",function()
 
 	if IsValid(e) and ply:IsLoaded() and ply:GetEyeTrace().HitPos:Distance(ply:EyePos()) < 100 then
 
-		if table.HasValue(doors,e:GetClass()) and availableProperty[e:EntIndex()] then
-			if not ERP.OwnedProperty[availableProperty[e:EntIndex()]] then
-				ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,{
-					{text="Buy property",func=function()
-						RunConsoleCommand("erp_buyproperty");
-					end}
-				})
-			elseif ERP.OwnedProperty[availableProperty[e:EntIndex()]].id == ply:UniqueID() then
-				ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,{
+		if table.HasValue(DoorTypes,e:GetClass()) and Doors[e:EntIndex()] then
+			local opts={}
+			local prop=Doors[e:EntIndex()]
+			if prop:PlayerHasPermissions(ply) then
+				opts={
 					{text="Lock",func=function()
-						RunConsoleCommand("erp_lockdoor");
+						RunConsoleCommand("erp_property_door_lock",e:EntIndex(),prop:GetName());
 					end},
 					{text="Unlock",func=function()
-						RunConsoleCommand("erp_unlockdoor");
+						RunConsoleCommand("erp_property_door_unlock",e:EntIndex(),prop:GetName());
 					end}
-				})
+				}
+				ES.DebugPrint("Created action menu for door")
 			else
-
+				ES.DebugPrint("No permissions for this property")
 			end
-		end
 
+			table.insert(opts,{text="Knock",func=function()
+					RunConsoleCommand("erp_property_door_knock",e:EntIndex(),prop:GetName());
+				end})
+
+			ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,opts)
+
+			return true
+		else
+			ES.DebugPrint("Door is not part of a property")
+		end
 	end
 end)
 
@@ -133,6 +139,20 @@ end,function(_,str)
 end,"Add the door you're facing to a property. Format: <Property name>")
 
 -- Networking
+net.Receive("ERP.property.update",function(len)
+	ES.DebugPrint("Updated properties")
+
+	local tab=net.ReadTable()
+	local prop=ERP.Properties[tab.name]
+	if prop then
+		for k,v in pairs(prop)do
+			prop[k]=nil
+		end
+		for k,v in pairs(tab)do
+			prop[k]=v
+		end
+	end
+end)
 net.Receive("ERP.property.sync",function(len)
 	ES.DebugPrint("Properties loaded!")
 
@@ -203,7 +223,7 @@ hook.Add("HUDPaint","exclDoorPropertyHints",function()
 
 			y=y+yAdd+4;
 
-			local ownerString=pr:HasOwner() and "Undefined" or "FOR RENT ($"..pr:GetPrice(1).." per hour)";
+			local ownerString=pr:HasOwner() and (pr:GetOwnerName() or "Undefined") or "FOR RENT ($"..pr:GetPrice(1).." per hour)";
 			draw.SimpleText(ownerString,"ESDefault.Shadow",x,y,ES.Color.Black,1,1)
 			draw.SimpleText(ownerString,"ESDefault.Shadow",x,y+1,ES.Color.Black,1,1)
 			draw.SimpleText(ownerString,"ESDefault",x,y,ES.Color.White,1,1)

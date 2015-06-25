@@ -140,7 +140,7 @@ local thirdperson = true;
 local newpos
 local tracedata = {}
 local ignoreent
-local distance = 50;
+local distance = 0;
 local camPos = Vector(0, 0, 0)
 local camAng = Angle(0, 0, 0)
 hook.Add("ShouldDrawLocalPlayer","ThirdPersonDrawLocalPlayer", function()
@@ -226,3 +226,53 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 
 	return {origin = pos, angles = angles, fov = fov}
 end
+
+-- net stuff
+net.Receive("ERP.Chat.ooc",function()
+	local ply=net.ReadEntity()
+	local msg=string.Trim(net.ReadString())
+	local looc=net.ReadBool()
+
+	if not IsValid(ply) or not ply:IsLoaded() or not msg then return end
+
+	local tab={ES.Color.White}
+
+	local char=ply:GetCharacter()
+
+	table.insert(tab,ES.Color.Highlight)
+	table.insert(tab,ply:Nick())
+	table.insert(tab,ES.Color.White)
+	table.insert(tab," in ")
+	table.insert(tab,ES.Color.Highlight)
+	table.insert(tab,looc and "LOOC" or "OOC")
+	table.insert(tab,ES.Color.White)
+	table.insert(tab,": ")
+	table.insert(tab,msg)
+
+	chat.AddText(unpack(tab))
+end)
+
+net.Receive("ERP.Chat.say",function()
+	local ply=net.ReadEntity()
+	local msg=string.Trim(net.ReadString())
+
+	if not IsValid(ply) or not ply:IsLoaded() or not msg then return end
+
+	local tab={}
+
+	table.insert(tab,team.GetColor(ply:Team()))
+	table.insert(tab,ply:GetCharacter():GetFullName())
+	table.insert(tab,ES.Color.White)
+	table.insert(tab," said: \"")
+
+	local len=string.len(msg)
+	local char=string.sub(msg,1,1)
+
+	msg=string.upper(char)..string.sub(msg,2,len)
+	table.insert(tab,msg)
+
+	char=string.sub(msg,len,len)
+	table.insert(tab,char ~= "." and char ~= "!" and char ~= "?" and ".\"" or "\"")
+
+	chat.AddText(unpack(tab))
+end)

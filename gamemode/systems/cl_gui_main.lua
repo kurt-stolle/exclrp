@@ -137,6 +137,7 @@ net.Receive("ERP.Character.OpenMenu",function()
 	ERP.MainMenu = vgui.Create("exclMainMenuPanel");
 	ERP.MainMenu:SetPos(0,0);
 	ERP.MainMenu:SetSize(ScrW(),ScrH());
+	ERP.MainMenu:SetZPos(-1)
 
 	// main items
 	local slideitems = {}

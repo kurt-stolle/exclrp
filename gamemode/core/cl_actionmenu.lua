@@ -25,7 +25,7 @@ hook.Add("PrePaintMainHUD","exclDrawActionMenus",function()
 
 		local scrPos = actionmenuPos:ToScreen();
 		scrPos.x = math.floor(scrPos.x)
-		scrPos.y = math.floor(scrPos.y)
+		scrPos.y = math.floor(scrPos.y) - 20
 
 		draw.SimpleText("Actions","ESDefault+.Shadow",scrPos.x-50,scrPos.y-20,ES.Color.Black,0,0)
 		draw.SimpleText("Actions","ESDefault+.Shadow",scrPos.x-50,scrPos.y-20,ES.Color.Black,0,0)
