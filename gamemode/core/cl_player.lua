@@ -140,7 +140,7 @@ local thirdperson = true;
 local newpos
 local tracedata = {}
 local ignoreent
-local distance = 0;
+local distance = 60;
 local camPos = Vector(0, 0, 0)
 local camAng = Angle(0, 0, 0)
 hook.Add("ShouldDrawLocalPlayer","ThirdPersonDrawLocalPlayer", function()
@@ -193,9 +193,9 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 			tracedata.filter = ignoreent
 			trace = util.TraceLine(tracedata)
 	        pos = newpos
-			newpos = LerpVector( 0.3, pos, trace.HitPos + trace.HitNormal*2 )
+			newpos = LerpVector(  15 * FrameTime(), pos, trace.HitPos + trace.HitNormal*2 )
 			angles = newangles
-			newangles = LerpAngle( 0.3, angles, (ply:GetEyeTraceNoCursor().HitPos-newpos):Angle() )
+			newangles = LerpAngle( 15 * FrameTime(), angles, (ply:GetEyeTraceNoCursor().HitPos-newpos):Angle() )
 
 			camPos = pos
 			camAng = angles;
@@ -208,7 +208,7 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 
 	    	trace = util.TraceLine(tracedata)
 	        pos = newpos
-			newpos = LerpVector( 0.3, pos, trace.HitPos + trace.HitNormal*2 )
+			newpos = LerpVector( 15 * FrameTime(), pos, trace.HitPos + trace.HitNormal*2 )
 
 			camPos = pos
 			camAng = angles
@@ -275,4 +275,11 @@ net.Receive("ERP.Chat.say",function()
 	table.insert(tab,char ~= "." and char ~= "!" and char ~= "?" and ".\"" or "\"")
 
 	chat.AddText(unpack(tab))
+end)
+
+-- spawnmenu
+hook.Add("PostReloadToolsMenu","ERP.OverrideSpawnMenu",function()
+	if IsValid(g_SpawnMenu) then
+		--g_SpawnMenu.CreateMenu:Remove()
+	end
 end)

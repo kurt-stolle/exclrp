@@ -20,11 +20,17 @@ end
 function PLAYER:Loadout()
   local pl=self.Player
 
+  pl:StripWeapons()
   pl:Give("weapon_fists")
+  pl:Give("weapon_physgun")
+  pl:Give("gmod_camera")
+  pl:Give("gmod_tool")
   pl:Give("erp_weapon_nothing")
 
-  if pl:IsSuperAdmin() then
-    pl:Give("weapon_physgun")
+  if pl.character.job and ERP.Jobs[pl.character.job] then
+    for k,v in pairs(ERP.Jobs[pl.character.job]:GetLoadout())do
+      pl:Give(v)
+    end
   end
 
   pl:SelectWeapon("erp_weapon_nothing")

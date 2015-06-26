@@ -2,7 +2,8 @@
 local PLAYER = FindMetaTable("Player");
 
 function PLAYER:IsAiming()
-	return (self:GetActiveWeapon() and self:GetActiveWeapon():IsValid() and self:GetActiveWeapon().GetClass and self:GetActiveWeapon():GetClass() == "weapon_physgun");
+	local wep=self:GetActiveWeapon();
+	return IsValid(wep) and (wep:GetClass() == "weapon_physgun" or wep:GetClass() == "gmod_tool")
 end
 
 function PLAYER:IsLoaded()

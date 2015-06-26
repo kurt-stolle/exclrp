@@ -102,3 +102,12 @@ function ERP:PlayerSay(ply, text, team)
 
 	return ""
 end
+
+-- Sandbox hooks
+local function canSpawn(gm,ply)
+	return ply:IsSuperAdmin() or ply:ESSendNotificationPopup("Restricted","The item you tried to spawn is restricted to Super Administrators.\n\nYou may only spawn Props in ExclRP.") and false;
+end
+ERP.PlayerSpawnNPC = canSpawn
+ERP.PlayerSpawnSENT = canSpawn
+ERP.PlayerSpawnSWEP = canSpawn
+ERP.PlayerSpawnVehicle = canSpawn
