@@ -3,6 +3,7 @@ include("shared.lua")
 function ENT:Initialize()
 end
 
+local w,h=165,160
 function ENT:Draw()
 	self.Entity:DrawModel()
 
@@ -11,11 +12,16 @@ function ENT:Draw()
 	local pos = self:GetPos()
 	local ang = self:GetAngles()
 	ang:RotateAroundAxis(ang:Up(),90);
-	ang:RotateAroundAxis(ang:Forward(),83);
-	cam.Start3D2D(pos + ang:Right()*-51 + ang:Up()*9.3, ang, 0.1)
+	ang:RotateAroundAxis(ang:Forward(),77);
+	cam.Start3D2D(pos + ang:Right()*-48.5 + ang:Up()*19.8 + ang:Forward() * -8.3, ang, 0.08)
 		surface.SetDrawColor(Color(0,0,0));
-		surface.DrawRect(-92,-51,120,73)
-		draw.DrawText("You currently have\n$ "..(LocalPlayer().character:GetBank() or 0)..",-\nin your bank account","DermaDefaultBold",-32,-35,Color(0,100,0),1);
+		surface.DrawRect(-w/2,-h/2,w,h)
+		draw.SimpleText("Account balance","ESDefault+",0,-32,ES.Color.Lime,1,1);
+		draw.SimpleText("$ "..(LocalPlayer().character:GetBank() or 0),"ESDefault++",0,0,ES.Color.Lime,1,1);
+		surface.SetDrawColor(ES.Color.White)
+		if math.sin(CurTime()*4) > 0 then
+			draw.SimpleText("PLEASE INSERT CARD","ESDefault",0,38,ES.Color.White,1,1);
+		end
 	cam.End3D2D()
 end
 
