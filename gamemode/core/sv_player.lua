@@ -111,3 +111,7 @@ ERP.PlayerSpawnNPC = canSpawn
 ERP.PlayerSpawnSENT = canSpawn
 ERP.PlayerSpawnSWEP = canSpawn
 ERP.PlayerSpawnVehicle = canSpawn
+
+function ERP:PhysgunPickup( ply, ent )
+	return ent.Getowner and ent:GetOwner() == ply or ply:IsSuperAdmin()
+end
