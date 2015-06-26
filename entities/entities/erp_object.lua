@@ -14,14 +14,16 @@ function ENT:GetItem()
 end
 
 if CLIENT then
-	hook.Add("OnContextMenuOpen","ERP.ContextMenu.Objects",function()
-		local ply=LocalPlayer()
-		local e = ply:GetEyeTrace().Entity;
+	hook.Add("PlayerBindPress","ERP.ContextMenu.Objects",function(ply,bind,pressed)
+		if bind == "+menu_context" and pressed then
+			local ply=LocalPlayer()
+			local e = ply:GetEyeTrace().Entity;
 
-		if IsValid(e) and e.Item and ply:GetEyeTrace().HitPos:Distance(ply:EyePos()) < 100 then
-			LocalPlayer():ConCommand("+use")
-			timer.Simple(.1,function() LocalPlayer():ConCommand("-use") end)
-			return true
+			if IsValid(e) and e.Item and ply:GetEyeTrace().HitPos:Distance(ply:EyePos()) < 100 then
+				LocalPlayer():ConCommand("+use")
+				timer.Simple(.1,function() LocalPlayer():ConCommand("-use") end)
+				return true
+			end
 		end
 	end)
 

@@ -117,7 +117,7 @@ function ERP.LoadCharacter(ply,id)
 		if v:IsLoaded() then
 			local public={};
 			for _k,_v in pairs(v.character)do
-				if table.HasValue(PublicFields,_v) then
+				if table.HasValue(PublicFields,_k) then
 					public[_k]=_v;
 				end
 			end

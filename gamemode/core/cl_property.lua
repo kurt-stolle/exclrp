@@ -6,38 +6,40 @@ local DoorTypes = {
 local Doors = {}
 local PROPERTY = FindMetaTable("Property")
 
-hook.Add("OnContextMenuOpen","ERP.ContextMenu.Properties",function()
-	local ply=LocalPlayer()
-	local e = ply:GetEyeTrace().Entity;
+hook.Add("PlayerBindPress","ERP.ContextMenu.Properties",function(ply,bind,pressed)
+	if bind == "+menu_context" and pressed then
+		local ply=LocalPlayer()
+		local e = ply:GetEyeTrace().Entity;
 
-	if IsValid(e) and ply:IsLoaded() and ply:GetEyeTrace().HitPos:Distance(ply:EyePos()) < 100 then
+		if IsValid(e) and ply:IsLoaded() and ply:GetEyeTrace().HitPos:Distance(ply:EyePos()) < 100 then
 
-		if table.HasValue(DoorTypes,e:GetClass()) and Doors[e:EntIndex()] then
-			local opts={}
-			local prop=Doors[e:EntIndex()]
-			if prop:PlayerHasPermissions(ply) then
-				opts={
-					{text="Lock",func=function()
-						RunConsoleCommand("erp_property_door_lock",e:EntIndex(),prop:GetName());
-					end},
-					{text="Unlock",func=function()
-						RunConsoleCommand("erp_property_door_unlock",e:EntIndex(),prop:GetName());
-					end}
-				}
-				ES.DebugPrint("Created action menu for door")
+			if table.HasValue(DoorTypes,e:GetClass()) and Doors[e:EntIndex()] then
+				local opts={}
+				local prop=Doors[e:EntIndex()]
+				if prop:PlayerHasPermissions(ply) then
+					opts={
+						{text="Lock",func=function()
+							RunConsoleCommand("erp_property_door_lock",e:EntIndex(),prop:GetName());
+						end},
+						{text="Unlock",func=function()
+							RunConsoleCommand("erp_property_door_unlock",e:EntIndex(),prop:GetName());
+						end}
+					}
+					ES.DebugPrint("Created action menu for door")
+				else
+					ES.DebugPrint("No permissions for this property")
+				end
+
+				table.insert(opts,{text="Knock",func=function()
+						RunConsoleCommand("erp_property_door_knock",e:EntIndex(),prop:GetName());
+					end})
+
+				ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,opts)
+
+				return true
 			else
-				ES.DebugPrint("No permissions for this property")
+				ES.DebugPrint("Door is not part of a property")
 			end
-
-			table.insert(opts,{text="Knock",func=function()
-					RunConsoleCommand("erp_property_door_knock",e:EntIndex(),prop:GetName());
-				end})
-
-			ERP:CreateActionMenu(ply:GetEyeTrace().HitPos,opts)
-
-			return true
-		else
-			ES.DebugPrint("Door is not part of a property")
 		end
 	end
 end)
