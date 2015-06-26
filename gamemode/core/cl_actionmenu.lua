@@ -1,20 +1,29 @@
 
 --TODO: Remake this whole thing. The code is from ProjectRP/IRP2k10, created by NewBee_ with some help from Yuriman.
 
-local actionmenu = false;
+--[[local actionmenu = false;
 local actionmenuOptions = {};
-local actionmenuPos = Vector(0,0,0); -- 3d vector!
+local actionmenuPos = Vector(0,0,0); -- 3d vector!]]
 function ERP:CreateActionMenu(pos,options)
-	actionmenu = true;
+	--[[actionmenu = true;
 	actionmenuOptions = options;
 
 	pos.x = math.floor(pos.x)
 	pos.y = math.floor(pos.y)
 	pos.z = math.floor(pos.z)
+]]
+	local menu = DermaMenu()
+	for k,v in ipairs(options)do
+		menu:AddOption( v.text, v.func )
+	end
+	menu:AddSpacer()
+	menu:AddOption( "Close", function() end )
+	menu:Open(ScrW()/2,ScrH()/2,false)
 
-	actionmenuPos = pos;
+	--actionmenuPos = pos;
 end
 
+--[[
 hook.Add("PrePaintMainHUD","exclDrawActionMenus",function()
 	if actionmenu then
 
@@ -64,3 +73,4 @@ hook.Add("PlayerBindPress","exclActionmenuBind",function(ply, bind, pressed)
 		return true;
 	end
 end)
+]]

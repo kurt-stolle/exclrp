@@ -4,6 +4,8 @@ SWEP.Base = "erp_weapon_base"
 
 SWEP.AnimPrefix = "stunstick"
 
+SWEP.Slot = 4
+
 SWEP.PrintName = "Baton"
 SWEP.Spawnable = true
 SWEP.AdminOnly = true

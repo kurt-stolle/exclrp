@@ -36,23 +36,20 @@ function CHARACTER:SetJob(job)
 
 	job=ERP.Jobs[job];
 
-	if not job then return end
-
-	self.Player:SetTeam(job.team);
+	if not job or job:GetTeam() == self.Player:Team() then return end
 
 	net.Start("ERP.Job.ChangedFX"); net.WriteEntity(self.Player); net.WriteUInt(job:GetTeam(),8); net.Broadcast();
-
-	local col = job.color;
-	col = Vector(col.a/255,col.g/255,col.b/255);
-
-	self.Player:SetPlayerColor(col);
-	self.Player:SetWeaponColor(col);
 
 	self.job=job:GetName();
 	self.joblevel=0;
 
 	ERP.SaveCharacter(self.Player,"job");
 	ERP.SaveCharacter(self.Player,"joblevel");
+
+	player_manager.OnPlayerSpawn( self.Player )
+	player_manager.RunClass( self.Player, "Spawn" )
+	player_manager.RunClass( self.Player, "Loadout" )
+	player_manager.RunClass( self.Player, "SetModel" )
 end
 
 -- INVENTORY

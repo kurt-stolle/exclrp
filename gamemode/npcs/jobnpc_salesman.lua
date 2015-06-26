@@ -8,7 +8,7 @@ if CLIENT then
     ES.DebugPrint("Opening salesman menu")
 
     local lbl=context:Add("DLabel")
-    lbl:SetText("...")
+    lbl:SetText("WARNING: Changing your job will strip you of ALL your weapons!")
     lbl:SetColor(ES.Color.White)
     lbl:SetFont("ESDefault")
     lbl:SizeToContents()
