@@ -7,8 +7,9 @@ if SERVER then
 end
 
 if CLIENT then
-	SWEP.DrawAmmo			= true
+	SWEP.DrawAmmo			= false
 	SWEP.DrawCrosshair		= true
+	SWEP.AccurateCrosshair = false
 	SWEP.ViewModelFOV		= 82
 	SWEP.ViewModelFlip		= false
 end
@@ -70,5 +71,24 @@ end
 function SWEP:Deploy()
   -- Implement me
 
+	return true
+end
+
+local gap = 20
+local size = 12
+function SWEP:DoDrawCrosshair( x, y )
+	-- Hack x and y to the actual values we're interested in
+	local pos=LocalPlayer():GetEyeTrace().HitPos:ToScreen()
+	x,y=pos.x,pos.y
+
+	-- Draw the crosshair
+	surface.SetDrawColor( ES.Color["#FFFFFFEE"] )
+
+	surface.DrawRect( x - gap/2 - size	, y-1, size, 2 )
+	surface.DrawRect( x + gap/2					, y-1, size, 2 )
+
+	surface.DrawRect( x-1, y - gap/2 - size	, 2, size)
+	surface.DrawRect( x-1, y + gap/2				, 2, size)
+	-- Supress the default
 	return true
 end

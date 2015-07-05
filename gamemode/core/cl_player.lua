@@ -138,7 +138,10 @@ end
 local fov = 0;
 local thirdperson = true;
 local newpos
-local tracedata = {}
+local tracedata = {
+	mins=Vector(-10,-10,-10),
+	maxs=Vector(10,10,10)
+}
 local ignoreent
 local distance = 60;
 local camPos = Vector(0, 0, 0)
@@ -191,11 +194,11 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 			tracedata.start = pos
 			tracedata.endpos = pos - ( angles:Forward() * distance ) + ( angles:Right()* ((distance/90)*35) )
 			tracedata.filter = ignoreent
-			trace = util.TraceLine(tracedata)
+			trace = util.TraceHull(tracedata)
 	        pos = newpos
 			newpos = LerpVector(  15 * FrameTime(), pos, trace.HitPos + trace.HitNormal*2 )
-			angles = newangles
-			newangles = LerpAngle( 15 * FrameTime(), angles, (ply:GetEyeTraceNoCursor().HitPos-newpos):Angle() )
+			--[[angles = newangles
+			newangles = LerpAngle( 15 * FrameTime(), angles, (ply:GetEyeTraceNoCursor().HitPos-newpos):Angle() )]]
 
 			camPos = pos
 			camAng = angles;
@@ -206,7 +209,7 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 			tracedata.endpos = pos - ( angles:Forward() * distance * 2 ) + ( angles:Up()* ((distance/60)*20) )
 			tracedata.filter = ignoreent
 
-	    	trace = util.TraceLine(tracedata)
+	    	trace = util.TraceHull(tracedata)
 	        pos = newpos
 			newpos = LerpVector( 15 * FrameTime(), pos, trace.HitPos + trace.HitNormal*2 )
 
@@ -227,6 +230,17 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 	return {origin = pos, angles = angles, fov = fov}
 end
 
+function ERP:PrePlayerDraw(p)
+	if p == LocalPlayer() and distance < 40 then
+		render.SetBlend(distance/40)
+	end
+end
+
+function ERP:PostPlayerDraw(p)
+	if p == LocalPlayer() and distance < 40 then
+		render.SetBlend(1)
+	end
+end
 -- net stuff
 net.Receive("ERP.Chat.ooc",function()
 	local ply=net.ReadEntity()
