@@ -20,7 +20,7 @@ FACTION_GOVERNMENT = 2;
 FACTION_CRIME = 4;
 
 --function to make this easier.
-local JOB={};
+local JOB=FindMetaTable("Job")
 AccessorFunc(JOB,"team","Team",FORCE_NUMBER);
 AccessorFunc(JOB,"name","Name",FORCE_STRING);
 AccessorFunc(JOB,"description","Description",FORCE_STRING);
@@ -28,17 +28,22 @@ AccessorFunc(JOB,"faction","Faction",FORCE_NUMBER);
 AccessorFunc(JOB,"pay","Pay",FORCE_NUMBER);
 AccessorFunc(JOB,"color","Color");
 
-function ERP.Job()
+function ERP.Job(name,description,faction,pay,color)
 	local obj={};
 	setmetatable(obj,JOB);
 	JOB.__index=JOB;
 
 	obj.team=-1;
-	obj.name="Unknown";
-	obj.description="No description given.";
-	obj.faction=FACTION_CIVILLIAN;
-	obj.pay=10;
-	obj.color=ES.Color.White;
+	obj.name=name or  "Unknown";
+	obj.description=description or "No description given.";
+	obj.faction=faction or FACTION_CIVILLIAN;
+	obj.pay=pay or 10;
+	obj.color=color or ES.Color.White;
+
+	if CLIENT then
+		obj.fnJobMenu = function(frame) end
+	end
+
 	obj.loadout={};
 
 	return obj;

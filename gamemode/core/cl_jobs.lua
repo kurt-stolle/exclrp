@@ -28,3 +28,11 @@ net.Receive("ERP.Job.ChangedFX",function()
 		part:SetVelocity(Vector(math.random(-10,10),math.random(-15,10),-20))
 	end
 end)
+
+local JOB=FindMetaTable("Job")
+function JOB:SetJobMenuFunction(fn)
+	self.fnJobMenu = fn;
+end
+function JOB:GetJobMenuFunction()
+	return self.fnJobMenu;
+end

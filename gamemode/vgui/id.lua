@@ -43,7 +43,7 @@ function PNL:Init()
   lbl:SetPos(xInfo,yInfo)
   lbl:SetColor(ES.Color.Black)
   lbl:SetFont("ESDefaultBold")
-  lbl:SetText("Name")
+  lbl:SetText("Name:")
   lbl:SizeToContents()
 
   self.name=self.container:Add("esLabel")
@@ -57,7 +57,21 @@ function PNL:Init()
   lbl:SetPos(xInfo,yInfo)
   lbl:SetColor(ES.Color.Black)
   lbl:SetFont("ESDefaultBold")
-  lbl:SetText("Job")
+  lbl:SetText("ID:")
+  lbl:SizeToContents()
+
+  self.id=self.container:Add("esLabel")
+  self.id:SetPos(xInfo+40,yInfo)
+  self.id:SetColor(ES.Color.Black)
+  self.id:SetFont("ESDefault")
+
+  yInfo = yInfo + lbl:GetTall() + margin*.2
+
+  local lbl=self.container:Add("esLabel")
+  lbl:SetPos(xInfo,yInfo)
+  lbl:SetColor(ES.Color.Black)
+  lbl:SetFont("ESDefaultBold")
+  lbl:SetText("Job:")
   lbl:SizeToContents()
 
   self.job=self.container:Add("esLabel")
@@ -74,6 +88,9 @@ function PNL:Setup(char)
 
   self.name:SetText(char:GetFullName())
   self.name:SizeToContents();
+
+  self.id:SetText(char:GetIDCardNumber())
+  self.id:SizeToContents()
 
   self.job:SetText(team.GetName(char.Player:Team()));
   self.job:SizeToContents()

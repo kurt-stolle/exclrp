@@ -7,8 +7,12 @@ if CLIENT then
   npc:SetDialogConstructor(function(self,context,npc)
     ES.DebugPrint("Opening property sales menu")
 
+    local scrollslave=vgui.Create("Panel",context)
+    scrollslave:SetPos(0,0)
+    scrollslave:SetWide(context:GetWide()-15)
+
     for k,v in ipairs(ERP.Properties)do
-      local pnl=context:Add("esPanel")
+      local pnl=scrollslave:Add("esPanel")
       pnl:SetTall(100)
       pnl:Dock(TOP)
       pnl:DockMargin(10,10,10,0)
@@ -55,6 +59,12 @@ if CLIENT then
 
       table.insert(rows,pnl)
     end
+
+    scrollslave:SetTall(#ERP.Properties * 110 + 10)
+
+    local scroll=vgui.Create("esScrollbar",context)
+    scroll:Dock(RIGHT)
+    scroll:Setup()
   end)
 
   net.Receive("ERP.NPC.Property.buy",function()

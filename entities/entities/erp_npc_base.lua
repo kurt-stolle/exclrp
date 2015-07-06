@@ -87,8 +87,6 @@ elseif CLIENT then
     context:DockPadding(10,10,10,10)
     context:SetColor(ES.Color["#1E1E1E"])
 
-      ERP.NPCs[name]:GetDialogConstructor()(ent,context,ent)
-
     local npcInfo=vgui.Create("esPanel",frame)
     npcInfo:SetWide(200)
     npcInfo:Dock(LEFT)
@@ -132,5 +130,12 @@ elseif CLIENT then
 
     frame:Center()
     frame:MakePopup()
+    frame:PerformLayout()
+
+    timer.Simple(.1,function()
+      if IsValid(context) and IsValid(ent) then
+        ERP.NPCs[name]:GetDialogConstructor()(ent,context,ent)
+      end
+    end)
   end)
 end

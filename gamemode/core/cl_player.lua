@@ -172,15 +172,17 @@ end)
 local newpos;
 local newangles;
 function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view, menu-view, and death from the ragdoll's eyes.
-	if not ply:IsLoaded() then
-		local view = {origin = pos, angles = angles, fov = fov};
+
 		if IsValid(ERP.MainMenu) then
+			local view = {origin = pos, angles = angles, fov = fov};
+			
 			view.origin = ERP.Config.MainMenu.ViewOrigin;
 			view.angles = ERP.Config.MainMenu.ViewAngles;
 			view.fov = 90;
+
+			return view
 		end
-		return view
-	end
+
 
 	if not newpos then
 		newpos = pos;

@@ -15,3 +15,7 @@ end
 function CHARACTER:GetInventory()
 	return self.inventory
 end
+
+function CHARACTER:GetIDCardNumber()
+	return util.CRC("ERP_"..self:GetFullName().."_"..self:GetID())
+end

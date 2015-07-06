@@ -7,4 +7,11 @@ JOB:SetDescription("Crime pays! The professional criminal is the job for the cit
 JOB:SetFaction(FACTION_CRIME);
 JOB:SetPay(8);
 JOB:SetColor(ES.Color.Red);
+
+if CLIENT then
+
+elseif SERVER then
+
+end
+
 JOB();
