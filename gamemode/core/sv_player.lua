@@ -112,6 +112,7 @@ local function canSpawn(gm,ply)
 	ply:ESSendNotificationPopup("Restricted","The item you tried to spawn is restricted to Super Administrators.\n\nYou may only spawn Props in ExclRP.")
 	return false;
 end
+ERP.PlayerGiveSWEP = canSpawn
 ERP.PlayerSpawnNPC = canSpawn
 ERP.PlayerSpawnSENT = canSpawn
 ERP.PlayerSpawnSWEP = canSpawn
