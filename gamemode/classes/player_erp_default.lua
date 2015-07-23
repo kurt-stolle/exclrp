@@ -1,24 +1,33 @@
 local PLAYER = {};
 
-PLAYER.DisplayName    = "Default Class";
+DEFINE_BASECLASS( "player_default" )
+
+PLAYER.DisplayName    = "ERP Default Class";
 PLAYER.WalkSpeed			= 100;
 PLAYER.RunSpeed				= 270;
 
+STATUS_NONE = 0
 STATUS_ARRESTED = 1
-STATUS_TYPING = 2
+STATUS_DEAD = 2
+STATUS_WANTED = 4
 
 function PLAYER:SetupDataTables()
   self.Player:NetworkVar( "Float", 0, "Energy" )
+
+  BaseClass.SetupDataTables(self)
 end
 
 function PLAYER:SetModel()
   local pl=self.Player
 
   pl:SetModel(pl.character.model);
+  pl:ESSetNetworkedVariable("erp_model",pl.character.model)
+  pl:ESSetNetworkedVariable("erp_clothing",util.CRC("suit"))
 end
 
 function PLAYER:Loadout()
   local pl=self.Player
+  local char=pl:GetCharacter()
 
   pl:StripWeapons()
   pl:Give("weapon_fists")
@@ -27,22 +36,40 @@ function PLAYER:Loadout()
   pl:Give("gmod_tool")
   pl:Give("erp_weapon_nothing")
 
-  if pl.character.job and ERP.Jobs[pl.character.job] then
-    for k,v in pairs(ERP.Jobs[pl.character.job]:GetLoadout())do
-      pl:Give(v)
+  if char.job then
+    local job=ERP.Jobs[char.job];
+
+    if IsValid(job) then
+      for k,v in pairs(job:GetLoadout())do
+        pl:Give(v);
+      end
     end
   end
 
-  pl:SelectWeapon("erp_weapon_nothing")
+  if char.weapon_primary then
+    pl:Give(char.weapon_primary)
+  end
 
-  pl:SetEnergy(100);
+  if char.weapon_secondary then
+    pl:Give(char.weapon_secondary)
+  end
+
+  pl:SelectWeapon("erp_weapon_nothing")
 end
 
 function PLAYER:Spawn()
   local pl=self.Player
   local col = Vector(180/255,180/255,180/255);
 
+  -- for models
   pl:AddEffects(EF_NOSHADOW)
+
+  -- handle status
+  pl:SetStatus(STATUS_NONE);
+
+  -- color
+  pl:SetPlayerColor(col);
+  pl:SetWeaponColor(col);
 
   if pl.character.job and ERP.Jobs[pl.character.job] then
     local job=ERP.Jobs[pl.character.job];
@@ -54,9 +81,8 @@ function PLAYER:Spawn()
     pl:SetTeam(TEAM_UNASSIGNED)
   end
 
-  pl:SetStatus(0)
-  pl:SetPlayerColor(col);
-  pl:SetWeaponColor(col);
+  -- handle energy
+  pl:SetEnergy(100);
 end
 
 player_manager.RegisterClass( "player_erp_default", PLAYER, "player_default" );

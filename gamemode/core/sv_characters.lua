@@ -1,6 +1,6 @@
 -- sv_characters.lua
 hook.Add("ESDatabaseReady","ERP.ES.CreateERPCharactersDB",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory MEDIUMTEXT, dead tinyint(1) default 0, arrested float(32,16) unsigned default 0, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory MEDIUMTEXT, deathTime int(32) unsigned default 0, arrestTime int(32) unsigned default 0, gang varchar(255), weapon_primary varchar(255), weapon_secondary varchar(255), clothing varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
 end)
 
 -- the following fields of characters will be sent to ALL PLAYERS
@@ -130,22 +130,49 @@ function ERP.LoadCharacter(ply,id)
 
 	ES.DBQuery("SELECT * FROM erp_characters WHERE steamid = '"..ply:SteamID().."' AND id = "..id.." LIMIT 1;",function(c)
 		if c and c[1] then
-			ply._erp_isLoadingCharacter=false;
-			if c.arrested and tonumber(c.arrested) > 0 then
-				local timeleft = (tonumber(c.arrested) + ERP.arrestTime) - os.time()
+			c=c[1];
 
-				if timeLeft > 0 then
-					ply:CreateErrorDialog("Character is in custody. Wait "..math.ceil(timeLeft/60).." more minutes.");
+			ply._erp_isLoadingCharacter=false;
+
+			ES.DebugPrint("Player loaded! ",c)
+
+			local time;
+
+			time = tonumber(c.arrestTime)
+			if time and time > 0 then
+				time = (time + ERP.Config["arrest_time"]) - os.time()
+
+				ES.DebugPrint("Arrest time found: "..time)
+
+				if time > 0 then
+					ply:CreateErrorDialog("Character is in custody. Wait "..math.ceil(time/60).." more minutes.");
 					return
 				end
 			end
-			ply.character = table.Copy(c[1]);
+
+			time = tonumber(c.deathTime)
+			if time and time > 0 then
+				time = (time + ERP.Config["death_time"]) - os.time();
+
+				ES.DebugPrint("Death time found: "..time)
+
+				if time > 0 then
+					ply:CreateErrorDialog("Character is dead. Wait "..math.ceil(time/60).." more minutes.");
+					return
+				end
+			end
+
+			ply.character = c;
 
 			setmetatable(ply.character,CHARACTER);
 			CHARACTER.__index = CHARACTER;
 
 			ply.character.Player = ply;
 			ply.character.inventory = ERP.DecodeInventory(ply.character.inventory);
+
+			if ply.character.gang then
+				ERP.LoadGang(ply.character.gang)
+			end
 
 			ply:KillSilent();
 			ply:Spawn();
@@ -154,7 +181,7 @@ function ERP.LoadCharacter(ply,id)
 
 			ES.DebugPrint("Successfully loaded character "..ply:Nick().."#"..tostring(id));
 		else
-			ES.DebugPrint("No character, nigga.")
+			ply:CreateErrorDialog("Failed to load character. Contact a developer.");
 			ply._erp_isLoadingCharacter=false
 		end
 	end)

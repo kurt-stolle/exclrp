@@ -1,3 +1,4 @@
+-- HUD
 local nodrawWeps = {"CHudDeathNotice", "CHudHealth", "CHudBattery", "CHudAmmo", "CHudSecondaryAmmo", "CHudDamageIndicator"}
 function ERP:HUDShouldDraw(name)
 	if table.HasValue(nodrawWeps, name) then
@@ -18,6 +19,20 @@ surface.CreateFont ("ERP.HudNormal.Shadow", {
 	antialias = true,
 	font = "Roboto",
 	blursize=2
+})
+
+surface.CreateFont("ERP.HudWasted", {
+	size=120,
+	weight=800,
+	antialias=true,
+	font="Roboto"
+})
+surface.CreateFont("ERP.HudWasted.Shadow", {
+	size=120,
+	weight=800,
+	antialias=true,
+	font="Roboto",
+	blursize=4
 })
 
 local ply;
@@ -93,19 +108,59 @@ local context_wide = (box_margin*3 + box_wide*2);
 
 local shift_hidden=context_tall;
 
+local w,h,x,y;
+
+local mat,matTranslation,matAngle,matScale = nil,Vector(0,0,0),Angle(0,0,0),Vector(0,0,0);
+
+local deathScale= 0
+
 function ERP:HUDPaint()
 	ply=LocalPlayer()
 
+	w,h=ScrW(),ScrH()
+
 	if not ply:IsLoaded() then return end
 
-	hook.Call("PrePaintMainHUD");
+	--hook.Call("PrePaintMainHUD");
 
 	if not ply:Alive() then
+		-- DEATH VIEW
+
+		deathScale=Lerp(FrameTime()*5,deathScale,1)
+
+		x,y=w/2,h/2
+		x,y=(deathScale-1)*-x,(deathScale-1)*-y
+
+		mat=Matrix()
+		mat:SetAngles( matAngle )
+		matTranslation.x = x
+		matTranslation.y = y
+		mat:SetTranslation( matTranslation )
+		matScale.x = deathScale
+		matScale.y = deathScale
+		mat:Scale( matScale )
+
+		x,y=w/2,h/2
+
+		cam.PushModelMatrix( mat )
+
+		for i=0,2,1 do
+			draw.SimpleText("WASTED","ERP.HudWasted.Shadow",x,y,ES.Color.Black,1,1)
+		end
+		draw.SimpleText("WASTED","ERP.HudWasted",x+3,y+3,ES.Color.Black,1,1)
+		draw.SimpleText("WASTED","ERP.HudWasted",x,y,ES.Color.Red,1,1)
+
+		cam.PopModelMatrix( mat )
+
+		-- SHIFT MAIN HUD
 		shift_hidden=Lerp(FrameTime()*animationSpeed,shift_hidden,context_tall);
 	else
+		-- SHIFT MAIN HUD
+		deathScale=0
 		shift_hidden=Lerp(FrameTime()*animationSpeed,shift_hidden,0);
 	end
 
+	-- SAVE SOME FRAMES
 	if shift_hidden >= context_tall-1 then return end
 
 	-- SAVE THESE
@@ -113,7 +168,13 @@ function ERP:HUDPaint()
 	screen_height	= ScrH();
 
 	mat = Matrix();
-	mat:Translate( Vector( 0, screen_height - context_tall + shift_hidden ) );
+  mat:SetAngles( matAngle )
+	matTranslation.x = 0
+	matTranslation.y = screen_height - context_tall + shift_hidden
+	mat:SetTranslation( matTranslation )
+	matScale.x = 1
+	matScale.y = 1
+	mat:Scale( matScale )
 
 	cam.PushModelMatrix( mat )
 
@@ -135,6 +196,8 @@ function ERP:HUDPaint()
 	cam.PopModelMatrix();
 end
 
+
+-- THIRDPERSON
 local fov = 0;
 local thirdperson = true;
 local newpos
@@ -175,9 +238,9 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 
 		if IsValid(ERP.MainMenu) then
 			local view = {origin = pos, angles = angles, fov = fov};
-			
-			view.origin = ERP.Config.MainMenu.ViewOrigin;
-			view.angles = ERP.Config.MainMenu.ViewAngles;
+
+			view.origin = ERP.Config["mainmenu_view_origin"];
+			view.angles = ERP.Config["mainmenu_view_angles"];
 			view.fov = 90;
 
 			return view
@@ -243,7 +306,8 @@ function ERP:PostPlayerDraw(p)
 		render.SetBlend(1)
 	end
 end
--- net stuff
+
+-- OOC
 net.Receive("ERP.Chat.ooc",function()
 	local ply=net.ReadEntity()
 	local msg=string.Trim(net.ReadString())
@@ -293,9 +357,129 @@ net.Receive("ERP.Chat.say",function()
 	chat.AddText(unpack(tab))
 end)
 
--- spawnmenu
+-- SPAWNMENU
 hook.Add("PostReloadToolsMenu","ERP.OverrideSpawnMenu",function()
 	if IsValid(g_SpawnMenu) then
 		--g_SpawnMenu.CreateMenu:Remove()
 	end
 end)
+
+-- SCREEN EFFECTS
+local tab = {}
+tab[ "$pp_colour_addr" ] = 0
+tab[ "$pp_colour_addg" ] = 0
+tab[ "$pp_colour_addb" ] = 0
+tab[ "$pp_colour_brightness" ] = 0
+tab[ "$pp_colour_contrast" ] = 1
+tab[ "$pp_colour_colour" ] = 0.1
+tab[ "$pp_colour_mulr" ] = 0
+tab[ "$pp_colour_mulg" ] = 0
+tab[ "$pp_colour_mulb" ] = 0
+function ERP:RenderScreenspaceEffects()
+	if not LocalPlayer():Alive() then
+		DrawColorModify( tab )
+	end
+end
+
+-- PRE PLAYER DRAW
+local bonesHead={
+	"ValveBiped.Bip01_Neck1",
+	"ValveBiped.Bip01_Head1",
+}
+local bonesClothing={
+	"ValveBiped.Bip01_Pelvis",
+	"ValveBiped.Bip01_Spine",
+	"ValveBiped.Bip01_Spine1",
+	"ValveBiped.Bip01_Spine2",
+	"ValveBiped.Bip01_Spine4",
+	"ValveBiped.Bip01_R_Clavicle",
+	"ValveBiped.Bip01_R_UpperArm",
+	"ValveBiped.Bip01_R_Forearm",
+	"ValveBiped.Bip01_L_Clavicle",
+	"ValveBiped.Bip01_L_UpperArm",
+	"ValveBiped.Bip01_L_Forearm",
+	"ValveBiped.Bip01_R_Clavicle",
+	"ValveBiped.Bip01_R_Thigh",
+	"ValveBiped.Bip01_R_Calf",
+	"ValveBiped.Bip01_R_Foot",
+	"ValveBiped.Bip01_R_Toe0",
+	"ValveBiped.Bip01_L_Thigh",
+	"ValveBiped.Bip01_L_Calf",
+	"ValveBiped.Bip01_L_Foot",
+	"ValveBiped.Bip01_L_Toe0"
+}
+local bonesHands={
+	"ValveBiped.Bip01_L_Hand",
+	"ValveBiped.Bip01_R_Hand",
+}
+
+local vecShrink=Vector(.1,.1,.1)
+local vecNormal=Vector(1,1,1)
+function ERP:PrePlayerDraw(ply)
+	if not ply:IsLoaded() then return end
+
+	ply:SetColor(ES.Color["#FFFFFF01"])
+
+	local clothes = ply:GetCharacter():GetClothing()
+	local ent;
+
+	-- The player itself
+	ent=ply._erp_modelEnt;
+	if IsValid(ent) then
+		if ent:GetModel() ~= ply:GetModel() then
+			ent:SetModel(ply:GetModel())
+		end
+	else
+		ent=ClientsideModel(ply:GetModel(),RENDERGROUP_BOTH)
+		ent:AddEffects(EF_BONEMERGE)
+		ent:SetParent(ply)
+
+		ply._erp_modelEnt=ent;
+	end
+
+	for k,v in ipairs(bonesClothing)do
+		local boneID=ent:LookupBone(v)
+
+		if not boneID then continue end
+
+		ent:ManipulateBoneScale( boneID, vecShrink )
+	end
+
+	for k,v in ipairs(bonesHands)do
+		local boneID=ent:LookupBone(v)
+
+		if not boneID then continue end
+
+		ent:ManipulateBoneScale( boneID, clothes.hasGloves and vecShrink or vecNormal )
+	end
+
+	-- The clothing
+	ent=ply._erp_clothingEnt;
+	if IsValid(ent) then
+		if ent:GetModel() ~= ent.model then
+			ent:SetModel(clothes.model)
+		end
+	else
+		ent=ClientsideModel(clothes.model,RENDERGROUP_BOTH)
+		ent:AddEffects(EF_BONEMERGE)
+		ent:SetParent(ply)
+
+		ply._erp_clothingEnt=ent;
+	end
+
+	for k,v in ipairs(bonesHands)do
+		local boneID=ent:LookupBone(v)
+
+		if not boneID then continue end
+
+		ent:ManipulateBoneScale( boneID, clothes.hasGloves and vecNormal or vecShrink )
+	end
+
+	for k,v in ipairs(bonesHead)do
+		local boneID=ent:LookupBone(v)
+
+		if not boneID then continue end
+
+		ent:ManipulateBoneScale( boneID, vecShrink )
+	end
+end

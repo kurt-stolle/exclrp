@@ -6,6 +6,8 @@ function PLAYER:UnLoad()
 
 	self.character=nil;
 
+	self:SetStatus(0)
+
 	self:KillSilent()
 	self:Spawn()
 end

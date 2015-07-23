@@ -62,6 +62,7 @@ function ERP.Include(name, folder, runtype)
 
 	return true
 end
+ERP.Include("sh_config.lua", ".", "sh")
 
 function ERP.IncludeFolder(folder,runtype)
 	ES.DebugPrint("Initializing "..folder)
@@ -72,6 +73,7 @@ function ERP.IncludeFolder(folder,runtype)
 		ERP.Include(v, folder, runtype)
 	end
 end
+
 ERP.IncludeFolder("exclrp/gamemode/util");
 ERP.IncludeFolder("exclrp/gamemode/core");
 ERP.IncludeFolder("exclrp/gamemode/vgui","cl");

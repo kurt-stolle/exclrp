@@ -1,6 +1,14 @@
 -- sv_characters_meta.lua
 local CHARACTER = FindMetaTable("Character");
 
+-- FIELDS
+function CHARACTER:Save(field,var)
+	if var then
+		self[field]=var
+	end
+	ERP.SaveCharacter(self.Player,field)
+end
+
 -- MONEY
 function CHARACTER:SetCash(i)
 	self.cash = i;
@@ -101,4 +109,62 @@ function CHARACTER:DropItem(item,x,y)
 	item:SpawnInWorld(trace.HitPos,self.Player:GetAngles())
 
 	ERP.SaveCharacter(self.Player,"inventory");
+end
+
+-- ARREST SYSTEM
+function CHARACTER:Arrest()
+  if bit.band(self.Player:GetStatus(),STATUS_ARRESTED) > 0 then return ES.DebugPrint(self.Player," is already arrested") end
+
+  ES.DebugPrint(self.Player," is being arrested!")
+
+  self.Player:SetStatus( self.Player:GetStatus() + STATUS_ARRESTED )
+  self.Player:Freeze(true)
+  self.arrestTime = os.time() + 20;
+
+  self.Player:ESSendNotificationPopup("Arrested","You have been arrested!\n\nYou have been sentenced to "..math.ceil(ERP.Config["arrest_time"]/60).." minutes in jail.\n\nYou will be automatically transferred to jail in 20 seconds. You will remain there until your jail time is over or until a Police officer unarrests you.")
+
+  ERP.SaveCharacter(self.Player,"arrestTime");
+
+  timer.Simple(20,function()
+    if self and IsValid(self.Player) and self.Player:GetCharacter() == self and bit.band(self.Player:GetStatus(),STATUS_ARRESTED) > 0 then
+      self.Player:Freeze(false)
+
+      local random = table.Random(ents.FindByClass("erp_jail_spawn"))
+      if not IsValid(random) then return ES.DebugPrint("No JailSpawn areas found!") end
+
+      self.Player:SetPos(random:GetPos())
+
+      timer.Create("ERP."..self:GetFullName()..".ArrestTimer",ERP.Config["arrest_time"],1,function()
+        if self and IsValid(self.Player) and self.Player:GetCharacter() == self and bit.band(self.Player:GetStatus(),STATUS_ARRESTED) > 0 then
+            self:UnArrest()
+        end
+      end)
+    end
+  end)
+end
+
+function CHARACTER:UnArrest()
+  if bit.band(self.Player:GetStatus(),STATUS_ARRESTED) == 0 then return end
+
+  ES.DebugPrint(self.Player," was unarrested!")
+
+  if timer.Exists("ERP."..self:GetFullName()..".ArrestTimer") then
+    timer.Remove("ERP."..self:GetFullName()..".ArrestTimer")
+  end
+
+  self.Player:SetStatus(self.Player:GetStatus() - STATUS_ARRESTED)
+
+  self.arrestTime = 0;
+
+  self.Player:ESSendNotificationPopup("Unarrested","You have been released from custody.")
+
+  ERP.SaveCharacter(self.Player,"arrested");
+end
+
+
+-- PLAYER CLOTHING
+ES.DefineNetworkedVariable("erp_clothing","UInt",32)
+local clothing_default=util.CRC("casual")
+function CHARACTER:GetClothing()
+	return ERP.Clothing[self.Player:ESGetNetworkedVariable("erp_clothing",clothing_default)];
 end

@@ -1,11 +1,13 @@
-local CHARACTER={IsCharacter = function() return true end};
-local ITEM={IsItem = function() return true end};
-local NPC={IsNPC = function() return true end};
-local PROPERTY={IsProperty = function() return true end};
-local INV={IsInventory = function() return true end};
-local STOR={IsStorage = function() return true end};
-local JOB={IsJob = function() return true end};
-local GANG={IsGang = function() return true end};
+local _returnTrue = function() return true end
+
+local CHARACTER = {IsCharacter 	= _returnTrue, IsValid = _returnTrue};
+local ITEM 		= {IsItem 		= _returnTrue, IsValid = _returnTrue};
+local NPC 		= {IsNPC 		= _returnTrue, IsValid = _returnTrue};
+local PROPERTY 	= {IsProperty 	= _returnTrue, IsValid = _returnTrue};
+local INV 		= {IsInventory 	= _returnTrue, IsValid = _returnTrue};
+local STOR 		= {IsStorage 	= _returnTrue, IsValid = _returnTrue};
+local JOB 		= {IsJob 		= _returnTrue, IsValid = _returnTrue};
+local GANG 		= {IsGang 		= _returnTrue, IsValid = _returnTrue};
 
 local _findMeta = FindMetaTable;
 function FindMetaTable(name)

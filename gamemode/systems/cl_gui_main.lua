@@ -1,6 +1,12 @@
 -- cl_mainmenu.lua
 
-ERP.MainMenu = false;
+--[[
+
+Implemented here:
+
+ERP.MainMenu (Panel) the main menu
+
+]]
 
 local color_outline=Color(255,255,255,5);
 
@@ -10,23 +16,6 @@ surface.CreateFont("TabLarge", {
 	weight = 700,
 	shadow = true,
 })
-
-hook.Add( "RenderScreenspaceEffects", "ERP.MM.PostProcess", function()
-	if IsValid(ERP.MainMenu) then
-		local tab = {}
-		tab[ "$pp_colour_addr" ] = 0
-		tab[ "$pp_colour_addg" ] = 0
-		tab[ "$pp_colour_addb" ] = 0
-		tab[ "$pp_colour_brightness" ] = 0
-		tab[ "$pp_colour_contrast" ] = 1
-		tab[ "$pp_colour_colour" ] = 0.1
-		tab[ "$pp_colour_mulr" ] = 0
-		tab[ "$pp_colour_mulg" ] = 0
-		tab[ "$pp_colour_mulb" ] = 0
-
-		DrawColorModify( tab )
-	end
-end)
 
 local PNL = {}
 function PNL:Init()
@@ -42,8 +31,8 @@ function PNL:Paint()
 	surface.DrawRect(0,self:GetTall()-248,self:GetWide(),150-3);
 end
 vgui.Register( "exclMainMenuPanel", PNL, "EditablePanel" );
-local PNL = {};
 
+local PNL = {};
 function PNL:Init()
 	self.title = "Unnamed";
 	self.Hover = false;
