@@ -418,19 +418,19 @@ local vecNormal=Vector(1,1,1)
 function ERP:PrePlayerDraw(ply)
 	if not ply:IsLoaded() then return end
 
-	ply:SetColor(ES.Color["#FFFFFF01"])
-
-	local clothes = ply:GetCharacter():GetClothing()
+	local clotModel = ply:GetCharacter():GetClothing()
+	local charModel = ply:GetCharacter():GetModel()
 	local ent;
 
 	-- The player itself
 	ent=ply._erp_modelEnt;
 	if IsValid(ent) then
-		if ent:GetModel() ~= ply:GetModel() then
-			ent:SetModel(ply:GetModel())
+		if ent:GetModel() ~= charModel then
+			ent:SetModel(charModel)
 		end
+		ent:SetPos(ply:GetPos())
 	else
-		ent=ClientsideModel(ply:GetModel(),RENDERGROUP_BOTH)
+		ent=ClientsideModel(charModel,RENDERGROUP_BOTH)
 		ent:AddEffects(EF_BONEMERGE)
 		ent:SetParent(ply)
 
@@ -456,11 +456,12 @@ function ERP:PrePlayerDraw(ply)
 	-- The clothing
 	ent=ply._erp_clothingEnt;
 	if IsValid(ent) then
-		if ent:GetModel() ~= ent.model then
-			ent:SetModel(clothes.model)
+		if ent:GetModel() ~= clotModel then
+			ent:SetModel(clotModel)
 		end
+		ent:SetPos(ply:GetPos())
 	else
-		ent=ClientsideModel(clothes.model,RENDERGROUP_BOTH)
+		ent=ClientsideModel(clotModel,RENDERGROUP_BOTH)
 		ent:AddEffects(EF_BONEMERGE)
 		ent:SetParent(ply)
 

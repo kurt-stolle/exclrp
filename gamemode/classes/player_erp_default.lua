@@ -20,7 +20,7 @@ end
 function PLAYER:SetModel()
   local pl=self.Player
 
-  pl:SetModel(pl.character.model);
+  pl:SetModel("models/player/charple.mdl");
   pl:ESSetNetworkedVariable("erp_model",pl.character.model)
   pl:ESSetNetworkedVariable("erp_clothing",util.CRC("suit"))
 end
