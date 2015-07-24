@@ -1,6 +1,6 @@
 -- sv_characters.lua
 hook.Add("ESDatabaseReady","ERP.ES.CreateERPCharactersDB",function()
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory MEDIUMTEXT, deathTime int(32) unsigned default 0, arrestTime int(32) unsigned default 0, gang varchar(255), weapon_primary varchar(255), weapon_secondary varchar(255), clothing varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_characters` (`id` INT unsigned NOT NULL AUTO_INCREMENT, steamid varchar(25) NOT NULL, firstname varchar(255), lastname varchar(255), playtime int(25) unsigned default 0, job varchar(20), joblevel int unsigned default 0, cash int(20) unsigned, bank int(20) unsigned, model varchar(100), jobbans varchar(6), stats varchar(255), inventory MEDIUMTEXT, deathTime int(32) unsigned default 0, arrestTime int(32) unsigned default 0, gang varchar(255), clothing varchar(255), PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
 end)
 
 -- the following fields of characters will be sent to ALL PLAYERS

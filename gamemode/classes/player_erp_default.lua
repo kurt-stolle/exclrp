@@ -23,6 +23,9 @@ function PLAYER:SetModel()
   pl:SetModel("models/player/charple.mdl");
   pl:ESSetNetworkedVariable("erp_model",pl.character.model)
   pl:ESSetNetworkedVariable("erp_clothing",util.CRC("suit"))
+
+  local color = pl:GetCharacter():GetClothing().color
+  pl:SetPlayerColor(Vector(color.r/255,color.g/255,color.b/255))
 end
 
 function PLAYER:Loadout()
@@ -46,14 +49,6 @@ function PLAYER:Loadout()
     end
   end
 
-  if char.weapon_primary then
-    pl:Give(char.weapon_primary)
-  end
-
-  if char.weapon_secondary then
-    pl:Give(char.weapon_secondary)
-  end
-
   pl:SelectWeapon("erp_weapon_nothing")
 end
 
@@ -67,10 +62,7 @@ function PLAYER:Spawn()
   -- handle status
   pl:SetStatus(STATUS_NONE);
 
-  -- color
-  pl:SetPlayerColor(col);
-  pl:SetWeaponColor(col);
-
+  -- handle job
   if pl.character.job and ERP.Jobs[pl.character.job] then
     local job=ERP.Jobs[pl.character.job];
 
@@ -80,6 +72,9 @@ function PLAYER:Spawn()
   else
     pl:SetTeam(TEAM_UNASSIGNED)
   end
+
+  -- handle color
+  pl:SetWeaponColor(col)
 
   -- handle energy
   pl:SetEnergy(100);

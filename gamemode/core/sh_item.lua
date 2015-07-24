@@ -25,6 +25,7 @@ AccessorFunc(ITEM,"_invWidth","InventoryWidth",FORCE_NUMBER);
 AccessorFunc(ITEM,"_invHeight","InventoryHeight",FORCE_NUMBER);
 AccessorFunc(ITEM,"_invCamPos","InventoryCamPos");
 AccessorFunc(ITEM,"_invLookAt","InventoryLookAt");
+AccessorFunc(ITEM,"_weapon","Weapon",FORCE_STRING);
 
 -- The constructor.
 function ERP.Item()
@@ -43,6 +44,7 @@ function ERP.Item()
 	obj._invCamPos = Vector(0,0,30)
 	obj._invLookAt = Vector(0,0,0)
 	obj._value = 100
+	obj._weapon = nil;
 
 	return obj;
 end

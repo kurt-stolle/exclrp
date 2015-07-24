@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-SWEP.Base = "erp_weapon_baton"
+SWEP.Base = "erp_weapon_base_baton"
 
 SWEP.PrintName = "Police Baton"
 SWEP.Spawnable = true
