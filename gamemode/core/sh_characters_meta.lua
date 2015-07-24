@@ -34,11 +34,10 @@ function CHARACTER:GetGang()
 end
 
 -- PLAYER CLOTHING
-local clothing_default=util.CRC("casual")
 function CHARACTER:GetClothing()
-	return ERP.Clothing[self.Player:ESGetNetworkedVariable("erp_clothing",clothing_default)];
+	return ERP.Clothing[self.clothing or 1];
 end
 
 function CHARACTER:GetModel()
-	return ERP.PlayerModels[self.Player:ESGetNetworkedVariable("erp_model",1)]
+	return self.model
 end

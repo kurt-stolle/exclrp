@@ -17,6 +17,5 @@ function ERP:CanProperty(ply,prop,ent)
 end
 
 -- NETWORKED
-ES.DefineNetworkedVariable("erp_clothing","UInt",32)
-ES.DefineNetworkedVariable("erp_model","UInt",4)
+ES.DefineNetworkedVariable("erp_clothing","UInt",4)
 ES.DefineNetworkedVariable("erp_status","UInt",4)

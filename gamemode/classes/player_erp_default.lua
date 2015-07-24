@@ -20,10 +20,7 @@ end
 function PLAYER:SetModel()
   local pl=self.Player
 
-  pl:SetModel("models/player/charple.mdl");
-  pl:ESSetNetworkedVariable("erp_model",pl.character.model)
-  pl:ESSetNetworkedVariable("erp_clothing",util.CRC("suit"))
-
+  pl:SetModel(pl:GetCharacter():GetClothing().model);
   local color = pl:GetCharacter():GetClothing().color
   pl:SetPlayerColor(Vector(color.r/255,color.g/255,color.b/255))
 end

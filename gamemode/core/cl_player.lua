@@ -413,21 +413,19 @@ local bonesHands={
 	"ValveBiped.Bip01_R_Hand",
 }
 
-local vecShrink=Vector(.1,.1,.1)
+local vecShrink=Vector(0,0,0)
 local vecNormal=Vector(1,1,1)
 function ERP:PrePlayerDraw(ply)
 	if not ply:IsLoaded() then return end
 
-	local clotModel = ply:GetCharacter():GetClothing()
 	local charModel = ply:GetCharacter():GetModel()
-	local ent;
 
 	-- The player itself
-	ent=ply._erp_modelEnt;
+	local ent=ply._erp_modelEnt;
 	if not IsValid(ent) then
 		ent=ClientsideModel(charModel,RENDERGROUP_BOTH)
 		ent:AddEffects(EF_BONEMERGE)
-		ent:SetNoDraw(true)
+		--ent:SetNoDraw(true)
 		ent:SetParent(ply)
 
 		ply._erp_modelEnt=ent;
@@ -435,64 +433,47 @@ function ERP:PrePlayerDraw(ply)
 
 	if ent:GetModel() ~= charModel then
 		ent:SetModel(charModel)
-
-		for k,v in ipairs(bonesClothing)do
-			local boneID=ent:LookupBone(v)
-
-			if not boneID then continue end
-
-			ent:ManipulateBoneScale( boneID, vecShrink )
-		end
 	end
-	ent:SetPos(ply:GetPos())
+
+	for k,v in ipairs(bonesClothing)do
+		local boneID=ent:LookupBone(v)
+
+		if not boneID then continue end
+
+		ent:ManipulateBoneScale( boneID, vecShrink )
+	end
 
 	for k,v in ipairs(bonesHands)do
 		local boneID=ent:LookupBone(v)
 
 		if not boneID then continue end
 
-		ent:ManipulateBoneScale( boneID, clothes.hasGloves and vecShrink or vecNormal )
-	end
-
-	ent:Draw()
-
-	-- The clothing
-	ent=ply._erp_clothingEnt;
-	if not IsValid(ent) then
-		ent=ClientsideModel(clotModel,RENDERGROUP_BOTH)
-		ent:AddEffects(EF_BONEMERGE)
-		ent:SetNoDraw(true)
-		ent:SetParent(ply)
-
-		ply._erp_clothingEnt=ent;
-	end
-
-	if ent:GetModel() ~= clotModel then
-		ent:SetModel(clotModel)
-
-		for k,v in ipairs(bonesHands)do
-			local boneID=ent:LookupBone(v)
-
-			if not boneID then continue end
-
-			ent:ManipulateBoneScale( boneID, clothes.hasGloves and vecNormal or vecShrink )
-		end
-
-		for k,v in ipairs(bonesHead)do
-			local boneID=ent:LookupBone(v)
-
-			if not boneID then continue end
-
-			ent:ManipulateBoneScale( boneID, vecShrink )
-		end
+		ent:ManipulateBoneScale( boneID, ply:GetCharacter():GetClothing().hasGloves and vecShrink or vecNormal )
 	end
 
 	ent:SetPos(ply:GetPos())
-	ent:Draw()
+	--ent:DrawModel()
 
-	render.SetBlend(0)
+	-- The clothing
+	for k,v in ipairs(bonesHands)do
+		local boneID=ply:LookupBone(v)
+
+		if not boneID then continue end
+
+		ply:ManipulateBoneScale( boneID, ply:GetCharacter():GetClothing().hasGloves and vecNormal or vecShrink )
+	end
+
+	for k,v in ipairs(bonesHead)do
+		local boneID=ply:LookupBone(v)
+
+		if not boneID then continue end
+
+		ply:ManipulateBoneScale( boneID, vecShrink )
+	end
+
+	--ent:DrawModel()
+
 end
 
 function ERP:PostPlayerDraw()
-	render.SetBlend(1)
 end
