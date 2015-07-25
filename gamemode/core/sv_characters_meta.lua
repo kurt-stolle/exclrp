@@ -4,6 +4,9 @@ local CHARACTER = FindMetaTable("Character");
 -- FIELDS
 function CHARACTER:Save(field,var)
 	if var then
+		if field == "clothing" then
+			self.Player:SetModel(var)
+		end
 		self[field]=var
 	end
 	ERP.SaveCharacter(self.Player,field)

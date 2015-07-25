@@ -11,7 +11,9 @@ JOB:SetColor(ES.Color.Red);
 if CLIENT then
 
 elseif SERVER then
-
+  function JOB:OnSelect(ply)
+    ply:GetCharacter():Save("clothing","Standard armor")
+  end
 end
 
 JOB();

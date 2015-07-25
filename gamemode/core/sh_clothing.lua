@@ -15,4 +15,7 @@ local function defineClothing(name,model,color,hasGloves,modelFemale) -- last tw
 end
 
 defineClothing("Standard outfit","models/player/group01/male_02.mdl",ES.Color.Blue,false,"models/player/group01/female_01.mdl")
-defineClothing("Casual suit","models/player/gman_high.mdl",ES.Color.Black)
+defineClothing("Casual suit","models/player/breen.mdl",ES.Color.Black)
+defineClothing("Police armor","models/player/police.mdl",ES.Color.Blue,true,"models/player/police_fem.mdl")
+defineClothing("Standard armor","models/player/group03/male_02.mdl",ES.Color.Green,true,"models/player/group03/female_01.mdl")
+defineClothing("Medic armor","models/player/group03m/male_02.mdl",ES.Color.Red,true,"models/player/group03m/female_01.mdl")

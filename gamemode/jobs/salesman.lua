@@ -9,7 +9,9 @@ JOB:SetColor(ES.Color.Amber);
 if CLIENT then
 
 elseif SERVER then
-
+  function JOB:OnSelect(ply)
+    ply:GetCharacter():Save("clothing","Standard outfit")
+  end
 end
 
 JOB();
