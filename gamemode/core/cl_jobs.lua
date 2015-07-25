@@ -6,6 +6,8 @@ net.Receive("ERP.Job.ChangedFX",function()
 
 	p.job = ERP.Jobs[job];
 
+	p.job:OnSelect(p)
+
 	if p == LocalPlayer() then
 		ES.Notify("generic","You have been made a "..(ERP.Jobs[job].name or "undefined"));
 	end

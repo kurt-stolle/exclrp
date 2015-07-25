@@ -35,7 +35,7 @@ end
 
 -- PLAYER CLOTHING
 function CHARACTER:GetClothing()
-	return ERP.Clothing[self.clothing or 1];
+	return (ERP.Clothing[self.clothing or 1]);
 end
 
 function CHARACTER:GetModel()

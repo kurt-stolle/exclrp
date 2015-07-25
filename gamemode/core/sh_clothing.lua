@@ -10,9 +10,9 @@ setmetatable(ERP.Clothing,{
 	end
 })
 
-local function defineClothing(name,model,color,hasGloves)
-  table.insert(ERP.Clothing,{name=name,model=model,color=color,hasGloves=hasGloves or false})
+local function defineClothing(name,model,color,hasGloves,modelFemale) -- last two are optional
+  table.insert(ERP.Clothing,{name=name,model=model,color=color,hasGloves=hasGloves or false,modelFemale=modelFemale or model})
 end
 
-defineClothing("casual","models/player/group01/male_01.mdl",ES.Color.Blue)
-defineClothing("suit","models/player/gman_high.mdl",ES.Color.Black)
+defineClothing("Standard outfit","models/player/group01/male_02.mdl",ES.Color.Blue,false,"models/player/group01/female_01.mdl")
+defineClothing("Casual suit","models/player/gman_high.mdl",ES.Color.Black)

@@ -382,11 +382,13 @@ function ERP:RenderScreenspaceEffects()
 end
 
 -- PRE PLAYER DRAW
+
 local bonesHead={
-	"ValveBiped.Bip01_Neck1",
 	"ValveBiped.Bip01_Head1",
 }
 local bonesClothing={
+	"ValveBiped.Bip01_Neck1",
+	"ValveBiped.forward",
 	"ValveBiped.Bip01_Pelvis",
 	"ValveBiped.Bip01_Spine",
 	"ValveBiped.Bip01_Spine1",
@@ -406,74 +408,102 @@ local bonesClothing={
 	"ValveBiped.Bip01_L_Thigh",
 	"ValveBiped.Bip01_L_Calf",
 	"ValveBiped.Bip01_L_Foot",
-	"ValveBiped.Bip01_L_Toe0"
+	"ValveBiped.Bip01_L_Toe0",
+	"ValveBiped.Bip01_L_Ulna",
+	"ValveBiped.Bip01_R_Ulna",
 }
 local bonesHands={
 	"ValveBiped.Bip01_L_Hand",
 	"ValveBiped.Bip01_R_Hand",
+	"ValveBiped.Anim_Attachment_LH",
+	"ValveBiped.Anim_Attachment_RH",
 }
 
-local vecShrink=Vector(0,0,0)
+local bonesHeadDummy = {
+	"ValveBiped.Bip01_Neck1","ValveBiped.Bip01_Head1"
+}
+local bonesBody = {
+	"ValveBiped.Bip01_Neck1",
+	"ValveBiped.forward",
+	"ValveBiped.Bip01_Pelvis",
+	"ValveBiped.Bip01_Spine",
+	"ValveBiped.Bip01_Spine1",
+	"ValveBiped.Bip01_Spine2",
+	"ValveBiped.Bip01_Spine4",
+	"ValveBiped.Bip01_R_Clavicle",
+	"ValveBiped.Bip01_L_Clavicle",
+	"ValveBiped.Bip01_R_Thigh",
+	"ValveBiped.Bip01_R_Calf",
+	"ValveBiped.Bip01_L_Thigh",
+	"ValveBiped.Bip01_L_Calf",
+}
+
+local vecShrink=Vector(.1,.1,.1)
 local vecNormal=Vector(1,1,1)
 function ERP:PrePlayerDraw(ply)
 	if not ply:IsLoaded() then return end
 
-	local charModel = ply:GetCharacter():GetModel()
+	-- Create a dummy for te head
+	if not IsValid(ply._erp_headEnt) then
+		ply._erp_headEnt=ClientsideModel(ply:GetCharacter():GetModel(),RENDERGROUP_BOTH)
+		ply._erp_headEnt:SetParent(ply)
+		ply._erp_headEnt:AddEffects(EF_BONEMERGE)
 
-	-- The player itself
-	local ent=ply._erp_modelEnt;
-	if not IsValid(ent) then
-		ent=ClientsideModel(charModel,RENDERGROUP_BOTH)
-		ent:AddEffects(EF_BONEMERGE)
-		--ent:SetNoDraw(true)
-		ent:SetParent(ply)
+		ply._erp_headEnt:AddCallback("BuildBonePositions",function(ent,numbones)
+			if not ply:IsLoaded() then
+				ent:Remove()
+				return
+			end
 
-		ply._erp_modelEnt=ent;
+			local headbone = ent:LookupBone("ValveBiped.Bip01_Head1")
+			local neckbone = ent:LookupBone("ValveBiped.Bip01_Neck1")
+
+			for i=1,numbones do
+				if i == headbone or i == neckbone then continue end
+
+				local matrix=ent:GetBoneMatrix(i)
+
+				if not matrix then continue end
+
+				matrix:Scale(vector_origin)
+
+				ent:SetBoneMatrix(i,matrix)
+			end
+		end)
 	end
 
-	if ent:GetModel() ~= charModel then
-		ent:SetModel(charModel)
+	-- Create a dummy for the body
+	if not IsValid(ply._erp_bodyEnt) then
+		ply._erp_bodyEnt=ClientsideModel(ply:GetModel(),RENDERGROUP_BOTH)
+		ply._erp_bodyEnt:SetParent(ply)
+		ply._erp_bodyEnt:AddEffects(EF_BONEMERGE)
+
+		ply._erp_bodyEnt:AddCallback("BuildBonePositions",function(ent,numbones)
+			if not ply:IsLoaded() then
+				ent:Remove()
+				return
+			end
+
+			local headbone = ent:LookupBone("ValveBiped.Bip01_Head1")
+
+			if not headbone then return end
+
+			local matrix= ent:GetBoneMatrix(headbone)
+			matrix:Scale(vector_origin)
+
+			ent:SetBoneMatrix(headbone,matrix)
+		end)
+	elseif ply._erp_bodyEnt:GetModel() ~= ply:GetModel() then
+		ply._erp_bodyEnt:SetModel(ply:GetModel())
 	end
 
-	for k,v in ipairs(bonesClothing)do
-		local boneID=ent:LookupBone(v)
-
-		if not boneID then continue end
-
-		ent:ManipulateBoneScale( boneID, vecShrink )
-	end
-
-	for k,v in ipairs(bonesHands)do
-		local boneID=ent:LookupBone(v)
-
-		if not boneID then continue end
-
-		ent:ManipulateBoneScale( boneID, ply:GetCharacter():GetClothing().hasGloves and vecShrink or vecNormal )
-	end
-
-	ent:SetPos(ply:GetPos())
-	--ent:DrawModel()
-
-	-- The clothing
-	for k,v in ipairs(bonesHands)do
-		local boneID=ply:LookupBone(v)
-
-		if not boneID then continue end
-
-		ply:ManipulateBoneScale( boneID, ply:GetCharacter():GetClothing().hasGloves and vecNormal or vecShrink )
-	end
-
-	for k,v in ipairs(bonesHead)do
-		local boneID=ply:LookupBone(v)
-
-		if not boneID then continue end
-
-		ply:ManipulateBoneScale( boneID, vecShrink )
-	end
-
-	--ent:DrawModel()
-
+	render.SetBlend(0)
 end
 
-function ERP:PostPlayerDraw()
+function ERP:PostPlayerDraw(ply)
+	if not ply:IsLoaded() then return end
+
+	render.SetBlend(1)
+
+	ply._erp_headEnt:SetRenderOrigin(ply:GetPos())
 end

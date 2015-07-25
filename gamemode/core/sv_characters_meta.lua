@@ -58,6 +58,8 @@ function CHARACTER:SetJob(job)
 	player_manager.RunClass( self.Player, "Spawn" )
 	player_manager.RunClass( self.Player, "Loadout" )
 	player_manager.RunClass( self.Player, "SetModel" )
+
+	job:OnSelect(self.Player)
 end
 
 -- INVENTORY
@@ -159,12 +161,4 @@ function CHARACTER:UnArrest()
   self.Player:ESSendNotificationPopup("Unarrested","You have been released from custody.")
 
   ERP.SaveCharacter(self.Player,"arrested");
-end
-
-
--- PLAYER CLOTHING
-ES.DefineNetworkedVariable("erp_clothing","UInt",32)
-local clothing_default=util.CRC("casual")
-function CHARACTER:GetClothing()
-	return ERP.Clothing[self.Player:ESGetNetworkedVariable("erp_clothing",clothing_default)];
 end

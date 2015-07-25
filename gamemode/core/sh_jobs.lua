@@ -39,6 +39,7 @@ function ERP.Job(name,description,faction,pay,color)
 	obj.faction=faction or FACTION_CIVILLIAN;
 	obj.pay=pay or 10;
 	obj.color=color or ES.Color.White;
+	obj.OnSelect=function(self,ply) end
 
 	if CLIENT then
 		obj.fnJobMenu = function(frame) end
