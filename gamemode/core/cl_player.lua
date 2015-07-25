@@ -27,13 +27,6 @@ surface.CreateFont("ERP.HudWasted", {
 	antialias=true,
 	font="Roboto"
 })
-surface.CreateFont("ERP.HudWasted.Shadow", {
-	size=120,
-	weight=800,
-	antialias=true,
-	font="Roboto",
-	blursize=4
-})
 
 local ply;
 local function convertMoneyString()
@@ -144,11 +137,16 @@ function ERP:HUDPaint()
 
 		cam.PushModelMatrix( mat )
 
-		for i=0,2,1 do
-			draw.SimpleText("WASTED","ERP.HudWasted.Shadow",x,y,ES.Color.Black,1,1)
+		for i=1,2 do
+			draw.SimpleText("WASTED","ERP.HudWasted",x+i,y+i,ES.Color.Black,1,4)
 		end
-		draw.SimpleText("WASTED","ERP.HudWasted",x+3,y+3,ES.Color.Black,1,1)
-		draw.SimpleText("WASTED","ERP.HudWasted",x,y,ES.Color.Red,1,1)
+
+		draw.SimpleText("WASTED","ERP.HudWasted",x,y,ES.Color.Red,1,4)
+
+		for i=1,1 do
+				draw.SimpleText("Press TAB to log out or wait "..math.ceil(ERP.Config["death_time"]/60).." minutes.","ESDefault++",x+i,y+20+i,ES.Color.Black,1,4)
+		end
+		draw.SimpleText("Press TAB to log out or wait "..math.ceil(ERP.Config["death_time"]/60).." minutes.","ESDefault++",x,y+20,ES.Color.White,1,4)
 
 		cam.PopModelMatrix( mat )
 
@@ -429,24 +427,27 @@ function ERP:PrePlayerDraw(ply)
 		ply._erp_headEnt:AddEffects(EF_BONEMERGE)
 
 		ply._erp_headEnt:AddCallback("BuildBonePositions",function(ent,numbones)
-			if not ply:IsLoaded() then
-				ent:Remove()
-				return
-			end
+			if not IsValid(ply) or not ply:IsLoaded() then
+				timer.Simple(0,function()
+					if IsValid(ent) then
+						ent:Remove()
+					end
+				end)
+			else
+				local headbone = ent:LookupBone("ValveBiped.Bip01_Head1")
+				local neckbone = ent:LookupBone("ValveBiped.Bip01_Neck1")
 
-			local headbone = ent:LookupBone("ValveBiped.Bip01_Head1")
-			local neckbone = ent:LookupBone("ValveBiped.Bip01_Neck1")
+				for i=1,numbones do
+					if i == headbone or i == neckbone then continue end
 
-			for i=1,numbones do
-				if i == headbone or i == neckbone then continue end
+					local matrix=ent:GetBoneMatrix(i)
 
-				local matrix=ent:GetBoneMatrix(i)
+					if not matrix then continue end
 
-				if not matrix then continue end
+					matrix:Scale(vector_origin)
 
-				matrix:Scale(vector_origin)
-
-				ent:SetBoneMatrix(i,matrix)
+					ent:SetBoneMatrix(i,matrix)
+				end
 			end
 		end)
 	end
@@ -458,19 +459,22 @@ function ERP:PrePlayerDraw(ply)
 		ply._erp_bodyEnt:AddEffects(EF_BONEMERGE)
 
 		ply._erp_bodyEnt:AddCallback("BuildBonePositions",function(ent,numbones)
-			if not ply:IsLoaded() then
-				ent:Remove()
-				return
+			if not IsValid(ply) or not ply:IsLoaded() then
+				timer.Simple(0,function()
+					if IsValid(ent) then
+						ent:Remove()
+					end
+				end)
+			else
+				local headbone = ent:LookupBone("ValveBiped.Bip01_Head1")
+
+				if not headbone then return end
+
+				local matrix= ent:GetBoneMatrix(headbone)
+				matrix:Scale(vector_origin)
+
+				ent:SetBoneMatrix(headbone,matrix)
 			end
-
-			local headbone = ent:LookupBone("ValveBiped.Bip01_Head1")
-
-			if not headbone then return end
-
-			local matrix= ent:GetBoneMatrix(headbone)
-			matrix:Scale(vector_origin)
-
-			ent:SetBoneMatrix(headbone,matrix)
 		end)
 	elseif ply._erp_bodyEnt:GetModel() ~= ply:GetModel() then
 		ply._erp_bodyEnt:SetModel(ply:GetModel())
@@ -484,5 +488,7 @@ function ERP:PostPlayerDraw(ply)
 
 	render.SetBlend(1)
 
-	ply._erp_headEnt:SetRenderOrigin(ply:GetPos())
+	if IsValid(ply._erp_headEnt) then
+		ply._erp_headEnt:SetRenderOrigin(ply:GetPos())
+	end
 end
