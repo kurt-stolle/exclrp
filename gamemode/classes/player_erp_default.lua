@@ -19,9 +19,12 @@ end
 
 function PLAYER:SetModel()
   local pl=self.Player
+  local char=pl:GetCharacter()
 
-  pl:SetModel(pl:GetCharacter():GetClothing().model);
-  local color = pl:GetCharacter():GetClothing().color
+  pl:SetModel(char:IsFemale() and char:GetClothing().modelFemale or char:GetClothing().model);
+
+  local color = char:GetClothing().color
+
   pl:SetPlayerColor(Vector(color.r/255,color.g/255,color.b/255))
 end
 

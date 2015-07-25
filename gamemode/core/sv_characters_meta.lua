@@ -4,9 +4,6 @@ local CHARACTER = FindMetaTable("Character");
 -- FIELDS
 function CHARACTER:Save(field,var)
 	if var then
-		if field == "clothing" then
-			self.Player:SetModel(var)
-		end
 		self[field]=var
 	end
 	ERP.SaveCharacter(self.Player,field)
@@ -57,12 +54,12 @@ function CHARACTER:SetJob(job)
 	ERP.SaveCharacter(self.Player,"job");
 	ERP.SaveCharacter(self.Player,"joblevel");
 
+	job:OnSelect(self.Player)
+
 	player_manager.OnPlayerSpawn( self.Player )
 	player_manager.RunClass( self.Player, "Spawn" )
 	player_manager.RunClass( self.Player, "Loadout" )
 	player_manager.RunClass( self.Player, "SetModel" )
-
-	job:OnSelect(self.Player)
 end
 
 -- INVENTORY

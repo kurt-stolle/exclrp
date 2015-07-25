@@ -18,8 +18,8 @@ if CLIENT then
     ang:RotateAroundAxis(ang:Up(),180)
 
   	cam.Start3D2D(pos + ang:Up() * 23.75, ang, 0.2)
-  		draw.SimpleText("EXCL SUPPLY & CO.","ESDefaultBold",-5,-65,ES.Color.Black,1,1)
-      draw.SimpleText("EXCL SUPPLY & CO.","ESDefaultBold",-5,-65,ES.Color.Black,1,1)
+  		draw.SimpleText("Crate","ESDefaultBold",-5,-65,ES.Color.Black,1,1)
+      draw.SimpleText("Crate","ESDefaultBold",-5,-65,ES.Color.Black,1,1)
   	cam.End3D2D()
 	end);
 

@@ -382,7 +382,7 @@ function ERP:RenderScreenspaceEffects()
 end
 
 -- PRE PLAYER DRAW
-
+--[[
 local bonesHead={
 	"ValveBiped.Bip01_Head1",
 }
@@ -417,29 +417,8 @@ local bonesHands={
 	"ValveBiped.Bip01_R_Hand",
 	"ValveBiped.Anim_Attachment_LH",
 	"ValveBiped.Anim_Attachment_RH",
-}
+}]]
 
-local bonesHeadDummy = {
-	"ValveBiped.Bip01_Neck1","ValveBiped.Bip01_Head1"
-}
-local bonesBody = {
-	"ValveBiped.Bip01_Neck1",
-	"ValveBiped.forward",
-	"ValveBiped.Bip01_Pelvis",
-	"ValveBiped.Bip01_Spine",
-	"ValveBiped.Bip01_Spine1",
-	"ValveBiped.Bip01_Spine2",
-	"ValveBiped.Bip01_Spine4",
-	"ValveBiped.Bip01_R_Clavicle",
-	"ValveBiped.Bip01_L_Clavicle",
-	"ValveBiped.Bip01_R_Thigh",
-	"ValveBiped.Bip01_R_Calf",
-	"ValveBiped.Bip01_L_Thigh",
-	"ValveBiped.Bip01_L_Calf",
-}
-
-local vecShrink=Vector(.1,.1,.1)
-local vecNormal=Vector(1,1,1)
 function ERP:PrePlayerDraw(ply)
 	if not ply:IsLoaded() then return end
 

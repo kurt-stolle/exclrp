@@ -7,6 +7,14 @@ AccessorFunc(CHARACTER,"cash","Cash",FORCE_NUMBER);
 AccessorFunc(CHARACTER,"bank","Bank",FORCE_NUMBER);
 AccessorFunc(CHARACTER,"id","ID",FORCE_NUMBER);
 
+-- Male or female
+function CHARACTER:IsMale()
+	return not self:IsFemale()
+end
+function CHARACTER:IsFemale()
+	return tobool(string.find("female",self.model,1,true))
+end
+
 -- Names
 function CHARACTER:GetFullName()
 	return (self:GetFirstName() or "").." "..(self:GetLastName() or "");
@@ -35,7 +43,7 @@ end
 
 -- PLAYER CLOTHING
 function CHARACTER:GetClothing()
-	return (ERP.Clothing[self.clothing or 1]);
+	return (ERP.Clothing[self.clothing or 1] or ERP.Clothing[1]);
 end
 
 function CHARACTER:GetModel()

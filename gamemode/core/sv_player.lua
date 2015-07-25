@@ -7,7 +7,7 @@ function ERP:PlayerCanHearPlayersVoice( listener, talker )
 end
 function ERP:PlayerSpawn(p)
 	player_manager.SetPlayerClass( p, "player_erp_default" )
-	
+
 	if p:IsLoaded() then
 		p:UnSpectate()
 		p:SetupHands()

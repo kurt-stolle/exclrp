@@ -12,6 +12,16 @@ for k,v in ipairs(ERP.Clothing)do
 
   	ITEM:AddHook("Draw",function(self)
   		self.Entity:DrawModel()
+
+      local pos = self:GetPos()
+      local ang = self:GetAngles()
+
+      ang:RotateAroundAxis(ang:Up(),180)
+
+      cam.Start3D2D(pos + ang:Up() * 23.75, ang, 0.2)
+      	draw.SimpleText(ITEM:GetName(),"ESDefaultBold",-5,-65,ES.Color.Black,1,1)
+        draw.SimpleText(ITEM:GetName(),"ESDefaultBold",-5,-65,ES.Color.Black,1,1)
+      cam.End3D2D()
   	end);
 
   	ITEM:AddInteraction( "Wear", ERP.ItemInteractWithServer("Wear") );
@@ -23,7 +33,8 @@ for k,v in ipairs(ERP.Clothing)do
 
       local old,pos,ang=ply:GetCharacter():GetClothing().name,self:GetPos(),self:GetAngles()
       -- Set clothing
-      ply:GetCharacter():Save("clothing",self:GetName())
+      ply:GetCharacter():Save("clothing",ITEM:GetName())
+      ply:SetModel(ply:GetCharacter():IsFemale() and ply:GetCharacter():GetClothing().modelFemale or ply:GetCharacter():GetClothing().model);
 
       self:Remove();
 

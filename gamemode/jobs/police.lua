@@ -12,7 +12,7 @@ if CLIENT then
 
 elseif SERVER then
   function JOB:OnSelect(ply)
-    ply:GetCharacter():Save("clothing","Police armor")
+    ply:GetCharacter():Save("clothing","Police Armor")
   end
 end
 
