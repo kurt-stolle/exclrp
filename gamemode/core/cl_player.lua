@@ -420,10 +420,17 @@ local bonesHands={
 function ERP:PrePlayerDraw(ply)
 	if not ply:IsLoaded() then return end
 
+	local charmodel=ply:GetCharacter():GetModel()
+
+	local parent=ply
+	if IsValid(ply:GetRagdollEntity()) then
+		parent=ply:GetRagdollEntity()
+	end
+
 	-- Create a dummy for te head
 	if not IsValid(ply._erp_headEnt) then
-		ply._erp_headEnt=ClientsideModel(ply:GetCharacter():GetModel(),RENDERGROUP_BOTH)
-		ply._erp_headEnt:SetParent(ply)
+		ply._erp_headEnt=ClientsideModel(charmodel,RENDERGROUP_BOTH)
+		ply._erp_headEnt:SetParent(parent)
 		ply._erp_headEnt:AddEffects(EF_BONEMERGE)
 
 		ply._erp_headEnt:AddCallback("BuildBonePositions",function(ent,numbones)
@@ -452,10 +459,17 @@ function ERP:PrePlayerDraw(ply)
 		end)
 	end
 
+	if ply._erp_headEnt:GetParent() ~= parent then
+		ply._erp_headEnt:SetParent(parent)
+
+		parent:SetColor( Color( 255,255,255, 5 ) )
+		parent:SetRenderMode( RENDERMODE_TRANSALPHA )
+	end
+
 	-- Create a dummy for the body
 	if not IsValid(ply._erp_bodyEnt) then
 		ply._erp_bodyEnt=ClientsideModel(ply:GetModel(),RENDERGROUP_BOTH)
-		ply._erp_bodyEnt:SetParent(ply)
+		ply._erp_bodyEnt:SetParent(parent)
 		ply._erp_bodyEnt:AddEffects(EF_BONEMERGE)
 
 		ply._erp_bodyEnt:AddCallback("BuildBonePositions",function(ent,numbones)
@@ -479,6 +493,18 @@ function ERP:PrePlayerDraw(ply)
 	elseif ply._erp_bodyEnt:GetModel() ~= ply:GetModel() then
 		ply._erp_bodyEnt:SetModel(ply:GetModel())
 	end
+
+	if ply._erp_bodyEnt:GetParent() ~= parent then
+		ply._erp_bodyEnt:SetParent(parent)
+
+		parent:SetColor( Color( 255,255,255, 5 ) )
+		parent:SetRenderMode( RENDERMODE_TRANSALPHA )
+	end
+
+	ply._erp_headEnt:SetRenderOrigin(parent:GetPos())
+	ply._erp_bodyEnt:SetRenderOrigin(parent:GetPos())
+
+	parent:SetLOD(8)
 
 	render.SetBlend(0)
 end
