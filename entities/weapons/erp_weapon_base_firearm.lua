@@ -177,8 +177,6 @@ function SWEP:Reload()
   			self:SetClip1(self.Primary.ClipSize);
   		end
 
-      print(self:Clip1())
-
       self.Owner:GetCharacter():TakeItem(ERP.Items[self.Primary.Ammo],x,y)
     end
 	end)

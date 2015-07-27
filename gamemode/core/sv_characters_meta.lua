@@ -57,7 +57,7 @@ function CHARACTER:HandleWeapons()
 	end
 
 	for k,v in pairs(WeaponList)do
-		if not self.Player:HasWeapon(v) then
+		if not self.Player:HasWeapon(k) then
 			self.Player:Give(k)
 
 			ES.DebugPrint("Player given weapon: "..k)
