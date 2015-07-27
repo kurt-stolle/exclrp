@@ -8,7 +8,7 @@ function PNL:Init()
 	self.color_highlight = table.Copy(ES.GetColorScheme(3))
 	self.color_highlight.a = 0
 end
-function PNL:Setup(item,x,y)
+function PNL:Setup(item,x,y) -- item name!
 	if item then
 		self:SetItem(item)
 	end
@@ -53,16 +53,21 @@ local matGradient = Material("exclserver/gradient.png")
 function PNL:Paint(w,h)
 	surface.SetDrawColor(self.color_highlight)
 	surface.DrawRect(0,0,w,h)
+
 end
 function PNL:Think()
-	self.color_highlight.a = Lerp(FrameTime()*4,self.color_highlight.a,self:GetHover() and 50 or 0)
+	self.color_highlight.a = Lerp(FrameTime()*4,self.color_highlight.a,self:GetHover() and 255 or 0)
 end
 function PNL:PaintOver(w,h)
-	if self:GetHover() then
-		local txt = string.upper(string.gsub(ERP.Items[self:GetItem()]:GetName()," ","\n"))
+	local txt = string.gsub(ERP.Items[self:GetItem()]:GetName()," ","\n")
 
-		draw.DrawText(txt,"ESDefaultBold",3,3,ES.Color.White)
-	end
+	draw.DrawText(txt,"ESDefault",4,4,ES.Color.White)
+
+		surface.SetDrawColor(ES.GetColorScheme(3))
+		surface.DrawRect(1,1,w-2,2)
+		surface.DrawRect(1,h-3,w-2,2)
+		surface.DrawRect(1,2,2,h-4)
+		surface.DrawRect(w-3,2,2,h-4)
 
 	ES.UIDrawRippleEffect(self,w,h)
 end
@@ -91,6 +96,8 @@ function PNL:Update()
 
 	for x,_t in pairs(self.inventory:GetGrid())do
 		for y,item in pairs(_t) do
+			item=item.item
+
 			local pnl = vgui.Create("ERP.Inventory.Item",self)
 
 			timer.Simple(0,function()

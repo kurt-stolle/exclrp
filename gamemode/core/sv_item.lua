@@ -5,6 +5,7 @@ function ITEM:SpawnInWorld(pos,ang)
 	local e = ents.Create("erp_object_"..util.CRC(self._name));
 	e:SetPos(pos);
 	e:SetAngles(ang);
+	e.Item = self
 	e:Spawn();
 	e:Activate();
 

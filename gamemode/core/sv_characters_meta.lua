@@ -97,7 +97,7 @@ function CHARACTER:DropItem(item,x,y)
 	local inv = self:GetInventory();
 
 	if not inv then return ES.DebugPrint("Character has an invalid inventory.")
-	elseif not inv:HasItemAt(item,x,y) then return ES.DebugPrint("Player does not have specified item") end
+	elseif not inv:HasItemAt(item:GetName(),x,y) then return ES.DebugPrint("Player does not have specified item") end
 
 	inv:RemoveItem(item,x,y)
 

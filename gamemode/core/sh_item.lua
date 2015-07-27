@@ -4,7 +4,7 @@ setmetatable(ERP.Items,{
 	__index=function(self,key)
 		for k,v in pairs(self)do
 			if string.lower(key) == string.lower(v._name) then
-				return v;
+				return table.Copy(v);
 			end
 		end
 		return nil;
@@ -45,8 +45,30 @@ function ERP.Item()
 	obj._invLookAt = Vector(0,0,0)
 	obj._value = 100
 	obj._weapon = nil;
+	obj._data=  {}
+
+	-- Only for initialization
+	obj._dataTypes={}
 
 	return obj;
+end
+
+-- Persistent data
+function ITEM:DefineData(key,default,dttyp)
+	self._data[key]=default
+
+	if dttyp ~= "No-Sync" and dttyp ~= "Table" then
+		self._dataTypes[key]=dttyp
+	end
+end
+function ITEM:GetData(key)
+	return self._data[key]
+end
+function ITEM:SetData(key,value)
+	self._data[key]=value;
+end
+function ITEM:CopyData(tab)
+	self._data=tab;
 end
 
 -- Use this hook to add ENT hooks.
@@ -77,15 +99,39 @@ function ITEM:__call() -- register
 	local ENT={
 		Base="erp_object",
 		PrintName=self._name,
-		Item=self._key,
 		Spawnable = true,
 		Category = "ExclRP",
+		ItemID = self._key;
 		Autor = "Excl",
-		AdminOnly = true
+		AdminOnly = true,
+		SetupDataTables = function(ent)
+			local countTypes={}
+			local dttyp;
+
+			for k,v in pairs(self._data)do
+				if not self._dataTypes[k] then continue end
+
+				dttyp=self._dataTypes[k];
+				if not countTypes[dttyp] then
+					countTypes[dttyp] = 0
+				end
+
+				ent:NetworkVar( dttyp, countTypes[dttyp], k )
+
+				if SERVER then
+					local oldset=ent["Set"..k]
+					ent["Set"..k] = function(_ent,value,...)
+						  _ent:GetItem():SetData(k,value)
+							oldset(_ent,value,...)
+					end
+				end
+				countTypes[dttyp]=countTypes[dttyp]+1;
+			end 
+		end
 	};
 	for k,v in pairs(self._hooks)do
 		--some hooks must be wrapped
-		if k == "Use" or k == "Initialize" then
+		if k == "Use" or k == "Initialize" or k == "SetupDataTables" then
 			ENT[k]=function(entity,...)
 				entity.BaseClass[k](entity,...)
 				v(entity,...)

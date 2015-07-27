@@ -22,6 +22,8 @@ SWEP.SlotPos = 0
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
 
+SWEP.GenerateItem = false
+
 SWEP.Author = "Excl"
 SWEP.Contact = "info@casualbananas.com"
 SWEP.Purpose = "Undefined"
@@ -74,7 +76,10 @@ function SWEP:Deploy()
 	return true
 end
 
-local gap = 20
+if SERVER then return end
+
+SWEP.CrosshairGap = 20
+
 local size = 12
 function SWEP:DoDrawCrosshair( x, y )
 	-- Hack x and y to the actual values we're interested in
@@ -84,11 +89,11 @@ function SWEP:DoDrawCrosshair( x, y )
 	-- Draw the crosshair
 	surface.SetDrawColor( ES.Color["#FFFFFFEE"] )
 
-	surface.DrawRect( x - gap/2 - size	, y-1, size, 2 )
-	surface.DrawRect( x + gap/2					, y-1, size, 2 )
+	surface.DrawRect( x - self.CrosshairGap/2 - size	, y-1, size, 2 )
+	surface.DrawRect( x + self.CrosshairGap/2					, y-1, size, 2 )
 
-	surface.DrawRect( x-1, y - gap/2 - size	, 2, size)
-	surface.DrawRect( x-1, y + gap/2				, 2, size)
+	surface.DrawRect( x-1, y - self.CrosshairGap/2 - size	, 2, size)
+	surface.DrawRect( x-1, y + self.CrosshairGap/2				, 2, size)
 	-- Supress the default
 	return true
 end

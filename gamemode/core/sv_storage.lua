@@ -35,8 +35,9 @@ function STOR:Sync(ply)
   net.Send(list)
 end
 
-function STOR:PlayerTakeItem(ply,item,x,y)
-  if not self.inventory:HasItemAt(item,x,y) then return ES.DebugPrint(ply," tried to take invalid item from storage") end
+function STOR:PlayerTakeItem(ply,itemName,x,y)
+  local item = ERP.Items[itemName]
+  if not self.inventory:HasItemAt(item:GetName(),x,y) then return ES.DebugPrint(ply," tried to take invalid item from storage") end
 
   local xInv,yInv = ply:GetCharacter():GetInventory():FitItem(item)
 
@@ -49,9 +50,10 @@ function STOR:PlayerTakeItem(ply,item,x,y)
 
     ply:GetCharacter():TakeCash(price)
 
-    ply:ESSendNotificationPopup("Success","The item was purchased and added to your inventory.")    
+    ply:ESSendNotificationPopup("Success","The item was purchased and added to your inventory.")
   end
 
+  item:CopyData(self.inventory:GetItemData(item,x,y))
   self.inventory:RemoveItem(item,x,y)
   self:Sync()
   ply:GetCharacter():GiveItem(item,xInv,yInv)
@@ -60,7 +62,7 @@ end
 util.AddNetworkString("ERP.Storage.Take")
 net.Receive("ERP.Storage.Take",function(len,ply)
   local stor = ERP.Storages[net.ReadString()]
-  local item = ERP.Items[net.ReadString()]
+  local item = net.ReadString()
   local x = net.ReadUInt(8)
   local y = net.ReadUInt(8)
 

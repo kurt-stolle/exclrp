@@ -7,10 +7,11 @@ ENT.Category = "ExclRP"
 ENT.Author = "Excl"
 ENT.Spawnable			= false
 ENT.AdminOnly			= true
-ENT.Item = 0
+ENT.Item = {}
+ENT.ItemID = 0
 
 function ENT:GetItem()
-	return ERP.Items[self.Item];
+	return self.Item;
 end
 
 if CLIENT then
@@ -54,8 +55,18 @@ if CLIENT then
 
 		ERP:CreateActionMenu(ent:LocalToWorld(ent:OBBCenter()),opts)
 	end)
+
+	function ENT:Initialize()
+		if not ERP.ValidItem(self.Item) then
+			self.Item = ERP.Items[self.ItemID]
+		end
+	end
 elseif SERVER then
 	function ENT:Initialize()
+		if not ERP.ValidItem(self.Item) then
+			self.Item = ERP.Items[self.ItemID]
+		end
+
 		self:SetModel(self:GetItem()._model);
 
 		self:PhysicsInit(SOLID_VPHYSICS)

@@ -1,5 +1,14 @@
 --sh_inventory
 
+--[[
+
+Grid structure:
+
+[x][y] = {item = itemname, data = itemdata}
+
+
+]]
+
 -- Metatable. See util/sh_overrides.lua
 local INV = FindMetaTable("Inventory")
 
@@ -47,11 +56,22 @@ AccessorFunc(INV,"h","Height",FORCE_NUMBER)
 function INV:GetSize()
 	return self.w,self.h;
 end
-function INV:HasItem(item)
-	return table.HasValue(self:GetItems(),item:GetName());
+function INV:HasItem(itemName)
+	for x,_t in pairs(self.grid) do
+		for y,tab in pairs(_t) do
+			if tab.item == itemName then
+				return true,x,y
+			end
+		end
+	end
+
+	return false,0,0
 end
-function INV:HasItemAt(item,x,y)
-	return tobool(ERP.ValidItem(item) and self.grid[x] and self.grid[x][y] and self.grid[x][y] == item:GetName())
+function INV:HasItemAt(itemName,x,y)
+	return tobool(self.grid[x] and self.grid[x][y] and self.grid[x][y].item == itemName)
+end
+function INV:GetItemData(itemName,x,y)
+	return self:HasItemAt(itemName,x,y) and self.grid[x][y].data;
 end
 
 -- Get the grid with item IDs at [x][y]. No fillers.
@@ -64,8 +84,9 @@ function INV:GetItems()
 	local items={};
 	for x,_t in pairs(self.grid) do
 		for y,item in pairs(_t) do
-			if ES.Items[item] then
-				table.insert(items,ES.Items[item]);
+			item=ES.Items[item.item]
+			if item then
+				table.insert(items,item);
 			end
 		end
 	end
@@ -79,7 +100,7 @@ function INV:GetSpace()
 	local space={};
 	for x,_t in pairs(self.grid) do
 		for y,item in pairs(_t) do
-			item=ERP.Items[item];
+			item=ERP.Items[item.item];
 			if item then
 				for _x=x,x+item:GetInventoryWidth()-1 do
 					for _y=y,y+item:GetInventoryHeight()-1 do

@@ -1,10 +1,14 @@
 AddCSLuaFile()
 
+DEFINE_BASECLASS("erp_weapon_base")
+
 SWEP.Base = "erp_weapon_base"
 
 SWEP.AnimPrefix = "stunstick"
 
 SWEP.Slot = 4
+
+SWEP.GenerateItem = false
 
 SWEP.PrintName = "Baton"
 SWEP.Spawnable = true
