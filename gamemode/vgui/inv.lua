@@ -59,9 +59,17 @@ function PNL:Think()
 	self.color_highlight.a = Lerp(FrameTime()*4,self.color_highlight.a,self:GetHover() and 255 or 0)
 end
 function PNL:PaintOver(w,h)
-	local txt = string.gsub(ERP.Items[self:GetItem()]:GetName()," ","\n")
+	if not self:GetItem() then return end
 
-	draw.DrawText(txt,"ESDefault",4,4,ES.Color.White)
+	local item=ERP.Items[self:GetItem()]
+
+	if not item then return ES.DebugPrint("INVALID ITEM! "..(self:GetItem() or "")) end
+
+	local txt = string.gsub(item:GetName()," ","\n")
+
+	draw.DrawText(txt,"ESDefaultBold",5,5,ES.Color.Black)
+	draw.DrawText(txt,"ESDefaultBold.Shadow",5,5,ES.Color.Black)
+	draw.DrawText(txt,"ESDefaultBold",4,4,ES.Color.White)
 
 		surface.SetDrawColor(ES.GetColorScheme(3))
 		surface.DrawRect(1,1,w-2,2)

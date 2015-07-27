@@ -21,7 +21,7 @@ SWEP.CanRechamber = false
 SWEP.Sound = "Weapon_357"
 
 SWEP.Primary.ClipSize = 7
-SWEP.Primary.DefaultClip = 7
+SWEP.Primary.DefaultClip = 0
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "357 Ammo"
 SWEP.Primary.Recoil = 1

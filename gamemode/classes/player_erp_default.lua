@@ -49,6 +49,8 @@ function PLAYER:Loadout()
     end
   end
 
+  char:HandleWeapons()
+
   pl:SelectWeapon("erp_weapon_nothing")
 end
 

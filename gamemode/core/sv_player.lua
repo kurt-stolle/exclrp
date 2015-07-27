@@ -146,6 +146,7 @@ end
 -- SANDBOX HOOKS
 local function canSpawn(gm,ply)
 	if ply:IsSuperAdmin() then
+		ply:ESChatPrint("You spawned a SA+ only item!")
 		return true
 	end
 

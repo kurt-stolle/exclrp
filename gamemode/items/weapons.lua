@@ -11,10 +11,11 @@ hook.Add("Initialize","exclrp.items.weapons",function()
       -- The single unit
       local ITEM = ERP.Item();
       ITEM:SetName(v.PrintName);
+      ITEM:SetWeapon(v.ClassName)
       ITEM:SetDescription("A "..v.PrintName.." weapon.");
       ITEM:SetModel(v.WorldModel);
       ITEM:SetValue(price)
-      ITEM:DefineData("Ammo",0,"Int")
+      ITEM:DefineData("Clip1",0,"Int")
 
       ITEM:SetInventorySize(v.Slot == 2 and 3 or 2,v.Slot == 2 and 2 or 1)
       ITEM:SetInventoryCamPos(Vector(0,10,0))
@@ -72,10 +73,6 @@ hook.Add("Initialize","exclrp.items.weapons",function()
           -- Spawn one
           ERP.Items[v.PrintName]:SpawnInWorld(pos + ang:Up() * 30,ang)
       	end);
-
-        ITEM:AddHook("Initialize",function(self)
-          self:SetAmount(self:GetItem():GetData("Amount"))
-        end)
       end
 
       ITEM();

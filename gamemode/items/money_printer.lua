@@ -40,7 +40,6 @@ elseif SERVER then
 			end
 			self:SetMoney(self:GetMoney()+math.random(8,12))
 		end);
-		self:SetMoney(self:GetItem():GetData("Money"));
 	end);
 	ITEM:AddHook("OnRemove",function(self)
 		timer.Remove("exclTimeMoney"..self:EntIndex());

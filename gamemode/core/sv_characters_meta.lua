@@ -36,6 +36,41 @@ function CHARACTER:TakeBank(i)
 	self:AddBank(-i);
 end
 
+-- WEAPONS
+function CHARACTER:HandleWeapons()
+	ES.DebugPrint("Handling weapons...")
+
+	local WeaponList={}
+	for k,v in ipairs(self:GetInventory():GetItemsWithData())do
+		if v.item:GetWeapon() and not WeaponList[v.item:GetWeapon()] then
+			WeaponList[v.item:GetWeapon()] = v.data and v.data["Clip1"] or 0
+		end
+	end
+
+	for k,v in ipairs(self.Player:GetWeapons())do
+		if v.GenerateItem then
+			if not WeaponList[v:GetClass()] then
+				self.Player:StripWeapon(k)
+				ES.DebugPrint("Player has weapon he no longer should: "..k)
+			end
+		end
+	end
+
+	for k,v in pairs(WeaponList)do
+		if not self.Player:HasWeapon(v) then
+			self.Player:Give(k)
+
+			ES.DebugPrint("Player given weapon: "..k)
+
+			for _,wep in ipairs(self.Player:GetWeapons())do
+				if wep:GetClass() == k then
+					wep:SetClip1(v)
+				end
+			end
+		end
+	end
+end
+
 -- JOBS
 function CHARACTER:SetJob(job)
 	if not job then
@@ -63,7 +98,7 @@ function CHARACTER:SetJob(job)
 end
 
 -- INVENTORY
-function CHARACTER:GiveItem(item,x,y)
+function CHARACTER:GiveItem(item,x,y,data)
 	if not ERP.ValidItem(item) then return ES.DebugPrint("Invalid item given to character!"); end
 
 	local inv = self:GetInventory();
@@ -76,7 +111,9 @@ function CHARACTER:GiveItem(item,x,y)
 
 	if not x or x <= 0 or not y or y <= 0 then return ES.DebugPrint("No space in inventory for item given to character!"); end
 
-	inv:AddItem(item,x,y)
+	inv:AddItem(item,x,y,data)
+
+	self:HandleWeapons()
 
 	ERP.SaveCharacter(self.Player,"inventory");
 end
@@ -99,8 +136,6 @@ function CHARACTER:DropItem(item,x,y)
 	if not inv then return ES.DebugPrint("Character has an invalid inventory.")
 	elseif not inv:HasItemAt(item:GetName(),x,y) then return ES.DebugPrint("Player does not have specified item") end
 
-	inv:RemoveItem(item,x,y)
-
 	local trace={}
 	trace.start = self.Player:EyePos()
 	trace.endpos = trace.start + (self.Player:GetAngles():Forward() * 50)
@@ -108,7 +143,25 @@ function CHARACTER:DropItem(item,x,y)
 
 	trace=util.TraceLine(trace)
 
-	item:SpawnInWorld(trace.HitPos,self.Player:GetAngles())
+	item:SpawnInWorld(trace.HitPos,self.Player:GetAngles(),inv:GetItemData(item:GetName(),x,y))
+
+	inv:RemoveItem(item,x,y)
+
+	self:HandleWeapons()
+
+	ERP.SaveCharacter(self.Player,"inventory");
+end
+function CHARACTER:TakeItem(item,x,y)
+	if not ERP.ValidItem(item) then return ES.DebugPrint("Invalid item taken from character!"); end
+
+	local inv = self:GetInventory();
+
+	if not inv then return ES.DebugPrint("Character has an invalid inventory.")
+	elseif not inv:HasItemAt(item:GetName(),x,y) then return ES.DebugPrint("Player does not have specified item") end
+
+	inv:RemoveItem(item,x,y)
+
+	self:HandleWeapons()
 
 	ERP.SaveCharacter(self.Player,"inventory");
 end

@@ -53,10 +53,9 @@ function STOR:PlayerTakeItem(ply,itemName,x,y)
     ply:ESSendNotificationPopup("Success","The item was purchased and added to your inventory.")
   end
 
-  item:CopyData(self.inventory:GetItemData(item,x,y))
+  ply:GetCharacter():GiveItem(item,xInv,yInv,self.inventory:GetItemData(item,x,y))
   self.inventory:RemoveItem(item,x,y)
   self:Sync()
-  ply:GetCharacter():GiveItem(item,xInv,yInv)
 end
 
 util.AddNetworkString("ERP.Storage.Take")

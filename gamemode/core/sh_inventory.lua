@@ -93,6 +93,16 @@ function INV:GetItems()
 	return items;
 end
 
+function INV:GetItemsWithData()
+	local items={}
+	for x,_t in pairs(self.grid) do
+		for y,item in pairs(_t) do
+			table.insert(items,{item=ERP.Items[item.item],data=item.data});
+		end
+	end
+	return items;
+end
+
 -- Gets a table that tells us whether there is space at a certain point in the inventory.
 -- true/1 means filled, false/0 means not filled.
 -- TODO: Needs serious optimization

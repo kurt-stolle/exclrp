@@ -17,6 +17,9 @@ setmetatable(ERP,{
 	end
 })
 
+-- Configure
+include("sh_config.lua")
+
 -- TODO: Load these variables from the .txt file.
 ERP.Name = "ExclRP";
 ERP.Author = "Excl";
@@ -62,7 +65,6 @@ function ERP.Include(name, folder, runtype)
 
 	return true
 end
-ERP.Include("sh_config.lua", ".", "sh")
 
 function ERP.IncludeFolder(folder,runtype)
 	ES.DebugPrint("Initializing "..folder)

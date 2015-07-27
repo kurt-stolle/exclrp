@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 -- Locals
 local map = string.lower(string.Trim(game.GetMap()));
 

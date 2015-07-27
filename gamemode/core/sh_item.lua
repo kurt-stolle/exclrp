@@ -2,9 +2,9 @@
 ERP.Items = {};
 setmetatable(ERP.Items,{
 	__index=function(self,key)
-		for k,v in pairs(self)do
-			if string.lower(key) == string.lower(v._name) then
-				return table.Copy(v);
+		for k,v in ipairs(self)do
+			if key == v:GetName() then
+				return v;
 			end
 		end
 		return nil;
@@ -57,18 +57,12 @@ end
 function ITEM:DefineData(key,default,dttyp)
 	self._data[key]=default
 
-	if dttyp ~= "No-Sync" and dttyp ~= "Table" then
+	if dttyp and dttyp ~= "None" and dttyp ~= "Table" then
 		self._dataTypes[key]=dttyp
 	end
 end
 function ITEM:GetData(key)
 	return self._data[key]
-end
-function ITEM:SetData(key,value)
-	self._data[key]=value;
-end
-function ITEM:CopyData(tab)
-	self._data=tab;
 end
 
 -- Use this hook to add ENT hooks.
@@ -102,6 +96,7 @@ function ITEM:__call() -- register
 		Spawnable = true,
 		Category = "ExclRP",
 		ItemID = self._key;
+		Item = self;
 		Autor = "Excl",
 		AdminOnly = true,
 		SetupDataTables = function(ent)
@@ -118,15 +113,8 @@ function ITEM:__call() -- register
 
 				ent:NetworkVar( dttyp, countTypes[dttyp], k )
 
-				if SERVER then
-					local oldset=ent["Set"..k]
-					ent["Set"..k] = function(_ent,value,...)
-						  _ent:GetItem():SetData(k,value)
-							oldset(_ent,value,...)
-					end
-				end
 				countTypes[dttyp]=countTypes[dttyp]+1;
-			end 
+			end
 		end
 	};
 	for k,v in pairs(self._hooks)do

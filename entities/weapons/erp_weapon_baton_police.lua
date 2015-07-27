@@ -3,7 +3,7 @@ AddCSLuaFile()
 DEFINE_BASECLASS("erp_weapon_base_baton")
 
 SWEP.Base = "erp_weapon_base_baton"
-SWEP.GenerateItem = true
+SWEP.GenerateItem = false
 SWEP.PrintName = "Police Baton"
 SWEP.Spawnable = true
 SWEP.AdminOnly = true

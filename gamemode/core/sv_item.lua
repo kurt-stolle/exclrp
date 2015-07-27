@@ -1,6 +1,6 @@
 local ITEM=FindMetaTable("Item");
 
-function ITEM:SpawnInWorld(pos,ang)
+function ITEM:SpawnInWorld(pos,ang,data)
 
 	local e = ents.Create("erp_object_"..util.CRC(self._name));
 	e:SetPos(pos);
@@ -8,6 +8,14 @@ function ITEM:SpawnInWorld(pos,ang)
 	e.Item = self
 	e:Spawn();
 	e:Activate();
+
+	if data then
+		for k,v in pairs(data)do
+			if e["Set"..k] then
+				e["Set"..k](e,v)
+			end
+		end
+	end
 
 	return e;
 end
@@ -66,7 +74,12 @@ net.Receive("ERP.ItemToInventory",function(len,ply)
 	if not char or not ERP.ValidItem(item) then return end
 
 	if tobool(char:GetInventory():FitItem(item)) then
-		char:GiveItem(item)
+		local data={}
+		for k,v in pairs(item._data)do
+			data[k]=ent["Get"..k](ent)
+		end
+
+		char:GiveItem(item,nil,nil,data)
 		ent:Remove();
 	end
 end)

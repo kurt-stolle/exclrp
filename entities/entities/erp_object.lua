@@ -55,18 +55,8 @@ if CLIENT then
 
 		ERP:CreateActionMenu(ent:LocalToWorld(ent:OBBCenter()),opts)
 	end)
-
-	function ENT:Initialize()
-		if not ERP.ValidItem(self.Item) then
-			self.Item = ERP.Items[self.ItemID]
-		end
-	end
 elseif SERVER then
 	function ENT:Initialize()
-		if not ERP.ValidItem(self.Item) then
-			self.Item = ERP.Items[self.ItemID]
-		end
-
 		self:SetModel(self:GetItem()._model);
 
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -78,6 +68,13 @@ elseif SERVER then
 		local phys = self:GetPhysicsObject();
 		if phys and phys:IsValid() then
 			phys:Wake();
+		end
+
+		for k,v in pairs(self:GetItem()._data)do
+			local setter=self["Set"..k]
+			if setter then
+				setter(self,v)
+			end
 		end
 	end
 

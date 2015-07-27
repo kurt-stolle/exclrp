@@ -33,7 +33,7 @@ SWEP.CanRechamber = true
 SWEP.Sound = "Weapon_357"
 
 SWEP.Primary.ClipSize = 16
-SWEP.Primary.DefaultClip = 16
+SWEP.Primary.DefaultClip = 0
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "Pistol Ammo"
 SWEP.Primary.Recoil = 1
@@ -177,10 +177,44 @@ function SWEP:Reload()
   			self:SetClip1(self.Primary.ClipSize);
   		end
 
-      self.Owner:GetCharacter():GetInventory():RemoveItem(ERP.Items[self.Primary.Ammo],x,y)
+      print(self:Clip1())
+
+      self.Owner:GetCharacter():TakeItem(ERP.Items[self.Primary.Ammo],x,y)
     end
 	end)
 end
+
+function SWEP:TakePrimaryAmmo( num )
+
+	self:SetClip1( self:Clip1() - num )
+
+  for x,_t in pairs(self.Owner:GetCharacter():GetInventory().grid)do
+    for y,tab in pairs(_t) do
+      if tab.item == self.PrintName then
+        tab.data["Clip1"] = self:Clip1()
+      end
+    end
+  end
+end
+
+function SWEP:OnDrop()
+
+  local hasItem,x,y = self.Owner:GetCharacter():GetInventory():HasItem(self.PrintName)
+
+  if hasItem then
+    self.Owner:DropItem(ERP.Items[self.PrintName],x,y)
+  end
+
+  self:Remove()
+
+  return true
+end
+
+function SWEP:ShouldDropOnDie()
+  return true
+end
+
+function SWEP:GetClip1() return self:Clip1() end
 
 function SWEP:PrimaryAttack()
 	if self:GetStatus() == WEAPON_STATUS_SPRINT then return end

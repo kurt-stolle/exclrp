@@ -21,7 +21,7 @@ SWEP.CanRechamber = false
 SWEP.Sound = "Weapon_SMG1"
 
 SWEP.Primary.ClipSize = 45
-SWEP.Primary.DefaultClip = 45
+SWEP.Primary.DefaultClip = 0
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "SMG Ammo"
 SWEP.Primary.Recoil = 1

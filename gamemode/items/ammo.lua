@@ -3,7 +3,7 @@ ITEM:SetName("Pistol Ammo");
 ITEM:SetDescription("Standard pistol ammo.");
 ITEM:SetModel("models/Items/BoxSRounds.mdl");
 ITEM:SetInventorySize(1,1)
-ITEM:SetInventoryCamPos(Vector(0,0,16))
+ITEM:SetInventoryCamPos(Vector(0,0,32))
 ITEM:SetInventoryLookAt(Vector(0,0,0))
 ITEM();
 
@@ -14,7 +14,7 @@ ITEM:SetName(".357 Ammo");
 ITEM:SetDescription(".357 magnum ammo.");
 ITEM:SetModel("models/Items/BoxFlares.mdl");
 ITEM:SetInventorySize(1,1)
-ITEM:SetInventoryCamPos(Vector(0,0,16))
+ITEM:SetInventoryCamPos(Vector(0,0,32))
 ITEM:SetInventoryLookAt(Vector(0,0,0))
 ITEM();
 
@@ -25,7 +25,7 @@ ITEM:SetName("Buckshot Ammo");
 ITEM:SetDescription("A box of buckshot ammo.");
 ITEM:SetModel("models/Items/BoxBuckshot.mdl");
 ITEM:SetInventorySize(1,1)
-ITEM:SetInventoryCamPos(Vector(0,0,16))
+ITEM:SetInventoryCamPos(Vector(0,0,32))
 ITEM:SetInventoryLookAt(Vector(0,0,0))
 ITEM();
 
@@ -36,7 +36,7 @@ ITEM:SetName("SMG Ammo")
 ITEM:SetDescription("Deadly SMG ammo.")
 ITEM:SetModel("models/Items/BoxMRounds.mdl")
 ITEM:SetInventorySize(1,1)
-ITEM:SetInventoryCamPos(Vector(0,0,16))
+ITEM:SetInventoryCamPos(Vector(0,0,32))
 ITEM:SetInventoryLookAt(Vector(0,0,0))
 ITEM();
 
