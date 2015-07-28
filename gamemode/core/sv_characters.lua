@@ -65,7 +65,7 @@ function ERP.SyncCharacter(ply,...)
 	if not ply.character then return end
 
 	local char={};
-	for k,v in pairs(self.character)do
+	for k,v in pairs(ply.character)do
 		if type(v) ~= "function" and string.sub(k,1,1) ~= "_" then
 			char[k]=v
 		end
