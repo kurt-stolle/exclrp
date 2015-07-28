@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 DEFINE_BASECLASS("erp_weapon_base")
-local ply;
+local ply,baseAccuracy;
 
 WEAPON_STATUS_NONE = 0
 WEAPON_STATUS_AIM = 1
@@ -42,6 +42,7 @@ SWEP.Primary.Force = 10
 SWEP.Primary.Delay = .1
 SWEP.Primary.Damage = 100
 SWEP.Primary.Automatic = false
+SWEP.Primary.NumShots = 1
 
 -- Bullshit
 SWEP.Secondary.ClipSize = -1
@@ -90,11 +91,15 @@ function SWEP:Think()
       self:SetStatus(WEAPON_STATUS_SPRINT)
     end
 
+    baseAccuracy = self.Primary.Accuracy * 2
+
   -- Check if aiming
   elseif ply:KeyDown(IN_ATTACK2) then
     if self:GetStatus() ~= WEAPON_STATUS_AIM then
       self:SetStatus(WEAPON_STATUS_AIM)
     end
+
+    baseAccuracy = self.Primary.Accuracy * .5
 
   -- Check if just chilling
   else
@@ -102,11 +107,13 @@ function SWEP:Think()
       self:SetStatus(WEAPON_STATUS_NONE)
     end
 
+    baseAccuracy = self.Primary.Accuracy
+
   end
 
   -- Close the gap if last fire > x seconds
-  if self:GetLastShoot() + .1 < CurTime() then
-    self:SetSpread(Lerp(FrameTime(),self:GetSpread(),self.Primary.Accuracy))
+  if self:GetLastShoot() + .2 < CurTime() then
+    self:SetSpread(Lerp(FrameTime()*4,self:GetSpread(),baseAccuracy))
   end
 end
 
@@ -196,12 +203,6 @@ function SWEP:TakePrimaryAmmo( num )
 end
 
 function SWEP:OnDrop()
-
-  local hasItem,x,y = self.Owner:GetCharacter():GetInventory():HasItem(self.PrintName)
-
-  if hasItem then
-    self.Owner:DropItem(ERP.Items[self.PrintName],x,y)
-  end
 
   self:Remove()
 

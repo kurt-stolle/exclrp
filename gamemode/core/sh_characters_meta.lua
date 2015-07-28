@@ -12,7 +12,7 @@ function CHARACTER:IsMale()
 	return not self:IsFemale()
 end
 function CHARACTER:IsFemale()
-	return tobool(string.find("female",self.model,1,true))
+	return tobool(string.find(string.lower(self.model),"female",1,true))
 end
 
 -- Names

@@ -143,10 +143,16 @@ function ERP:HUDPaint()
 
 		draw.SimpleText("WASTED","ERP.HudWasted",x,y,ES.Color.Red,1,4)
 
-		for i=1,1 do
-				draw.SimpleText("Press TAB to log out or wait "..math.ceil(ERP.Config["death_time"]/60).." minutes.","ESDefault++",x+i,y+20+i,ES.Color.Black,1,4)
+		local wait = math.ceil(ERP.Config["death_time"]/60)
+
+		if ply:GetCharacter().deathTime and ply:GetCharacter().deathTime + ERP.Config["death_time"] > os.time() then
+			wait = math.ceil(((ply:GetCharacter().deathTime + ERP.Config["death_time"]) - os.time())/60)
 		end
-		draw.SimpleText("Press TAB to log out or wait "..math.ceil(ERP.Config["death_time"]/60).." minutes.","ESDefault++",x,y+20,ES.Color.White,1,4)
+
+		for i=1,1 do
+				draw.SimpleText("Press TAB to log out or wait "..wait.." minutes.","ESDefault++",x+i,y+20+i,ES.Color.Black,1,4)
+		end
+		draw.SimpleText("Press TAB to log out or wait "..wait.." minutes.","ESDefault++",x,y+20,ES.Color.White,1,4)
 
 		cam.PopModelMatrix( mat )
 
@@ -291,18 +297,6 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 	end
 
 	return {origin = pos, angles = angles, fov = fov}
-end
-
-function ERP:PrePlayerDraw(p)
-	if p == LocalPlayer() and distance < 40 then
-		render.SetBlend(distance/40)
-	end
-end
-
-function ERP:PostPlayerDraw(p)
-	if p == LocalPlayer() and distance < 40 then
-		render.SetBlend(1)
-	end
 end
 
 -- OOC
@@ -501,9 +495,6 @@ function ERP:PrePlayerDraw(ply)
 		parent:SetRenderMode( RENDERMODE_TRANSALPHA )
 	end
 
-	ply._erp_headEnt:SetRenderOrigin(parent:GetPos())
-	ply._erp_bodyEnt:SetRenderOrigin(parent:GetPos())
-
 	parent:SetLOD(8)
 
 	render.SetBlend(0)
@@ -512,9 +503,15 @@ end
 function ERP:PostPlayerDraw(ply)
 	if not ply:IsLoaded() then return end
 
-	render.SetBlend(1)
+	if IsValid(ply._erp_headEnt) and IsValid(ply._erp_bodyEnt) then
+		local parent=ply
+		if IsValid(ply:GetRagdollEntity()) then
+			parent=ply:GetRagdollEntity()
+		end
 
-	if IsValid(ply._erp_headEnt) then
-		ply._erp_headEnt:SetRenderOrigin(ply:GetPos())
+		ply._erp_headEnt:SetRenderOrigin(parent:GetPos())
+		ply._erp_bodyEnt:SetRenderOrigin(parent:GetPos())
 	end
+
+	render.SetBlend(1)
 end

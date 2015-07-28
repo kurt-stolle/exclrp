@@ -50,8 +50,8 @@ function CHARACTER:HandleWeapons()
 	for k,v in ipairs(self.Player:GetWeapons())do
 		if v.GenerateItem then
 			if not WeaponList[v:GetClass()] then
-				self.Player:StripWeapon(k)
-				ES.DebugPrint("Player has weapon he no longer should: "..k)
+				self.Player:StripWeapon(v:GetClass())
+				ES.DebugPrint("Player has weapon he no longer should: "..v:GetClass())
 			end
 		end
 	end

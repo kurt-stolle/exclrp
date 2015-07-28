@@ -4,7 +4,8 @@ local PLAYER = FindMetaTable("Player");
 -- THIRDPERSON
 function PLAYER:IsAiming()
 	local wep=self:GetActiveWeapon();
-	return IsValid(wep) and (wep:GetClass() == "weapon_physgun" or wep:GetClass() == "gmod_tool")
+
+	return IsValid(wep) and ( (wep.GetStatus and wep:GetStatus() == WEAPON_STATUS_AIM) or wep:GetClass() == "weapon_physgun" or wep:GetClass() == "gmod_tool" )
 end
 
 -- CHARACTER HELPERS

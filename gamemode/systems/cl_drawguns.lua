@@ -1,80 +1,94 @@
--- drawguns
--- draws weapons on the players
+local clientModels={}
 
-local clientModels = {}
-local function CheckWeaponTable(class)
-	if clientModels[class] then
-		return clientModels[class]
-	end
-	local wclass = weapons.Get(class);
-	if not wclass or not wclass.WorldModel then return false end;
-	timer.Simple(0,function()
-		local wclass = weapons.Get(class);
-		if not wclass or not wclass.WorldModel or wclass.WorldModel == "" then return false end;
+hook.Add("PrePlayerDraw","exclrp.draw.weapons",function(p)
+	for k, v in ipairs(p:GetWeapons())do
+		if v.WorldModel and v.WorldModel ~= "" and not clientModels[v:GetClass()] and v:GetClass() ~= "gmod_tool" and v:GetClass() ~= "gmod_camera" then
 
-		clientModels[class] = ClientsideModel(wclass.WorldModel,RENDERGROUP_OPAQUE);
+			local cMdl = ClientsideModel(v.WorldModel,RENDERGROUP_OPAQUE)
 
-		if IsValid(clientModels[class]) then
-
-			clientModels[class]:SetNoDraw(true);
-
+			if IsValid(cMdl) then
+				cMdl:SetNoDraw(true)
+				clientModels[v:GetClass()] = cMdl;
+			else
+				print("ERROR!",weapons.GetStored(v:GetClass()).WorldModel,v:GetClass())
+			end
 		end
-	end);
-	return false;
-end
+	end
+end)
 
-hook.Add("PostPlayerDraw","ERPDrawWeaponsOnPlayer",function(p)
-	local weps = p:GetWeapons();
+hook.Add("PostPlayerDraw","exclrp.draw.weapons",function(p)
+	local blend=render.GetBlend()
+	render.SetBlend(1)
 
-	for k, v in pairs(weps)do
-		local mdl = CheckWeaponTable(v:GetClass());
+	local ent,mdl;
+	for k, v in ipairs(p:GetWeapons())do
+		if not clientModels or not v.GetClass then continue end
 
-		if IsValid(mdl) and p:GetActiveWeapon() and p:GetActiveWeapon():IsValid() and p:GetActiveWeapon():GetClass() ~= v:GetClass() then
-			if string.find(mdl:GetModel(),"pist") then
+		ent = clientModels[v:GetClass()]
 
+		if IsValid(ent) and p:GetActiveWeapon() and p:GetActiveWeapon():IsValid() and p:GetActiveWeapon():GetClass() ~= v:GetClass() then
+			mdl=string.lower(ent:GetModel())
+
+			ent:SetPos(p:GetPos())
+			ent:SetAngles(p:GetAngles())
+
+			if string.find(mdl,"pist",1,true) or string.find(mdl,"357",1,true) then
 				local boneindex = p:LookupBone("ValveBiped.Bip01_R_Thigh")
 				if boneindex then
 					local pos, ang = p:GetBonePosition(boneindex)
 
 					ang:RotateAroundAxis(ang:Forward(),90)
-					mdl:SetRenderOrigin(pos+(ang:Right()*4.5)+(ang:Up()*-1.5));
-					mdl:SetRenderAngles(ang);
-					mdl:DrawModel();
+					ent:SetRenderOrigin(pos+(ang:Right()*4.5)+(ang:Up()*-3));
+					ent:SetRenderAngles(ang)
+					ent:DrawModel();
 				end
-			elseif string.find(mdl:GetModel(),"shot") or string.find(mdl:GetModel(),"rif") or string.find(mdl:GetModel(),"smg") or string.find(mdl:GetModel(),"snip") then
+			elseif string.find(mdl,"shotgun",1,true) then -- HL2
 				local boneindex = p:LookupBone("ValveBiped.Bip01_Spine2")
 				if boneindex then
 					local pos, ang = p:GetBonePosition(boneindex)
 
 					ang:RotateAroundAxis(ang:Forward(),0)
-					mdl:SetRenderOrigin(pos+(ang:Right()*4)+(ang:Forward()*-5));
-					ang:RotateAroundAxis(ang:Right(),-15)
-					mdl:SetRenderAngles(ang);
-					mdl:DrawModel();
+					ent:SetRenderOrigin(pos+(ang:Right()*4)+(ang:Forward()*3)+(ang:Up()*0));
+					ang:RotateAroundAxis(ang:Right(),180+-30)
+					ent:SetRenderAngles(ang);
+					ent:DrawModel();
 				end
-			elseif string.find(mdl:GetModel(),"rocket_launcher") then
+				elseif string.find(mdl,"smg1",1,true) then -- HL2
+					local boneindex = p:LookupBone("ValveBiped.Bip01_Spine2")
+					if boneindex then
+						local pos, ang = p:GetBonePosition(boneindex)
+
+						ang:RotateAroundAxis(ang:Forward(),0)
+						ent:SetRenderOrigin(pos+(ang:Right()*4)+(ang:Forward()*5)+(ang:Up()*-3));
+						ang:RotateAroundAxis(ang:Right(),-30)
+						ent:SetRenderAngles(ang);
+						ent:DrawModel();
+					end
+			elseif string.find(mdl,"snip",1,true) or string.find(mdl,"rif",1,true) or string.find(mdl,"shot",1,true) or string.find(mdl,"smg",1,true) then -- CS:S
 				local boneindex = p:LookupBone("ValveBiped.Bip01_Spine2")
 				if boneindex then
 					local pos, ang = p:GetBonePosition(boneindex)
 
 					ang:RotateAroundAxis(ang:Forward(),0)
-					mdl:SetRenderOrigin(pos+(ang:Right()*3)+(ang:Forward()*17)+(ang:Up()*10));
-					ang:RotateAroundAxis(ang:Right(),180+15)
-					mdl:SetRenderAngles(ang);
-					mdl:DrawModel();
+					ent:SetRenderOrigin(pos+(ang:Right()*4)+(ang:Forward()*5)+(ang:Up()*-5));
+					ang:RotateAroundAxis(ang:Right(),25)
+					ent:SetRenderAngles(ang);
+					ent:DrawModel();
 				end
-			/*elseif string.find(mdl:GetModel(),"baton") then
+			elseif string.find(mdl,"baton") then
 				local boneindex = p:LookupBone("ValveBiped.Bip01_L_Thigh")
 				if boneindex then
 					local pos, ang = p:GetBonePosition(boneindex)
 
 					ang:RotateAroundAxis(ang:Forward(),90)
-					ang:RotateAroundAxis(ang:Right(),-56)
-					mdl:SetRenderOrigin(pos+(ang:Right()*-4.2)+(ang:Up()*2));
-					mdl:SetRenderAngles(ang);
-					mdl:DrawModel();
-				end*/
+					ang:RotateAroundAxis(ang:Right(),150)
+					ent:SetRenderOrigin(pos+(ang:Right()*-4)+(ang:Up()*-1)+(ang:Forward()*-5));
+					ent:SetRenderAngles(ang);
+					ent:DrawModel();
+				end
 			end
 		end
 	end
+
+	render.SetBlend(blend)
 end)
