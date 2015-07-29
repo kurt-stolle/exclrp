@@ -250,6 +250,10 @@ function ERP:CalcView(ply, pos, angles, fov) --Calculates the view, for run-view
 			return view
 		end
 
+		if ply:InVehicle() then
+			return GAMEMODE.BaseClass.CalcView(GAMEMODE,ply,pos,angles,fov)
+		end
+
 
 	if not newpos then
 		newpos = pos;

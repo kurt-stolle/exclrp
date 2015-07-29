@@ -40,10 +40,16 @@ if CLIENT then
 
         local price=vgui.Create("DLabel",mid)
         price:Dock(BOTTOM)
-        price:SetText("Costs $"..v.price)
         price:SetFont("ESDefault")
         price:SetColor(ES.Color.White)
-        price:SizeToContents()
+
+        if not LocalPlayer():GetCharacter():HasCar(v.name) then
+          price:SetText("Costs $"..v.price)
+          price:SizeToContents()
+        else
+          price:SetText("You own this car.")
+          price:SizeToContents()
+        end
 
         pnl.price=price
 
@@ -56,9 +62,21 @@ if CLIENT then
         if LocalPlayer():GetCharacter():GetCash() < v.price then
           buy:SetDisabled(true)
         end
+
+        buy.DoClick = function()
+          net.Start('exclrp.cars.buy')
+          net.WriteString(v.name)
+          net.SendToServer()
+        end
       else
         buy:SetText("Spawn")
+        buy.DoClick = function()
+          net.Start('exclrp.cars.spawn')
+          net.WriteString(v.name)
+          net.SendToServer()
+        end
       end
+
 
       pnl.buy = buy
 
@@ -78,8 +96,13 @@ if CLIENT then
         if char:HasCar(v.name) then
           v.buy:SetText("Spawn")
           v.buy:SetDisabled(false)
-          v.cost:SetText("You own this car.")
-          v.cost:SizeToContents()
+          v.price:SetText("You own this car.")
+          v.price:SizeToContents()
+          v.buy.DoClick = function()
+            net.Start('exclrp.cars.spawn')
+            net.WriteString(v.name)
+            net.SendToServer()
+          end
         end
       end
     end

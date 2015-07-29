@@ -4,6 +4,8 @@ function PLAYER:UnLoad()
 	-- This function unloads the player
 	-- meaning they can select a new character.
 
+	hook.Call("ERPCharacterUnloaded",GAMEMODE,self,self.character)
+
 	self.character=nil;
 
 	self:SetStatus(0)

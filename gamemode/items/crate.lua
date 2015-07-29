@@ -1,26 +1,16 @@
 local ITEM = ERP.Item();
 ITEM:SetName("Crate");
-ITEM:SetDescription("Stores stuff.");
-ITEM:SetModel("models/Items/item_item_crate.mdl");
+ITEM:SetDescription("Can be used to store items and extend your inventory.");
+ITEM:SetModel("models/props/de_nuke/crate_extrasmall.mdl");
 
 ITEM:SetInventorySize(3,3)
-ITEM:SetInventoryCamPos(Vector(1,-1,42))
+ITEM:SetInventoryCamPos(Vector(1,-1,52))
 ITEM:SetInventoryLookAt(Vector(1,-1,0))
 
 if CLIENT then
 
 	ITEM:AddHook("Draw",function(self)
 		self.Entity:DrawModel()
-
-    local pos = self:GetPos()
-  	local ang = self:GetAngles()
-
-    ang:RotateAroundAxis(ang:Up(),180)
-
-  	cam.Start3D2D(pos + ang:Up() * 23.75, ang, 0.2)
-  		draw.SimpleText("Crate","ESDefaultBold",-5,-65,ES.Color.Black,1,1)
-      draw.SimpleText("Crate","ESDefaultBold",-5,-65,ES.Color.Black,1,1)
-  	cam.End3D2D()
 	end);
 
 	ITEM:AddInteraction( "Open", ERP.ItemInteractWithServer("Open") );

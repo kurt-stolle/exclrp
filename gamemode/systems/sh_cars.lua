@@ -23,3 +23,12 @@ local CHARACTER = FindMetaTable("Character")
 function CHARACTER:GetCars()
   return self._cars or {}
 end
+
+function CHARACTER:HasCar(car)
+	for k,v in ipairs(self._cars or {})do
+		if v.car == car then
+			return true
+		end
+	end
+	return false
+end
