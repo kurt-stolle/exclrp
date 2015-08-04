@@ -33,6 +33,13 @@ function PLAYER:CreateErrorDialog(txt)
 	return -1
 end
 
+-- STATUS
 function PLAYER:SetStatus(int)
 	self:ESSetNetworkedVariable("erp_status",int)
+end
+
+function PLAYER:AddStatus(status)
+	if self:HasStatus(status) then return end
+
+	self:SetStatus(self:GetStatus() + status)
 end

@@ -4,7 +4,7 @@
 local ranks_sync={}
 hook.Add("ESDatabaseReady","ERP.ES.SetupGangsSQL",function()
 	ES.DebugPrint("Loading gangs information...")
-	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_gangs` (`id` int unsigned NOT NULL AUTO_INCREMENT, name varchar(255), description varchar(255), sign varchar(255), members TEXT, exp int unsigned default 0, ranks TEXT, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",function()	end):wait();
+	ES.DBQuery("CREATE TABLE IF NOT EXISTS `erp_gangs` (`id` int unsigned NOT NULL AUTO_INCREMENT, name varchar(255), description varchar(255), sign varchar(255), members TEXT, exp int unsigned default 0, ranks TEXT, PRIMARY KEY (`id`), UNIQUE KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1;",function()	end);
 end)
 
 -- Load gang

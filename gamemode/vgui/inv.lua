@@ -65,17 +65,20 @@ function PNL:PaintOver(w,h)
 
 	if not item then return ES.DebugPrint("INVALID ITEM! "..(self:GetItem() or "")) end
 
-	local txt = string.gsub(item:GetName()," ","\n")
+	local txt = string.upper(string.gsub(item:GetName()," ","\n"));
 
-	draw.DrawText(txt,"ESDefaultBold",5,5,ES.Color.Black)
-	draw.DrawText(txt,"ESDefaultBold.Shadow",5,5,ES.Color.Black)
-	draw.DrawText(txt,"ESDefaultBold",4,4,ES.Color.White)
+	draw.DrawText(txt,"ESDefault",6,6,ES.Color.Black)
+	draw.DrawText(txt,"ESDefault",7,7,ES.Color.Black)
+	draw.DrawText(txt,"ESDefault.Shadow",5,5,ES.Color.Black)
+	draw.DrawText(txt,"ESDefault.Shadow",6,6,ES.Color.Black)
+	draw.DrawText(txt,"ESDefault.Shadow",7,7,ES.Color.Black)
+	draw.DrawText(txt,"ESDefault",5,5,ES.Color.White)
 
-		surface.SetDrawColor(ES.GetColorScheme(3))
+		--[[surface.SetDrawColor(ES.GetColorScheme(3))
 		surface.DrawRect(1,1,w-2,2)
 		surface.DrawRect(1,h-3,w-2,2)
 		surface.DrawRect(1,2,2,h-4)
-		surface.DrawRect(w-3,2,2,h-4)
+		surface.DrawRect(w-3,2,2,h-4)]]
 
 	ES.UIDrawRippleEffect(self,w,h)
 end

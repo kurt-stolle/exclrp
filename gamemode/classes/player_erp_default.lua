@@ -5,12 +5,6 @@ DEFINE_BASECLASS( "player_default" )
 PLAYER.DisplayName    = "ERP Default Class";
 PLAYER.WalkSpeed			= 100;
 PLAYER.RunSpeed				= 270;
-
-STATUS_NONE = 0
-STATUS_ARRESTED = 1
-STATUS_DEAD = 2
-STATUS_WANTED = 4
-
 function PLAYER:SetupDataTables()
   self.Player:NetworkVar( "Float", 0, "Energy" )
 

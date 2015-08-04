@@ -28,11 +28,7 @@ function ERP.OpenUI_Job()
   else
     frame:SetSize(500,500);
 
-    local lblJob=frame:Add("esLabel")
-    lblJob:SetText(ply:GetCharacter():GetJob():GetName())
-    lblJob:SizeToContents()
-    lblJob:Dock(TOP)
-    lblJob:DockMargin(10,10,10,0)
+    ERP.Jobs[ply:Team()]:BuildJobMenu(frame)
   end
 
   frame:Center();

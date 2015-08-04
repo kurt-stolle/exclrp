@@ -42,7 +42,7 @@ function ERP.Job(name,description,faction,pay,color)
 	obj.OnSelect=function(self,ply) end
 
 	if CLIENT then
-		obj.fnJobMenu = function(frame) end
+		obj.BuildJobMenu = function(frame) end
 	end
 
 	obj.loadout={};

@@ -18,10 +18,19 @@ function PLAYER:GetCharacter()
 end
 
 -- PLAYER STATUS
+STATUS_NONE = 0
+STATUS_ARRESTED = 1
+STATUS_DEAD = 2
+STATUS_WANTED = 4
+STATUS_WARRANT = 8
 function PLAYER:GetStatus()
 	return self:ESGetNetworkedVariable("erp_status",0)
 end
 
+function PLAYER:HasStatus(status)
+	return bit.band(self:GetStatus(),status) > 0
+end
+
 function PLAYER:Alive()
-	return self:IsLoaded() and bit.band(self:GetStatus(),STATUS_DEAD) == 0;
+	return self:IsLoaded() and not self:HasStatus(STATUS_DEAD);
 end

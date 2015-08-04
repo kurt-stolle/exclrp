@@ -16,6 +16,7 @@ hook.Add("Initialize","exclrp.items.weapons",function()
       ITEM:SetModel(v.WorldModel);
       ITEM:SetValue(price)
       ITEM:DefineData("Clip1",0,"Int")
+      ITEM:SetIllegal(true)
 
       ITEM:SetInventorySize(v.Slot == 2 and 3 or 2,v.Slot == 2 and 2 or 1)
       ITEM:SetInventoryCamPos(Vector(0,10,0))
@@ -30,7 +31,7 @@ hook.Add("Initialize","exclrp.items.weapons",function()
       ITEM:SetModel("models/Items/item_item_crate.mdl");
       ITEM:SetValue(price*8)
       ITEM:DefineData("Amount",10,"Int")
-
+      ITEM:SetIllegal(true)
 
       ITEM:SetInventorySize(3,3)
       ITEM:SetInventoryCamPos(Vector(1,-1,42))

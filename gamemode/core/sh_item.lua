@@ -26,6 +26,7 @@ AccessorFunc(ITEM,"_invHeight","InventoryHeight",FORCE_NUMBER);
 AccessorFunc(ITEM,"_invCamPos","InventoryCamPos");
 AccessorFunc(ITEM,"_invLookAt","InventoryLookAt");
 AccessorFunc(ITEM,"_weapon","Weapon",FORCE_STRING);
+AccessorFunc(ITEM,"_isIllegal","Illegal",FORCE_BOOL);
 
 -- The constructor.
 function ERP.Item()
@@ -46,6 +47,7 @@ function ERP.Item()
 	obj._value = 100
 	obj._weapon = nil;
 	obj._data=  {}
+	obj._isIllegal = false;
 
 	-- Only for initialization
 	obj._dataTypes={}

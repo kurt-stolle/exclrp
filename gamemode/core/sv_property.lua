@@ -82,8 +82,8 @@ hook.Add("ESDatabaseReady","ERP.ES.SetupPropertySQL",function()
 					ES.DebugPrint("Successfully loaded property.")
 				end
 			end
-		end):wait();
-	end):wait();
+		end);
+	end);
 end)
 
 -- Check expirations

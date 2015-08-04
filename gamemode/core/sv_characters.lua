@@ -4,7 +4,7 @@ hook.Add("ESDatabaseReady","ERP.ES.CreateERPCharactersDB",function()
 end)
 
 -- the following fields of characters will be sent to ALL PLAYERS
-local PublicFields={"firstname","lastname","job","joblevel","clothing","model","gang"}
+local PublicFields={"firstname","lastname","job","joblevel","clothing","model","gang","id"}
 
 -- create a new character
 function ERP.CreateCharacter(ply,fname,lname,model)
