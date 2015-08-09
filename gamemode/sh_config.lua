@@ -11,6 +11,8 @@ ERP.Config["mainmenu_view_origin"] = Vector(0,0,0);
 ERP.Config["mainmenu_view_angles"] = Angle(0,0,0);
 ERP.Config["arrest_time"] = 60*5
 ERP.Config["death_time"] = 60*10
+ERP.Config["warrant_time"] = 60*10
+ERP.Config["wanted_time"] = 60*20
 
 -- Map dependant configuration. These values should always override some default value!
 if map == "rp_evocity_v4b1" then

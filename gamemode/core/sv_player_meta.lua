@@ -43,3 +43,9 @@ function PLAYER:AddStatus(status)
 
 	self:SetStatus(self:GetStatus() + status)
 end
+
+function PLAYER:TakeStatus(status)
+	if not self:HasStatus(status) then return end
+
+	self:SetStatus(self:GetStatus() - status)
+end

@@ -128,6 +128,22 @@ elseif SERVER then
     ply:AddStatus(status)
 
     ES.BroadcastChat(target:GetCharacter():GetFullName()..(status == STATUS_WARRANT and " now has a warrant approved." or status == STATUS_WANTED and "is not wanted"))
+
+    if timer.Exists(ply:UniqueID()..".WantedTimer."..status) then
+      timer.Remove(ply:UniqueID()..".WantedTimer."..status)
+    end
+
+    timer.Create(ply:UniqueID()..".WantedTimer."..status,status == STATUS_WANTED and ERP.Config["wanted_time"] or ERP.Config["warrant_time"],1,function()
+      ply:TakeStatus(status)
+    end)
+  end)
+
+  hook.Add("PlayerDeath","exclrp.job.police.setstatus.death",function(ply)
+    if timer.Exists(ply:UniqueID()..".WantedTimer."..STATUS_WANTED) then
+      timer.Remove(ply:UniqueID()..".WantedTimer."..STATUS_WANTED)
+    end
+
+    ply:TakeStatus(STATUS_WANTED)
   end)
 end
 
