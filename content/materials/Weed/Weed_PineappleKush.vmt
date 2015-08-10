@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+
+	$basetexture "weed/Weed_Fire1"
+	$bumpmap "Map _5/hemp_list_non"
+                // "$envmap" "env_cubemap"
+     // "$normalmapalphaenvmapmask" 1
+     // "$envmapcontrast" 1
+	// "$translucent" 1
+     "$model" 1
+	"$surfaceprop" "foliage"
+     // "$selfillum" 1
+	"$alphatest" 1
+}	
+

@@ -87,6 +87,21 @@ function ITEM:SetInventorySize(w,h)
 	self:SetInventoryHeight(h)
 end
 
+-- Helper functions
+if SERVER then
+	function ITEM:DefineCombination(item,onCombine)
+		self:AddHook("Touch",function(me,you)
+			if not IsValid(you) or me._isCombinedAlready or (not me:IsPlayerHolding() and not you:IsPlayerHolding()) or not you.GetItem or you:GetItem():GetName() ~= item then return end
+			onCombine(me)
+
+			you._isCombinedAlready=true
+			you:Remove()
+
+			ES.DebugPrint("Combining item")
+		end)
+	end
+end
+
 -- Use this hook to register the entity.
 function ITEM:__call() -- register
 	self._key=(#ERP.Items+1);
@@ -121,9 +136,15 @@ function ITEM:__call() -- register
 	};
 	for k,v in pairs(self._hooks)do
 		--some hooks must be wrapped
-		if k == "Use" or k == "Initialize" or k == "SetupDataTables" then
+		if k == "Use" or k == "Initialize" then
 			ENT[k]=function(entity,...)
 				entity.BaseClass[k](entity,...)
+				v(entity,...)
+			end
+		elseif k == "SetupDataTables" then
+			local oldSetupDT=ENT[k]
+			ENT[k]=function(entity,...)
+				oldSetupDT(entity,...)
 				v(entity,...)
 			end
 		else

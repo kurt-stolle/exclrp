@@ -47,7 +47,7 @@ if CLIENT then
       btn:DockMargin(10,10,10,10)
       btn:SetText("Make wanted")
       btn.DoClick = function()
-        ES.DebugPrint(conbo:GetData(),"is being made wanted/warranted.")
+        ES.DebugPrint(combo:GetData(),"is being made wanted/warranted.")
 
         net.Start("exclrp.job.police.setstatus")
         net.WriteEntity(combo:GetData())

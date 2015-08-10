@@ -65,6 +65,8 @@ elseif SERVER then
 
 		self:SetUseType(SIMPLE_USE);
 
+		self:SetTrigger(true)
+
 		local phys = self:GetPhysicsObject();
 		if phys and phys:IsValid() then
 			phys:Wake();
